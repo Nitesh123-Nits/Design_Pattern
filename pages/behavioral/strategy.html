@@ -4,14 +4,12 @@
   <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Strategy Pattern in Java — JavaPatterns</title>
   <meta name="description" content="Strategy design pattern in Java — interchangeable algorithms, sorting, payment strategies, interview questions." />
-  <link rel="stylesheet" href="../../css/styles.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
-</head>
+  <link rel="stylesheet" href="../../css/styles.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" /></head>
 <body>
 <header class="site-header">
-  <button id="menu-toggle">☰</button>
-  <a href="../../index.html" class="logo"><div class="logo-icon">♟</div><span>JavaPatterns</span></a>
-  <div class="search-bar"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
+  <button id="menu-toggle"></button>
+  <a href="../../index.html" class="logo"><div class="logo-icon"></div><span>JavaPatterns</span></a>
+  <div class="search-bar"><span class="search-icon"></span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
 </header>
 <div class="layout">
   <nav class="sidebar" id="sidebar" data-root="../../"></nav>
@@ -19,11 +17,11 @@
     <div class="page-header">
       <div class="breadcrumb"><a href="../../index.html">Home</a><span class="sep">›</span><a href="index.html">Behavioral</a><span class="sep">›</span><span>Strategy</span></div>
       <div class="badges"><span class="badge badge-behavioral">Behavioral</span><span class="badge badge-easy">Easy</span></div>
-      <h1>♟️ Strategy Pattern</h1>
+      <h1>Strategy Pattern</h1>
       <p>Defines a family of algorithms, encapsulates each one, and makes them interchangeable. Strategy lets the algorithm vary independently from the clients that use it.</p>
     </div>
 
-    <h2>🎯 When to Use</h2>
+    <h2>When to Use</h2>
     <ul>
       <li>When you have multiple variants of an algorithm</li>
       <li>When you want to switch algorithms at runtime</li>
@@ -31,7 +29,7 @@
       <li>Sorting strategies, payment methods, compression algorithms, discount policies</li>
     </ul>
 
-    <h2>💻 Java Implementation</h2>
+    <h2>Java Implementation</h2>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">E-Commerce Discount Strategy</span><button class="copy-btn">Copy</button></div>
       <pre><code class="language-java">// Strategy interface — the contract for all algorithms
@@ -127,7 +125,7 @@ public class Main {
 }</code></pre>
     </div>
 
-    <h2>🔍 Real-World Usage</h2>
+    <h2>Real-World Usage</h2>
     <ul>
       <li><code>java.util.Comparator</code> — Strategy for sorting (passed to <code>List.sort()</code>)</li>
       <li><code>java.util.concurrent.ThreadPoolExecutor</code> — rejection policies are strategies</li>
@@ -136,7 +134,7 @@ public class Main {
       <li>Jackson's <code>SerializationFeature</code> settings</li>
     </ul>
 
-    <h2>🎤 Interview Q&amp;A</h2>
+    <h2>Interview Q&amp;A</h2>
     <div class="accordion">
       <div class="accordion-item">
         <button class="accordion-header">Q: How does Strategy differ from State pattern?<span class="accordion-icon">+</span></button>

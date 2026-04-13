@@ -4,14 +4,12 @@
   <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Builder Pattern in Java — JavaPatterns</title>
   <meta name="description" content="Builder design pattern in Java with complete code examples, method chaining, Lombok, and interview questions." />
-  <link rel="stylesheet" href="../../css/styles.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
-</head>
+  <link rel="stylesheet" href="../../css/styles.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" /></head>
 <body>
 <header class="site-header">
-  <button id="menu-toggle">☰</button>
-  <a href="../../index.html" class="logo"><div class="logo-icon">♟</div><span>JavaPatterns</span></a>
-  <div class="search-bar"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
+  <button id="menu-toggle"></button>
+  <a href="../../index.html" class="logo"><div class="logo-icon"></div><span>JavaPatterns</span></a>
+  <div class="search-bar"><span class="search-icon"></span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
 </header>
 <div class="layout">
   <nav class="sidebar" id="sidebar" data-root="../../"></nav>
@@ -19,11 +17,11 @@
     <div class="page-header">
       <div class="breadcrumb"><a href="../../index.html">Home</a><span class="sep">›</span><a href="index.html">Creational</a><span class="sep">›</span><span>Builder</span></div>
       <div class="badges"><span class="badge badge-creational">Creational</span><span class="badge badge-medium">Medium</span></div>
-      <h1>🔨 Builder Pattern</h1>
+      <h1>Builder Pattern</h1>
       <p>Constructs a complex object step by step. Separates the construction of a complex object from its representation, allowing the same construction process to create different representations.</p>
     </div>
 
-    <h2>🎯 When to Use</h2>
+    <h2>When to Use</h2>
     <ul>
       <li>When an object has many optional parameters (Telescoping Constructor problem)</li>
       <li>When construction must be done step-by-step</li>
@@ -31,25 +29,7 @@
       <li>When you need to vary object representation (different configurations)</li>
     </ul>
 
-    <h2>🗺️ UML Structure</h2>
-    <div class="uml-diagram"><pre>
-  ┌────────────────┐       ┌─────────────────┐
-  │    Director    │──────▶│  Builder (iface) │
-  ├────────────────┤       ├─────────────────┤
-  │+construct()    │       │+setPartA()       │
-  └────────────────┘       │+setPartB()       │
-                           │+build(): Product │
-                           └─────────────────┘
-                                    ▲
-                           ┌────────┴────────┐
-                           │ConcreteBuilder  │
-                           ├─────────────────┤
-                           │+setPartA()       │
-                           │+setPartB()       │
-                           │+build(): Product │
-                           └─────────────────┘</pre></div>
-
-    <h2>💻 Java Implementation</h2>
+    <h2>Java Implementation</h2>
 
     <h3>Classic Builder (Inner Class) — Preferred in Java</h3>
     <div class="code-block">
@@ -92,7 +72,7 @@ public final class HttpRequest {
         return method + " " + url + " (timeout=" + timeoutMs + "ms, redirects=" + followRedirects + ")";
     }
 
-    // ─── Static Inner Builder ───────────────────────────────────
+    //  Static Inner Builder 
     public static class Builder {
         // Required
         private final String url;
@@ -209,20 +189,20 @@ public class User {
 }</code></pre>
     </div>
 
-    <h2>📊 Pros &amp; Cons</h2>
+    <h2>Pros &amp; Cons</h2>
     <div class="table-wrapper"><table class="pros-cons-table">
       <thead><tr><th>Aspect</th><th>Detail</th></tr></thead>
       <tbody>
-        <tr><td class="pro">✅ Readable</td><td>Fluent API reads almost like English</td></tr>
-        <tr><td class="pro">✅ Immutability</td><td>Final fields set only via builder</td></tr>
-        <tr><td class="pro">✅ Validation</td><td>Validate at build time before object creation</td></tr>
-        <tr><td class="pro">✅ Optional params</td><td>No need for multiple constructors (telescoping)</td></tr>
-        <tr><td class="con">❌ Verbosity</td><td>Lots of boilerplate (use Lombok to mitigate)</td></tr>
-        <tr><td class="con">❌ Incomplete builds</td><td>Developer might forget to set required fields</td></tr>
+        <tr><td class="pro">Readable</td><td>Fluent API reads almost like English</td></tr>
+        <tr><td class="pro">Immutability</td><td>Final fields set only via builder</td></tr>
+        <tr><td class="pro">Validation</td><td>Validate at build time before object creation</td></tr>
+        <tr><td class="pro">Optional params</td><td>No need for multiple constructors (telescoping)</td></tr>
+        <tr><td class="con">Verbosity</td><td>Lots of boilerplate (use Lombok to mitigate)</td></tr>
+        <tr><td class="con">Incomplete builds</td><td>Developer might forget to set required fields</td></tr>
       </tbody>
     </table></div>
 
-    <h2>🔍 Real-World Usage</h2>
+    <h2>Real-World Usage</h2>
     <ul>
       <li><code>StringBuilder</code> — classic Java Builder for string construction</li>
       <li><code>java.util.stream.Stream.Builder</code></li>
@@ -231,7 +211,7 @@ public class User {
       <li>Lombok's <code>@Builder</code> — industry standard for DTOs / entities</li>
     </ul>
 
-    <h2>🎤 Interview Q&amp;A</h2>
+    <h2>Interview Q&amp;A</h2>
     <div class="accordion">
       <div class="accordion-item">
         <button class="accordion-header">Q: What problem does Builder pattern solve that constructors cannot?<span class="accordion-icon">+</span></button>

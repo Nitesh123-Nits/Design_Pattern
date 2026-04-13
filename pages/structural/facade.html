@@ -4,14 +4,12 @@
   <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Facade Pattern in Java — JavaPatterns</title>
   <meta name="description" content="Facade design pattern in Java — simplified API, subsystem complexity, Spring facades, interview questions." />
-  <link rel="stylesheet" href="../../css/styles.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
-</head>
+  <link rel="stylesheet" href="../../css/styles.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" /></head>
 <body>
 <header class="site-header">
-  <button id="menu-toggle">☰</button>
-  <a href="../../index.html" class="logo"><div class="logo-icon">♟</div><span>JavaPatterns</span></a>
-  <div class="search-bar"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
+  <button id="menu-toggle"></button>
+  <a href="../../index.html" class="logo"><div class="logo-icon"></div><span>JavaPatterns</span></a>
+  <div class="search-bar"><span class="search-icon"></span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
 </header>
 <div class="layout">
   <nav class="sidebar" id="sidebar" data-root="../../"></nav>
@@ -19,11 +17,11 @@
     <div class="page-header">
       <div class="breadcrumb"><a href="../../index.html">Home</a><span class="sep">›</span><a href="index.html">Structural</a><span class="sep">›</span><span>Facade</span></div>
       <div class="badges"><span class="badge badge-structural">Structural</span><span class="badge badge-easy">Easy</span></div>
-      <h1>🏢 Facade Pattern</h1>
+      <h1>Facade Pattern</h1>
       <p>Provides a simplified interface to a complex subsystem. Hides the complexity of the underlying system and provides a simple API for clients.</p>
     </div>
 
-    <h2>🎯 When to Use</h2>
+    <h2>When to Use</h2>
     <ul>
       <li>When you want to provide a simple interface to a complex system</li>
       <li>When there are many interdependent classes in a subsystem</li>
@@ -31,10 +29,10 @@
       <li>Service layer in Spring (hides repo + business logic complexity from controllers)</li>
     </ul>
 
-    <h2>💻 Java Implementation</h2>
+    <h2>Java Implementation</h2>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">E-Commerce Order Facade</span><button class="copy-btn">Copy</button></div>
-      <pre><code class="language-java">// ── Complex Subsystem Classes ─────────────────────────────────
+      <pre><code class="language-java">//  Complex Subsystem Classes 
 
 public class InventoryService {
     public boolean checkStock(String productId, int quantity) {
@@ -82,7 +80,7 @@ public class LoyaltyPointsService {
     }
 }
 
-// ── Facade — One simple method replaces all subsystem calls ──
+//  Facade — One simple method replaces all subsystem calls 
 public class OrderFacade {
     private final InventoryService inventory;
     private final PaymentProcessor payment;
@@ -132,7 +130,7 @@ public class OrderFacade {
     }
 }
 
-// ── Client — only deals with Facade ──────────────────────────
+//  Client — only deals with Facade 
 public class CheckoutController {
     private final OrderFacade orderFacade = new OrderFacade();
 
@@ -148,7 +146,7 @@ public class CheckoutController {
 }</code></pre>
     </div>
 
-    <h2>🔍 Real-World Usage</h2>
+    <h2>Real-World Usage</h2>
     <ul>
       <li>Spring's <code>JdbcTemplate</code> — facade over JDBC's complex API</li>
       <li>Spring's <code>RestTemplate</code> / <code>WebClient</code> — facade over HTTP</li>
@@ -157,7 +155,7 @@ public class CheckoutController {
       <li>Spring's <code>ApplicationContext</code> — facade over bean management</li>
     </ul>
 
-    <h2>🎤 Interview Q&amp;A</h2>
+    <h2>Interview Q&amp;A</h2>
     <div class="accordion">
       <div class="accordion-item">
         <button class="accordion-header">Q: What is the difference between Facade and Adapter patterns?<span class="accordion-icon">+</span></button>

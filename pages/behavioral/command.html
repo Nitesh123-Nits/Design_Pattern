@@ -4,14 +4,12 @@
   <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Command Pattern in Java — JavaPatterns</title>
   <meta name="description" content="Command design pattern in Java — encapsulate requests, undo/redo, queuing, Spring @Async, interview questions." />
-  <link rel="stylesheet" href="../../css/styles.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
-</head>
+  <link rel="stylesheet" href="../../css/styles.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" /></head>
 <body>
 <header class="site-header">
-  <button id="menu-toggle">☰</button>
-  <a href="../../index.html" class="logo"><div class="logo-icon">♟</div><span>JavaPatterns</span></a>
-  <div class="search-bar"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
+  <button id="menu-toggle"></button>
+  <a href="../../index.html" class="logo"><div class="logo-icon"></div><span>JavaPatterns</span></a>
+  <div class="search-bar"><span class="search-icon"></span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
 </header>
 <div class="layout">
   <nav class="sidebar" id="sidebar" data-root="../../"></nav>
@@ -19,11 +17,11 @@
     <div class="page-header">
       <div class="breadcrumb"><a href="../../index.html">Home</a><span class="sep">›</span><a href="index.html">Behavioral</a><span class="sep">›</span><span>Command</span></div>
       <div class="badges"><span class="badge badge-behavioral">Behavioral</span><span class="badge badge-medium">Medium</span></div>
-      <h1>📝 Command Pattern</h1>
+      <h1>Command Pattern</h1>
       <p>Encapsulates a request as an object, allowing parameterization, queuing, logging, and undoable operations. Decouples the sender of a request from the object that handles it.</p>
     </div>
 
-    <h2>🎯 When to Use</h2>
+    <h2>When to Use</h2>
     <ul>
       <li>Undo/Redo functionality (text editors, IDEs)</li>
       <li>Queuing and scheduling requests (job queues, task schedulers)</li>
@@ -31,19 +29,19 @@
       <li>Macro recording — record then replay sequences of actions</li>
     </ul>
 
-    <h2>💻 Java Implementation</h2>
+    <h2>Java Implementation</h2>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Text Editor with Undo/Redo</span><button class="copy-btn">Copy</button></div>
       <pre><code class="language-java">import java.util.ArrayDeque;
 import java.util.Deque;
 
-// ── Command Interface ─────────────────────────────────────────
+//  Command Interface 
 public interface Command {
     void execute();
     void undo();
 }
 
-// ── Receiver — the object that actually does the work ─────────
+//  Receiver — the object that actually does the work 
 public class TextDocument {
     private StringBuilder content = new StringBuilder();
 
@@ -61,7 +59,7 @@ public class TextDocument {
     public int length() { return content.length(); }
 }
 
-// ── Concrete Commands ─────────────────────────────────────────
+//  Concrete Commands 
 public class InsertTextCommand implements Command {
     private final TextDocument doc;
     private final int position;
@@ -111,7 +109,7 @@ public class DeleteTextCommand implements Command {
     }
 }
 
-// ── Invoker — manages command execution and history ───────────
+//  Invoker — manages command execution and history 
 public class TextEditor {
     private final TextDocument doc = new TextDocument();
     private final Deque&lt;Command&gt; undoStack = new ArrayDeque&lt;&gt;();
@@ -158,7 +156,7 @@ public class Main {
 }</code></pre>
     </div>
 
-    <h2>🎤 Interview Q&amp;A</h2>
+    <h2>Interview Q&amp;A</h2>
     <div class="accordion">
       <div class="accordion-item">
         <button class="accordion-header">Q: What are the four participants in the Command pattern?<span class="accordion-icon">+</span></button>

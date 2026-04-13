@@ -5,15 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OOP Concepts in Java — JavaPatterns</title>
   <meta name="description" content="All four OOP pillars explained with Java code: Encapsulation, Inheritance, Polymorphism, Abstraction — with interview questions." />
-  <link rel="stylesheet" href="../../css/styles.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
-</head>
+  <link rel="stylesheet" href="../../css/styles.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" /></head>
 <body>
 <header class="site-header">
-  <button id="menu-toggle">☰</button>
-  <a href="../../index.html" class="logo"><div class="logo-icon">♟</div><span>JavaPatterns</span></a>
+  <button id="menu-toggle"></button>
+  <a href="../../index.html" class="logo"><div class="logo-icon"></div><span>JavaPatterns</span></a>
   <div class="search-bar">
-    <span class="search-icon">🔍</span>
+    <span class="search-icon"></span>
     <input type="text" id="search-input" placeholder="Search patterns..." autocomplete="off" />
     <div id="search-results"></div>
   </div>
@@ -24,14 +22,14 @@
 
     <div class="page-header">
       <div class="breadcrumb"><a href="../../index.html">Home</a><span class="sep">›</span><span>OOP Concepts</span></div>
-      <div class="badges"><span class="badge badge-oop">🧬 Core Java</span></div>
+      <div class="badges"><span class="badge badge-oop">Core Java</span></div>
       <h1>OOP Concepts in Java</h1>
       <p>Object-Oriented Programming is the foundation of Java. Master the 4 pillars — Encapsulation, Inheritance, Polymorphism, and Abstraction — with practical examples and interview answers.</p>
     </div>
 
     <!-- 1. Encapsulation -->
     <section class="section-block" id="encapsulation">
-      <h2>🔒 Encapsulation</h2>
+      <h2>Encapsulation</h2>
       <p><strong>Definition:</strong> Encapsulation bundles data (fields) and methods that operate on the data into a single unit (class), and restricts direct access to some of the object's components using access modifiers.</p>
 
       <h3>When to Use</h3>
@@ -44,7 +42,7 @@
       <div class="code-block">
         <div class="code-header">
           <div class="code-dots"><span></span><span></span><span></span></div>
-          <span class="code-title">💼 BankAccount.java</span>
+          <span class="code-title">BankAccount.java</span>
           <button class="copy-btn">Copy</button>
         </div>
         <pre><code class="language-java">public class BankAccount {
@@ -87,9 +85,9 @@
     // Main — Demo
     public static void main(String[] args) {
         BankAccount account = new BankAccount("ACC-001", "Alice", 1000.0);
-        account.deposit(500);      // ✅ Deposited: 500.0 | New Balance: 1500.0
-        account.withdraw(200);     // ✅ Withdrawn: 200.0 | New Balance: 1300.0
-        // account.balance = 9999; // ❌ Compile error — private field
+        account.deposit(500);      //  Deposited: 500.0 | New Balance: 1500.0
+        account.withdraw(200);     //  Withdrawn: 200.0 | New Balance: 1300.0
+        // account.balance = 9999; //  Compile error — private field
     }
 }</code></pre>
       </div>
@@ -103,7 +101,7 @@
       </ul>
 
       <div class="info-box tip">
-        <span class="info-icon">💡</span>
+        <span class="info-icon"></span>
         <p><strong>Interview Tip:</strong> Encapsulation ≠ just using getters/setters. The real goal is <em>data integrity</em>. A bank account with a public <code>setBalance()</code> is not properly encapsulated.</p>
       </div>
 
@@ -138,13 +136,13 @@
 
     <!-- 2. Inheritance -->
     <section class="section-block" id="inheritance">
-      <h2>🧬 Inheritance</h2>
+      <h2>Inheritance</h2>
       <p><strong>Definition:</strong> Inheritance lets a child class acquire properties and methods from a parent class using the <code>extends</code> keyword. It promotes code reuse and establishes an IS-A relationship.</p>
 
       <div class="code-block">
         <div class="code-header">
           <div class="code-dots"><span></span><span></span><span></span></div>
-          <span class="code-title">🐾 Animal Hierarchy</span>
+          <span class="code-title">Animal Hierarchy</span>
           <button class="copy-btn">Copy</button>
         </div>
         <pre><code class="language-java">// Base (Parent) class
@@ -227,7 +225,7 @@ public class Main {
       </div>
 
       <div class="info-box warning">
-        <span class="info-icon">⚠️</span>
+        <span class="info-icon"></span>
         <p><strong>Prefer Composition over Inheritance</strong> when the relationship is HAS-A rather than IS-A. Deep inheritance hierarchies lead to fragile, hard-to-maintain code. Java only supports single inheritance for classes (but multiple interface implementation).</p>
       </div>
 
@@ -262,13 +260,13 @@ public class Main {
 
     <!-- 3. Polymorphism -->
     <section class="section-block" id="polymorphism">
-      <h2>🦋 Polymorphism</h2>
+      <h2>Polymorphism</h2>
       <p><strong>Definition:</strong> Polymorphism allows objects of different types to be treated through a common interface. "One interface, many implementations." Two types: <strong>Compile-time</strong> (overloading) and <strong>Runtime</strong> (overriding).</p>
 
       <div class="code-block">
         <div class="code-header">
           <div class="code-dots"><span></span><span></span><span></span></div>
-          <span class="code-title">🎭 Runtime Polymorphism</span>
+          <span class="code-title">Runtime Polymorphism</span>
           <button class="copy-btn">Copy</button>
         </div>
         <pre><code class="language-java">// Polymorphism with a Payment system
@@ -362,7 +360,7 @@ class Calculator {
 
     <!-- 4. Abstraction -->
     <section class="section-block" id="abstraction">
-      <h2>🌫️ Abstraction</h2>
+      <h2>Abstraction</h2>
       <p><strong>Definition:</strong> Abstraction hides implementation details and shows only the essential features. Achieved via <code>abstract</code> classes and <code>interface</code>s.</p>
 
       <div class="table-wrapper">
@@ -382,7 +380,7 @@ class Calculator {
       <div class="code-block">
         <div class="code-header">
           <div class="code-dots"><span></span><span></span><span></span></div>
-          <span class="code-title">🚗 Vehicle Abstraction</span>
+          <span class="code-title">Vehicle Abstraction</span>
           <button class="copy-btn">Copy</button>
         </div>
         <pre><code class="language-java">// Abstract class — partial abstraction (some concrete methods)

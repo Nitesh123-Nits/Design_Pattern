@@ -4,15 +4,13 @@
   <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Singleton Pattern — All 6 Ways in Java | JavaPatterns</title>
   <meta name="description" content="All 6 ways to create Singleton in Java: Eager, Lazy, Synchronized, Double-Checked Locking, Bill Pugh (Static Inner Class), Enum — with thread safety analysis and interview Q&A." />
-  <link rel="stylesheet" href="../../css/styles.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
-</head>
+  <link rel="stylesheet" href="../../css/styles.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" /></head>
 <body>
 <header class="site-header">
-  <button id="menu-toggle">☰</button>
-  <a href="../../index.html" class="logo"><div class="logo-icon">♟</div><span>JavaPatterns</span></a>
+  <button id="menu-toggle"></button>
+  <a href="../../index.html" class="logo"><div class="logo-icon"></div><span>JavaPatterns</span></a>
   <div class="search-bar">
-    <span class="search-icon">🔍</span>
+    <span class="search-icon"></span>
     <input type="text" id="search-input" placeholder="Search..." autocomplete="off" />
     <div id="search-results"></div>
   </div>
@@ -31,25 +29,25 @@
         <span class="badge badge-creational">Creational</span>
         <span class="badge badge-easy">Easy</span>
       </div>
-      <h1>1️⃣ Singleton Pattern</h1>
+      <h1>1⃣ Singleton Pattern</h1>
       <p>Ensures a class has <strong>only one instance</strong> and provides a global point of access to it. There are <strong>6 different ways</strong> to implement Singleton in Java — each with different trade-offs in thread safety, performance, and robustness.</p>
     </div>
 
     <!-- Quick Navigation -->
     <div class="card" style="margin-bottom:32px">
-      <h3 style="margin-top:0">⚡ Quick Jump — All 6 Approaches</h3>
+      <h3 style="margin-top:0">Quick Jump — All 6 Approaches</h3>
       <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:12px">
         <a href="#eager" class="badge badge-creational" style="text-decoration:none">1. Eager Init</a>
         <a href="#lazy" class="badge badge-medium" style="text-decoration:none">2. Lazy Init</a>
         <a href="#synchronized" class="badge badge-medium" style="text-decoration:none">3. Synchronized Method</a>
         <a href="#dcl" class="badge badge-creational" style="text-decoration:none">4. Double-Checked Locking</a>
-        <a href="#billpugh" class="badge badge-solid" style="text-decoration:none">5. Bill Pugh ⭐ Best</a>
+        <a href="#billpugh" class="badge badge-solid" style="text-decoration:none">5. Bill Pugh  Best</a>
         <a href="#enum" class="badge badge-behavioral" style="text-decoration:none">6. Enum Singleton</a>
       </div>
     </div>
 
     <!-- When to Use -->
-    <h2>🎯 When to Use Singleton</h2>
+    <h2>When to Use Singleton</h2>
     <ul>
       <li>Database connection pools (<code>HikariDataSource</code>)</li>
       <li>Logger instances (<code>Logger.getLogger()</code>)</li>
@@ -60,26 +58,11 @@
     </ul>
 
     <!-- UML -->
-    <h2>🗺️ UML Structure</h2>
-    <div class="uml-diagram">
-      <pre>┌──────────────────────────────────┐
-│           Singleton               │
-├──────────────────────────────────┤
-│ - instance: Singleton  (static)  │
-├──────────────────────────────────┤
-│ - Singleton()   ← private        │
-│ + getInstance(): Singleton       │
-│ + doWork(): void                 │
-└──────────────────────────────────┘
-          ↑
-    Client calls getInstance()
-    Always gets the SAME object</pre>
-    </div>
 
-    <!-- ─────────────────────────────────────────── -->
+    <!--  -->
     <!-- APPROACH 1: Eager Initialization            -->
-    <!-- ─────────────────────────────────────────── -->
-    <h2 id="eager">🔵 Approach 1 — Eager Initialization</h2>
+    <!--  -->
+    <h2 id="eager">Approach 1 — Eager Initialization</h2>
     <p>Instance is created at class-loading time. Simplest approach. Thread-safe by JVM class-loading guarantee. <strong>Drawback:</strong> object is created even if never used.</p>
 
     <div class="code-block">
@@ -120,24 +103,24 @@
       <table>
         <thead><tr><th>Property</th><th>Value</th></tr></thead>
         <tbody>
-          <tr><td>Thread Safe</td><td class="pro">✅ Yes (JVM class loading)</td></tr>
-          <tr><td>Lazy Loading</td><td class="con">❌ No — created even if unused</td></tr>
-          <tr><td>Exception Handling</td><td class="con">❌ Cannot handle exceptions in constructor</td></tr>
+          <tr><td>Thread Safe</td><td class="pro">Yes (JVM class loading)</td></tr>
+          <tr><td>Lazy Loading</td><td class="con">No — created even if unused</td></tr>
+          <tr><td>Exception Handling</td><td class="con">Cannot handle exceptions in constructor</td></tr>
           <tr><td>Use When</td><td>Object is always needed + creation is cheap</td></tr>
         </tbody>
       </table>
     </div>
 
-    <!-- ─────────────────────────────────────────── -->
+    <!--  -->
     <!-- APPROACH 2: Lazy Initialization             -->
-    <!-- ─────────────────────────────────────────── -->
-    <h2 id="lazy">🟡 Approach 2 — Lazy Initialization (NOT Thread-Safe)</h2>
-    <p>Instance is created only when first requested. <strong>⚠️ Not safe for multi-threaded environments</strong> — two threads can create two instances simultaneously.</p>
+    <!--  -->
+    <h2 id="lazy">Approach 2 — Lazy Initialization (NOT Thread-Safe)</h2>
+    <p>Instance is created only when first requested. <strong> Not safe for multi-threaded environments</strong> — two threads can create two instances simultaneously.</p>
 
     <div class="code-block">
       <div class="code-header">
         <div class="code-dots"><span></span><span></span><span></span></div>
-        <span class="code-title">LazySingleton.java ⚠️ Not Thread-Safe</span>
+        <span class="code-title">LazySingleton.java  Not Thread-Safe</span>
         <button class="copy-btn">Copy</button>
       </div>
       <pre><code class="language-java">public class LazySingleton {
@@ -149,7 +132,7 @@
     }
 
     public static LazySingleton getInstance() {
-        // ⚠️ PROBLEM: Two threads can both see instance == null simultaneously
+        //  PROBLEM: Two threads can both see instance == null simultaneously
         // Thread A checks → null, Thread B checks → null
         // Both create a new instance → TWO instances exist!
         if (instance == null) {
@@ -159,7 +142,7 @@
     }
 }
 
-// ⚠️ Thread-unsafe scenario:
+//  Thread-unsafe scenario:
 // Thread A: if (instance == null) → true
 // Thread B: if (instance == null) → true  ← both pass check!
 // Thread A: instance = new LazySingleton() ← creates object 1
@@ -167,20 +150,20 @@
     </div>
 
     <div class="info-box warning">
-      <span class="info-icon">⚠️</span>
+      <span class="info-icon"></span>
       <p><strong>Only use this in single-threaded applications.</strong> In a Spring Boot or any multi-threaded Java app, this will create multiple instances and break the Singleton guarantee.</p>
     </div>
 
-    <!-- ─────────────────────────────────────────── -->
+    <!--  -->
     <!-- APPROACH 3: Synchronized Method             -->
-    <!-- ─────────────────────────────────────────── -->
-    <h2 id="synchronized">🟠 Approach 3 — Thread-Safe (Synchronized Method)</h2>
+    <!--  -->
+    <h2 id="synchronized">Approach 3 — Thread-Safe (Synchronized Method)</h2>
     <p>Adds <code>synchronized</code> to <code>getInstance()</code> — only one thread can execute it at a time. Thread-safe but <strong>performance bottleneck</strong>: every call to <code>getInstance()</code> acquires a lock even after instance is created.</p>
 
     <div class="code-block">
       <div class="code-header">
         <div class="code-dots"><span></span><span></span><span></span></div>
-        <span class="code-title">SynchronizedSingleton.java 🐢 Thread-Safe but Slow</span>
+        <span class="code-title">SynchronizedSingleton.java  Thread-Safe but Slow</span>
         <button class="copy-btn">Copy</button>
       </div>
       <pre><code class="language-java">public class SynchronizedSingleton {
@@ -192,7 +175,7 @@
     }
 
     // synchronized ensures only ONE thread can enter at a time
-    // ✅ Thread-safe — but 🐢 every call acquires the lock (100x slower!)
+    //  Thread-safe — but  every call acquires the lock (100x slower!)
     public static synchronized SynchronizedSingleton getInstance() {
         if (instance == null) {
             instance = new SynchronizedSingleton();
@@ -210,24 +193,24 @@
       <table>
         <thead><tr><th>Property</th><th>Value</th></tr></thead>
         <tbody>
-          <tr><td>Thread Safe</td><td class="pro">✅ Yes</td></tr>
-          <tr><td>Lazy Loading</td><td class="pro">✅ Yes</td></tr>
-          <tr><td>Performance</td><td class="con">❌ Poor — every call locks, even post-init</td></tr>
+          <tr><td>Thread Safe</td><td class="pro">Yes</td></tr>
+          <tr><td>Lazy Loading</td><td class="pro">Yes</td></tr>
+          <tr><td>Performance</td><td class="con">Poor — every call locks, even post-init</td></tr>
           <tr><td>Use When</td><td>Simple low-traffic, single-threaded code. Avoid in production.</td></tr>
         </tbody>
       </table>
     </div>
 
-    <!-- ─────────────────────────────────────────── -->
+    <!--  -->
     <!-- APPROACH 4: Double-Checked Locking          -->
-    <!-- ─────────────────────────────────────────── -->
-    <h2 id="dcl">🟢 Approach 4 — Double-Checked Locking (DCL)</h2>
+    <!--  -->
+    <h2 id="dcl">Approach 4 — Double-Checked Locking (DCL)</h2>
     <p>Fixes the performance problem of Approach 3. Only locks when creating — after instance exists, no lock needed. Requires <code>volatile</code> to prevent instruction reordering by the JVM/CPU.</p>
 
     <div class="code-block">
       <div class="code-header">
         <div class="code-dots"><span></span><span></span><span></span></div>
-        <span class="code-title">DCLSingleton.java ✅ Thread-Safe + Performant</span>
+        <span class="code-title">DCLSingleton.java  Thread-Safe + Performant</span>
         <button class="copy-btn">Copy</button>
       </div>
       <pre><code class="language-java">public class DCLSingleton {
@@ -274,30 +257,30 @@
       <table>
         <thead><tr><th>Property</th><th>Value</th></tr></thead>
         <tbody>
-          <tr><td>Thread Safe</td><td class="pro">✅ Yes (with volatile)</td></tr>
-          <tr><td>Lazy Loading</td><td class="pro">✅ Yes</td></tr>
-          <tr><td>Performance</td><td class="pro">✅ Good — lock only during creation</td></tr>
-          <tr><td>Complexity</td><td class="con">⚠️ Easy to get wrong (forget volatile)</td></tr>
+          <tr><td>Thread Safe</td><td class="pro">Yes (with volatile)</td></tr>
+          <tr><td>Lazy Loading</td><td class="pro">Yes</td></tr>
+          <tr><td>Performance</td><td class="pro">Good — lock only during creation</td></tr>
+          <tr><td>Complexity</td><td class="con">Easy to get wrong (forget volatile)</td></tr>
           <tr><td>Use When</td><td>Need lazy loading in multi-threaded environment</td></tr>
         </tbody>
       </table>
     </div>
 
-    <!-- ─────────────────────────────────────────── -->
+    <!--  -->
     <!-- APPROACH 5: BILL PUGH — BEST PRACTICE       -->
-    <!-- ─────────────────────────────────────────── -->
-    <h2 id="billpugh">⭐ Approach 5 — Bill Pugh Singleton (Static Inner Class)</h2>
+    <!--  -->
+    <h2 id="billpugh">Approach 5 — Bill Pugh Singleton (Static Inner Class)</h2>
     <p>The <strong>most recommended approach</strong> for most use cases. Invented by <em>Bill Pugh</em> in 2004. Uses a <strong>static inner holder class</strong> — instance is NOT created until <code>getInstance()</code> is called. JVM class loading guarantee makes it thread-safe with <strong>zero synchronization overhead</strong>.</p>
 
     <div class="info-box tip">
-      <span class="info-icon">💡</span>
+      <span class="info-icon"></span>
       <p><strong>Why it works:</strong> Java's class loader only loads the inner <code>SingletonHolder</code> class when it's first referenced (inside <code>getInstance()</code>). Class loading is thread-safe by the JVM — no <code>synchronized</code> needed.</p>
     </div>
 
     <div class="code-block">
       <div class="code-header">
         <div class="code-dots"><span></span><span></span><span></span></div>
-        <span class="code-title">BillPughSingleton.java ⭐ RECOMMENDED — Lazy + Thread-Safe + No Lock</span>
+        <span class="code-title">BillPughSingleton.java  RECOMMENDED — Lazy + Thread-Safe + No Lock</span>
         <button class="copy-btn">Copy</button>
       </div>
       <pre><code class="language-java">public class BillPughSingleton {
@@ -311,7 +294,7 @@
         System.out.println("BillPughSingleton instantiated");
     }
 
-    // ─── Static Inner Holder Class ────────────────────────────
+    //  Static Inner Holder Class 
     // This class is NOT loaded when BillPughSingleton is loaded.
     // It is loaded ONLY when getInstance() is called for the first time.
     // JVM class loading is thread-safe → no synchronized keyword needed!
@@ -334,13 +317,13 @@
         return getInstance();
     }
 
-    // ─── Your actual business methods ────────────────────────
+    //  Your actual business methods 
     public void connect() {
         System.out.println("Connected! Instance hashCode: " + hashCode());
     }
 }
 
-// ─── Usage ────────────────────────────────────────────────────
+//  Usage 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
         // Simulate multiple threads calling getInstance() simultaneously
@@ -441,21 +424,21 @@ public class ConnectionPool {
       <table>
         <thead><tr><th>Property</th><th>Value</th></tr></thead>
         <tbody>
-          <tr><td>Thread Safe</td><td class="pro">✅ Yes — JVM class loading guarantee</td></tr>
-          <tr><td>Lazy Loading</td><td class="pro">✅ Yes — inner class not loaded until needed</td></tr>
-          <tr><td>Performance</td><td class="pro">✅ Excellent — no synchronization overhead</td></tr>
-          <tr><td>Reflection Safe</td><td class="con">⚠️ Needs manual guard in constructor</td></tr>
-          <tr><td>Serialization Safe</td><td class="con">⚠️ Needs readResolve()</td></tr>
-          <tr><td>Complexity</td><td class="pro">✅ Simple and clean</td></tr>
+          <tr><td>Thread Safe</td><td class="pro">Yes — JVM class loading guarantee</td></tr>
+          <tr><td>Lazy Loading</td><td class="pro">Yes — inner class not loaded until needed</td></tr>
+          <tr><td>Performance</td><td class="pro">Excellent — no synchronization overhead</td></tr>
+          <tr><td>Reflection Safe</td><td class="con">Needs manual guard in constructor</td></tr>
+          <tr><td>Serialization Safe</td><td class="con">Needs readResolve()</td></tr>
+          <tr><td>Complexity</td><td class="pro">Simple and clean</td></tr>
           <tr><td>Use When</td><td><strong>Default choice for most Java applications</strong></td></tr>
         </tbody>
       </table>
     </div>
 
-    <!-- ─────────────────────────────────────────── -->
+    <!--  -->
     <!-- APPROACH 6: ENUM SINGLETON                  -->
-    <!-- ─────────────────────────────────────────── -->
-    <h2 id="enum">🔴 Approach 6 — Enum Singleton (Joshua Bloch's Recommendation)</h2>
+    <!--  -->
+    <h2 id="enum">Approach 6 — Enum Singleton (Joshua Bloch's Recommendation)</h2>
     <p>Using a Java <code>enum</code> with a single constant. <strong>Most robust</strong> — JVM guarantees exactly one instance even against reflection, serialization, and cloning. Recommended in <em>Effective Java</em> by Joshua Bloch as the preferred Singleton approach when you don't need lazy loading.</p>
 
     <div class="code-block">
@@ -508,10 +491,10 @@ public class Application {
         String url = AppConfig.INSTANCE.getDbUrl();
 
         // Enum is automatically:
-        // ✅ Thread-safe (JVM enum guarantee)
-        // ✅ Reflection-safe (JVM blocks reflective construction of enums)
-        // ✅ Serialization-safe (enum has built-in serialization)
-        // ✅ Clone-safe (enums cannot be cloned)
+        //  Thread-safe (JVM enum guarantee)
+        //  Reflection-safe (JVM blocks reflective construction of enums)
+        //  Serialization-safe (enum has built-in serialization)
+        //  Clone-safe (enums cannot be cloned)
 
         // Proof — reflection CANNOT break it:
         try {
@@ -520,7 +503,7 @@ public class Application {
             c.setAccessible(true);
             c.newInstance("HACK", 0); // ← JVM throws IllegalArgumentException!
         } catch (Exception e) {
-            System.out.println("✅ Reflection blocked: " + e.getMessage());
+            System.out.println(" Reflection blocked: " + e.getMessage());
             // "Cannot reflectively create enum objects"
         }
     }
@@ -531,25 +514,24 @@ public class Application {
       <table>
         <thead><tr><th>Property</th><th>Value</th></tr></thead>
         <tbody>
-          <tr><td>Thread Safe</td><td class="pro">✅ Yes — JVM enum guarantee</td></tr>
-          <tr><td>Lazy Loading</td><td class="con">❌ No — created at class load</td></tr>
-          <tr><td>Reflection Safe</td><td class="pro">✅ Yes — JVM prevents it</td></tr>
-          <tr><td>Serialization Safe</td><td class="pro">✅ Yes — built into enum</td></tr>
-          <tr><td>Clone Safe</td><td class="pro">✅ Yes — enum cannot be cloned</td></tr>
-          <tr><td>Inheritance</td><td class="con">❌ Cannot extend other classes</td></tr>
+          <tr><td>Thread Safe</td><td class="pro">Yes — JVM enum guarantee</td></tr>
+          <tr><td>Lazy Loading</td><td class="con">No — created at class load</td></tr>
+          <tr><td>Reflection Safe</td><td class="pro">Yes — JVM prevents it</td></tr>
+          <tr><td>Serialization Safe</td><td class="pro">Yes — built into enum</td></tr>
+          <tr><td>Clone Safe</td><td class="pro">Yes — enum cannot be cloned</td></tr>
+          <tr><td>Inheritance</td><td class="con">Cannot extend other classes</td></tr>
           <tr><td>Use When</td><td>Need maximum safety; don't need lazy loading or inheritance</td></tr>
         </tbody>
       </table>
     </div>
 
-    <!-- ─────────────────────────────────────────── -->
+    <!--  -->
     <!-- MASTER COMPARISON TABLE                     -->
-    <!-- ─────────────────────────────────────────── -->
-    <h2>📊 Complete Comparison — All 6 Approaches</h2>
+    <!--  -->
+    <h2>Complete Comparison — All 6 Approaches</h2>
     <div class="table-wrapper">
       <table>
-        <thead>
-          <tr>
+        <thead><tr>
             <th>Approach</th>
             <th>Thread Safe</th>
             <th>Lazy Init</th>
@@ -562,76 +544,76 @@ public class Application {
         <tbody>
           <tr>
             <td><strong>1. Eager Init</strong></td>
-            <td class="pro">✅ Yes</td>
-            <td class="con">❌ No</td>
-            <td class="con">❌ No</td>
-            <td class="con">❌ No</td>
-            <td class="pro">✅ Fast</td>
+            <td class="pro">Yes</td>
+            <td class="con">No</td>
+            <td class="con">No</td>
+            <td class="con">No</td>
+            <td class="pro">Fast</td>
             <td>Simple cases only</td>
           </tr>
           <tr>
             <td><strong>2. Lazy Init</strong></td>
-            <td class="con">❌ No</td>
-            <td class="pro">✅ Yes</td>
-            <td class="con">❌ No</td>
-            <td class="con">❌ No</td>
-            <td class="pro">✅ Fast</td>
+            <td class="con">No</td>
+            <td class="pro">Yes</td>
+            <td class="con">No</td>
+            <td class="con">No</td>
+            <td class="pro">Fast</td>
             <td>Single-thread only</td>
           </tr>
           <tr>
             <td><strong>3. Synchronized</strong></td>
-            <td class="pro">✅ Yes</td>
-            <td class="pro">✅ Yes</td>
-            <td class="con">❌ No</td>
-            <td class="con">❌ No</td>
-            <td class="con">❌ Slow</td>
-            <td>❌ Avoid</td>
+            <td class="pro">Yes</td>
+            <td class="pro">Yes</td>
+            <td class="con">No</td>
+            <td class="con">No</td>
+            <td class="con">Slow</td>
+            <td>Avoid</td>
           </tr>
           <tr>
             <td><strong>4. DCL</strong></td>
-            <td class="pro">✅ Yes*</td>
-            <td class="pro">✅ Yes</td>
-            <td class="con">❌ No</td>
-            <td class="con">❌ No</td>
-            <td class="pro">✅ Good</td>
+            <td class="pro">Yes*</td>
+            <td class="pro">Yes</td>
+            <td class="con">No</td>
+            <td class="con">No</td>
+            <td class="pro">Good</td>
             <td>When DCL understood</td>
           </tr>
           <tr style="background:rgba(0,212,255,0.06)">
-            <td><strong>5. Bill Pugh ⭐</strong></td>
-            <td class="pro">✅ Yes</td>
-            <td class="pro">✅ Yes</td>
-            <td class="con">⚠️ Guard needed</td>
-            <td class="con">⚠️ readResolve needed</td>
-            <td class="pro">✅ Excellent</td>
-            <td><strong>✅ Most Java apps</strong></td>
+            <td><strong>5. Bill Pugh </strong></td>
+            <td class="pro">Yes</td>
+            <td class="pro">Yes</td>
+            <td class="con">Guard needed</td>
+            <td class="con">readResolve needed</td>
+            <td class="pro">Excellent</td>
+            <td><strong> Most Java apps</strong></td>
           </tr>
           <tr>
             <td><strong>6. Enum</strong></td>
-            <td class="pro">✅ Yes</td>
-            <td class="con">❌ No</td>
-            <td class="pro">✅ Yes</td>
-            <td class="pro">✅ Yes</td>
-            <td class="pro">✅ Fast</td>
-            <td>✅ When safety = priority</td>
+            <td class="pro">Yes</td>
+            <td class="con">No</td>
+            <td class="pro">Yes</td>
+            <td class="pro">Yes</td>
+            <td class="pro">Fast</td>
+            <td>When safety = priority</td>
           </tr>
         </tbody>
       </table>
     </div>
 
     <div class="info-box tip">
-      <span class="info-icon">🏆</span>
+      <span class="info-icon"></span>
       <p><strong>Decision Guide:</strong> Need lazy loading + best performance → <strong>Bill Pugh</strong>. Need reflection + serialization safety → <strong>Enum</strong>. Simple app, no multi-threading → <strong>Eager</strong>. In Spring → just use <code>@Component</code> (Spring manages singleton lifecycle for you).</p>
     </div>
 
     <!-- How to BREAK Singleton -->
-    <h2>🔓 How to Break Singleton &amp; How to Prevent</h2>
+    <h2>How to Break Singleton &amp; How to Prevent</h2>
     <div class="code-block">
       <div class="code-header">
         <div class="code-dots"><span></span><span></span><span></span></div>
         <span class="code-title">BreakSingleton.java — 3 Attacks + Fixes</span>
         <button class="copy-btn">Copy</button>
       </div>
-      <pre><code class="language-java">// ── Attack 1: Reflection ──────────────────────────────────────
+      <pre><code class="language-java">//  Attack 1: Reflection 
 Constructor&lt;BillPughSingleton&gt; c = BillPughSingleton.class.getDeclaredConstructor();
 c.setAccessible(true);
 BillPughSingleton s2 = c.newInstance(); // creates 2nd instance without guard!
@@ -643,7 +625,7 @@ private BillPughSingleton() {
     }
 }
 
-// ── Attack 2: Serialization ────────────────────────────────────
+//  Attack 2: Serialization 
 // Serialize instance → write to file → deserialize → NEW object!
 ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("singleton.ser"));
 out.writeObject(BillPughSingleton.getInstance());
@@ -655,7 +637,7 @@ protected Object readResolve() {
     return getInstance(); // always return the existing instance
 }
 
-// ── Attack 3: Cloning ──────────────────────────────────────────
+//  Attack 3: Cloning 
 BillPughSingleton cloned = (BillPughSingleton) getInstance().clone(); // new instance!
 
 // FIX: Override clone() to throw exception:
@@ -664,12 +646,12 @@ protected Object clone() throws CloneNotSupportedException {
     throw new CloneNotSupportedException("Singleton cannot be cloned!");
 }
 
-// ── BEST FIX: Use Enum ─────────────────────────────────────────
+//  BEST FIX: Use Enum 
 // Enum is immune to ALL 3 attacks automatically — JVM guarantees it.</code></pre>
     </div>
 
     <!-- Real World -->
-    <h2>🔍 Real-World Usage in Java &amp; Spring</h2>
+    <h2>Real-World Usage in Java &amp; Spring</h2>
     <ul>
       <li><code>java.lang.Runtime.getRuntime()</code> — Eager Singleton in JDK</li>
       <li><code>java.awt.Desktop.getDesktop()</code> — OS desktop handle</li>
@@ -681,7 +663,7 @@ protected Object clone() throws CloneNotSupportedException {
     </ul>
 
     <!-- Interview Q&A -->
-    <h2>🎤 Interview Q&amp;A</h2>
+    <h2>Interview Q&amp;A</h2>
     <div class="accordion">
       <div class="accordion-item">
         <button class="accordion-header">Q: What is Bill Pugh Singleton and why is it the best approach?<span class="accordion-icon">+</span></button>
@@ -740,13 +722,13 @@ protected Object clone() throws CloneNotSupportedException {
     </div>
 
     <div class="info-box note">
-      <span class="info-icon">📌</span>
+      <span class="info-icon"></span>
       <p><strong>Summary:</strong> 
         <code>Lazy (unsafe)</code> → 
         <code>Eager</code> → 
         <code>Synchronized (slow)</code> → 
         <code>DCL + volatile</code> → 
-        <strong><code>Bill Pugh ⭐ (best for most)</code></strong> → 
+        <strong><code>Bill Pugh  (best for most)</code></strong> → 
         <code>Enum (safest)</code>. 
         In Spring Boot? Just use <code>@Component</code> — Spring handles it all.
       </p>

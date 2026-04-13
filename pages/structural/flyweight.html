@@ -3,14 +3,12 @@
 <head>
   <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Flyweight Pattern in Java — JavaPatterns</title>
-  <link rel="stylesheet" href="../../css/styles.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
-</head>
+  <link rel="stylesheet" href="../../css/styles.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" /></head>
 <body>
 <header class="site-header">
-  <button id="menu-toggle">☰</button>
-  <a href="../../index.html" class="logo"><div class="logo-icon">♟</div><span>JavaPatterns</span></a>
-  <div class="search-bar"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
+  <button id="menu-toggle"></button>
+  <a href="../../index.html" class="logo"><div class="logo-icon"></div><span>JavaPatterns</span></a>
+  <div class="search-bar"><span class="search-icon"></span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
 </header>
 <div class="layout">
   <nav class="sidebar" id="sidebar" data-root="../../"></nav>
@@ -18,11 +16,11 @@
     <div class="page-header">
       <div class="breadcrumb"><a href="../../index.html">Home</a><span class="sep">›</span><a href="index.html">Structural</a><span class="sep">›</span><span>Flyweight</span></div>
       <div class="badges"><span class="badge badge-structural">Structural</span><span class="badge badge-hard">Hard</span></div>
-      <h1>🪶 Flyweight Pattern</h1>
+      <h1>Flyweight Pattern</h1>
       <p>Uses sharing to efficiently support a large number of fine-grained objects. Splits object state into <strong>intrinsic</strong> (shared, immutable) and <strong>extrinsic</strong> (unique, passed in).</p>
     </div>
 
-    <h2>🎯 When to Use</h2>
+    <h2>When to Use</h2>
     <ul>
       <li>When you have a massive number of similar objects consuming too much memory</li>
       <li>Character rendering in text editors (millions of chars, share font/style data)</li>
@@ -30,7 +28,7 @@
       <li>Integer, String caching in Java (<code>Integer.valueOf()</code> pool)</li>
     </ul>
 
-    <h2>💻 Java Implementation</h2>
+    <h2>Java Implementation</h2>
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Text Editor Character Flyweight</span><button class="copy-btn">Copy</button></div>
       <pre><code class="language-java">import java.util.HashMap;
@@ -125,7 +123,7 @@ public class TextDocument {
 }</code></pre>
     </div>
 
-    <h2>🎤 Interview Q&amp;A</h2>
+    <h2>Interview Q&amp;A</h2>
     <div class="accordion">
       <div class="accordion-item">
         <button class="accordion-header">Q: What is the difference between intrinsic and extrinsic state?<span class="accordion-icon">+</span></button>

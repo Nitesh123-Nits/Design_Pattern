@@ -4,14 +4,12 @@
   <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SOLID Principles in Java — JavaPatterns</title>
   <meta name="description" content="All 5 SOLID principles explained with Java code: SRP, OCP, LSP, ISP, DIP with examples and interview questions." />
-  <link rel="stylesheet" href="../../css/styles.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
-</head>
+  <link rel="stylesheet" href="../../css/styles.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" /></head>
 <body>
 <header class="site-header">
-  <button id="menu-toggle">☰</button>
-  <a href="../../index.html" class="logo"><div class="logo-icon">♟</div><span>JavaPatterns</span></a>
-  <div class="search-bar"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
+  <button id="menu-toggle"></button>
+  <a href="../../index.html" class="logo"><div class="logo-icon"></div><span>JavaPatterns</span></a>
+  <div class="search-bar"><span class="search-icon"></span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
 </header>
 <div class="layout">
   <nav class="sidebar" id="sidebar" data-root="../../"></nav>
@@ -19,7 +17,7 @@
 
     <div class="page-header">
       <div class="breadcrumb"><a href="../../index.html">Home</a><span class="sep">›</span><span>SOLID Principles</span></div>
-      <div class="badges"><span class="badge badge-solid">🏛️ Best Practices</span></div>
+      <div class="badges"><span class="badge badge-solid">Best Practices</span></div>
       <h1>SOLID Principles in Java</h1>
       <p>SOLID is a set of 5 design principles for writing maintainable, scalable, and testable object-oriented code. Coined by Robert C. Martin (Uncle Bob).</p>
     </div>
@@ -30,7 +28,7 @@
       <p><strong>"A class should have one, and only one, reason to change."</strong> — A class should do one thing and do it well. If a class handles multiple concerns, changes to one concern may break the other.</p>
 
       <div class="code-block">
-        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">❌ Violating SRP</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Violating SRP</span><button class="copy-btn">Copy</button></div>
         <pre><code class="language-java">// BAD: This class has 3 responsibilities
 public class UserService {
     public void createUser(User user) { /* DB logic */ }
@@ -41,7 +39,7 @@ public class UserService {
       </div>
 
       <div class="code-block">
-        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">✅ Following SRP</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Following SRP</span><button class="copy-btn">Copy</button></div>
         <pre><code class="language-java">// Each class has ONE reason to change
 
 // Responsibility 1: User persistence
@@ -104,7 +102,7 @@ public class UserService {
       <p><strong>"Software entities should be open for extension, but closed for modification."</strong> — Add new functionality by creating new code, not changing existing tested code.</p>
 
       <div class="code-block">
-        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">✅ OCP with Strategy Pattern</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">OCP with Strategy Pattern</span><button class="copy-btn">Copy</button></div>
         <pre><code class="language-java">// Closed for modification — shape interface never changes
 public interface Shape {
     double area();
@@ -163,7 +161,7 @@ System.out.println(new AreaCalculator().totalArea(shapes)); // Works for ANY sha
       <p><strong>"Subtypes must be substitutable for their base types."</strong> — If S extends T, then objects of type T may be replaced with objects of type S without altering correctness.</p>
 
       <div class="code-block">
-        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">❌ LSP Violation — Square extends Rectangle</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">LSP Violation — Square extends Rectangle</span><button class="copy-btn">Copy</button></div>
         <pre><code class="language-java">// Classic LSP violation
 class Rectangle {
     protected int width, height;
@@ -184,12 +182,12 @@ class Square extends Rectangle {
 void testRectangle(Rectangle r) {
     r.setWidth(5);
     r.setHeight(4);
-    assert r.area() == 20; // ✅ for Rectangle, ❌ fails for Square (returns 16)
+    assert r.area() == 20; //  for Rectangle,  fails for Square (returns 16)
 }</code></pre>
       </div>
 
       <div class="code-block">
-        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">✅ LSP Fix — Common base Shape</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">LSP Fix — Common base Shape</span><button class="copy-btn">Copy</button></div>
         <pre><code class="language-java">// Fix: Don't inherit if it violates substitutability
 public interface Shape {
     int area();
@@ -227,7 +225,7 @@ public class Square implements Shape {
       <p><strong>"Clients should not be forced to depend on methods they do not use."</strong> — Split large interfaces into smaller, more specific ones.</p>
 
       <div class="code-block">
-        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">✅ ISP — Segregated Interfaces</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">ISP — Segregated Interfaces</span><button class="copy-btn">Copy</button></div>
         <pre><code class="language-java">// BAD: Fat interface forces all implementors to implement ALL methods
 interface Worker {
     void work();
@@ -279,7 +277,7 @@ public class RobotWorker implements Workable {
       <p><strong>"High-level modules should not depend on low-level modules. Both should depend on abstractions."</strong> — Depend on interfaces/abstract classes, not concrete implementations.</p>
 
       <div class="code-block">
-        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">✅ DIP with Spring Dependency Injection</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">DIP with Spring Dependency Injection</span><button class="copy-btn">Copy</button></div>
         <pre><code class="language-java">// Abstraction (interface) — both high and low-level depend on this
 public interface NotificationService {
     void send(String message, String recipient);
