@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Singleton Pattern in Java — JavaPatterns</title>
-  <meta name="description" content="Singleton design pattern in Java with thread-safe implementation, double-checked locking, enum singleton, and interview questions." />
+  <title>Singleton Pattern — All 6 Ways in Java | JavaPatterns</title>
+  <meta name="description" content="All 6 ways to create Singleton in Java: Eager, Lazy, Synchronized, Double-Checked Locking, Bill Pugh (Static Inner Class), Enum — with thread safety analysis and interview Q&A." />
   <link rel="stylesheet" href="../../css/styles.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
 </head>
@@ -11,215 +11,745 @@
 <header class="site-header">
   <button id="menu-toggle">☰</button>
   <a href="../../index.html" class="logo"><div class="logo-icon">♟</div><span>JavaPatterns</span></a>
-  <div class="search-bar"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
+  <div class="search-bar">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Search..." autocomplete="off" />
+    <div id="search-results"></div>
+  </div>
 </header>
 <div class="layout">
   <nav class="sidebar" id="sidebar" data-root="../../"></nav>
   <main class="main-content">
 
     <div class="page-header">
-      <div class="breadcrumb"><a href="../../index.html">Home</a><span class="sep">›</span><a href="index.html">Creational</a><span class="sep">›</span><span>Singleton</span></div>
-      <div class="badges"><span class="badge badge-creational">Creational</span><span class="badge badge-easy">Easy</span></div>
+      <div class="breadcrumb">
+        <a href="../../index.html">Home</a><span class="sep">›</span>
+        <a href="index.html">Creational</a><span class="sep">›</span>
+        <span>Singleton</span>
+      </div>
+      <div class="badges">
+        <span class="badge badge-creational">Creational</span>
+        <span class="badge badge-easy">Easy</span>
+      </div>
       <h1>1️⃣ Singleton Pattern</h1>
-      <p>Ensures a class has only one instance and provides a global point of access to it. One of the most commonly asked patterns in Java interviews.</p>
+      <p>Ensures a class has <strong>only one instance</strong> and provides a global point of access to it. There are <strong>6 different ways</strong> to implement Singleton in Java — each with different trade-offs in thread safety, performance, and robustness.</p>
     </div>
 
-    <h2>🎯 When to Use</h2>
+    <!-- Quick Navigation -->
+    <div class="card" style="margin-bottom:32px">
+      <h3 style="margin-top:0">⚡ Quick Jump — All 6 Approaches</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:12px">
+        <a href="#eager" class="badge badge-creational" style="text-decoration:none">1. Eager Init</a>
+        <a href="#lazy" class="badge badge-medium" style="text-decoration:none">2. Lazy Init</a>
+        <a href="#synchronized" class="badge badge-medium" style="text-decoration:none">3. Synchronized Method</a>
+        <a href="#dcl" class="badge badge-creational" style="text-decoration:none">4. Double-Checked Locking</a>
+        <a href="#billpugh" class="badge badge-solid" style="text-decoration:none">5. Bill Pugh ⭐ Best</a>
+        <a href="#enum" class="badge badge-behavioral" style="text-decoration:none">6. Enum Singleton</a>
+      </div>
+    </div>
+
+    <!-- When to Use -->
+    <h2>🎯 When to Use Singleton</h2>
     <ul>
-      <li>Database connection pools</li>
-      <li>Logger instances (e.g., <code>Logger.getLogger()</code>)</li>
-      <li>Configuration managers</li>
-      <li>Thread pools</li>
-      <li>Caches</li>
-      <li>Spring beans (default scope is singleton)</li>
+      <li>Database connection pools (<code>HikariDataSource</code>)</li>
+      <li>Logger instances (<code>Logger.getLogger()</code>)</li>
+      <li>Configuration / Properties managers</li>
+      <li>Thread pools, Cache managers</li>
+      <li>Spring beans (default scope is singleton — managed by Spring container)</li>
+      <li>Application-wide shared state (e.g., counter, registry)</li>
     </ul>
 
+    <!-- UML -->
     <h2>🗺️ UML Structure</h2>
     <div class="uml-diagram">
-      <pre>┌──────────────────────────────┐
-│          Singleton            │
-├──────────────────────────────┤
-│ - instance: Singleton        │
-│ - data: String               │
-├──────────────────────────────┤
-│ - Singleton()                │
-│ + getInstance(): Singleton   │
-│ + getData(): String          │
-└──────────────────────────────┘
-        ↑
-  (only one instance
-   shared globally)</pre>
+      <pre>┌──────────────────────────────────┐
+│           Singleton               │
+├──────────────────────────────────┤
+│ - instance: Singleton  (static)  │
+├──────────────────────────────────┤
+│ - Singleton()   ← private        │
+│ + getInstance(): Singleton       │
+│ + doWork(): void                 │
+└──────────────────────────────────┘
+          ↑
+    Client calls getInstance()
+    Always gets the SAME object</pre>
     </div>
 
-    <h2>💻 Java Implementation</h2>
+    <!-- ─────────────────────────────────────────── -->
+    <!-- APPROACH 1: Eager Initialization            -->
+    <!-- ─────────────────────────────────────────── -->
+    <h2 id="eager">🔵 Approach 1 — Eager Initialization</h2>
+    <p>Instance is created at class-loading time. Simplest approach. Thread-safe by JVM class-loading guarantee. <strong>Drawback:</strong> object is created even if never used.</p>
 
-    <h3>1. Thread-Safe Singleton (Double-Checked Locking) ← Preferred</h3>
     <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">DatabaseConnectionPool.java</span><button class="copy-btn">Copy</button></div>
-      <pre><code class="language-java">public class DatabaseConnectionPool {
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-title">EagerSingleton.java</span>
+        <button class="copy-btn">Copy</button>
+      </div>
+      <pre><code class="language-java">public class EagerSingleton {
 
-    // volatile ensures visibility across threads — prevents instruction reordering
-    private static volatile DatabaseConnectionPool instance;
+    // Instance created when class loads — before getInstance() is ever called
+    private static final EagerSingleton INSTANCE = new EagerSingleton();
 
-    private final String url;
-    private final int maxConnections;
-
-    // Private constructor — prevents direct instantiation
-    private DatabaseConnectionPool() {
-        this.url = "jdbc:mysql://localhost:3306/mydb";
-        this.maxConnections = 10;
-        System.out.println("DatabaseConnectionPool initialized");
+    // Private constructor — no one can call new EagerSingleton()
+    private EagerSingleton() {
+        System.out.println("EagerSingleton created at class load time");
     }
 
-    // Double-Checked Locking — thread-safe & performant
-    public static DatabaseConnectionPool getInstance() {
-        if (instance == null) {                        // 1st check — avoids synchronization overhead
-            synchronized (DatabaseConnectionPool.class) {
-                if (instance == null) {                // 2nd check — within synchronized block
-                    instance = new DatabaseConnectionPool();
-                }
-            }
-        }
-        return instance;
+    public static EagerSingleton getInstance() {
+        return INSTANCE; // Always returns the same pre-created instance
     }
 
-    public String getUrl() { return url; }
-    public int getMaxConnections() { return maxConnections; }
-
-    // Prevent cloning
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        throw new CloneNotSupportedException("Singleton cannot be cloned");
+    public void doWork() {
+        System.out.println("Working... hashCode: " + this.hashCode());
     }
 
-    // Prevent deserialization from creating new instance
-    protected Object readResolve() {
-        return instance;
-    }
-}</code></pre>
-    </div>
-
-    <h3>2. Enum Singleton ← Best for Serialization Safety</h3>
-    <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">AppConfig.java (Enum Singleton)</span><button class="copy-btn">Copy</button></div>
-      <pre><code class="language-java">// Most concise, serialization-safe, reflection-safe Singleton
-public enum AppConfig {
-    INSTANCE;
-
-    private String dbUrl;
-    private int timeout;
-
-    // Enum constructor (called once by JVM)
-    AppConfig() {
-        this.dbUrl = System.getenv().getOrDefault("DB_URL", "jdbc:h2:mem:testdb");
-        this.timeout = 30;
-    }
-
-    public String getDbUrl() { return dbUrl; }
-    public int getTimeout() { return timeout; }
-    public void setDbUrl(String url) { this.dbUrl = url; }
-
-    // Usage:
-    // AppConfig.INSTANCE.getDbUrl()
-    // AppConfig.INSTANCE.getTimeout()
-}</code></pre>
-    </div>
-
-    <h3>3. Eager Initialization</h3>
-    <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Logger.java (Eager)</span><button class="copy-btn">Copy</button></div>
-      <pre><code class="language-java">// Good when instantiation is cheap and always needed
-public class AppLogger {
-    // Created when class is loaded — thread-safe by JVM class loading guarantee
-    private static final AppLogger INSTANCE = new AppLogger();
-
-    private AppLogger() {}
-
-    public static AppLogger getInstance() {
-        return INSTANCE;
-    }
-
-    public void log(String message) {
-        System.out.println("[LOG] " + java.time.LocalDateTime.now() + " - " + message);
-    }
-}
-
-// Usage
-public class Main {
+    // Usage
     public static void main(String[] args) {
-        // Both references point to the SAME object
-        DatabaseConnectionPool pool1 = DatabaseConnectionPool.getInstance();
-        DatabaseConnectionPool pool2 = DatabaseConnectionPool.getInstance();
-        System.out.println(pool1 == pool2); // true
-
-        AppLogger.getInstance().log("Application started");
-        AppConfig.INSTANCE.getDbUrl(); // Enum singleton
+        EagerSingleton s1 = EagerSingleton.getInstance();
+        EagerSingleton s2 = EagerSingleton.getInstance();
+        System.out.println(s1 == s2);            // true — same object
+        System.out.println(s1.hashCode() == s2.hashCode()); // true
     }
 }</code></pre>
     </div>
 
-    <h2>📊 Pros &amp; Cons</h2>
     <div class="table-wrapper">
-      <table class="pros-cons-table">
-        <thead><tr><th>Aspect</th><th>Detail</th></tr></thead>
+      <table>
+        <thead><tr><th>Property</th><th>Value</th></tr></thead>
         <tbody>
-          <tr><td class="pro">✅ Single instance</td><td>Controlled access to a single shared resource</td></tr>
-          <tr><td class="pro">✅ Lazy initialization</td><td>Created only when needed (saves memory)</td></tr>
-          <tr><td class="pro">✅ Global access</td><td>Accessible from anywhere without passing references</td></tr>
-          <tr><td class="con">❌ Global state</td><td>Makes unit testing difficult — hard to mock</td></tr>
-          <tr><td class="con">❌ Thread safety</td><td>Requires careful implementation in multithreaded environments</td></tr>
-          <tr><td class="con">❌ Violation of SRP</td><td>Class manages its own lifecycle + business logic</td></tr>
-          <tr><td class="con">❌ Hidden dependency</td><td>Classes calling getInstance() hide their dependency</td></tr>
+          <tr><td>Thread Safe</td><td class="pro">✅ Yes (JVM class loading)</td></tr>
+          <tr><td>Lazy Loading</td><td class="con">❌ No — created even if unused</td></tr>
+          <tr><td>Exception Handling</td><td class="con">❌ Cannot handle exceptions in constructor</td></tr>
+          <tr><td>Use When</td><td>Object is always needed + creation is cheap</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>🔍 Real-World Usage in Java/Spring</h2>
+    <!-- ─────────────────────────────────────────── -->
+    <!-- APPROACH 2: Lazy Initialization             -->
+    <!-- ─────────────────────────────────────────── -->
+    <h2 id="lazy">🟡 Approach 2 — Lazy Initialization (NOT Thread-Safe)</h2>
+    <p>Instance is created only when first requested. <strong>⚠️ Not safe for multi-threaded environments</strong> — two threads can create two instances simultaneously.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-title">LazySingleton.java ⚠️ Not Thread-Safe</span>
+        <button class="copy-btn">Copy</button>
+      </div>
+      <pre><code class="language-java">public class LazySingleton {
+
+    private static LazySingleton instance; // null initially
+
+    private LazySingleton() {
+        System.out.println("LazySingleton created");
+    }
+
+    public static LazySingleton getInstance() {
+        // ⚠️ PROBLEM: Two threads can both see instance == null simultaneously
+        // Thread A checks → null, Thread B checks → null
+        // Both create a new instance → TWO instances exist!
+        if (instance == null) {
+            instance = new LazySingleton(); // Race condition here!
+        }
+        return instance;
+    }
+}
+
+// ⚠️ Thread-unsafe scenario:
+// Thread A: if (instance == null) → true
+// Thread B: if (instance == null) → true  ← both pass check!
+// Thread A: instance = new LazySingleton() ← creates object 1
+// Thread B: instance = new LazySingleton() ← creates object 2 ← BROKEN!</code></pre>
+    </div>
+
+    <div class="info-box warning">
+      <span class="info-icon">⚠️</span>
+      <p><strong>Only use this in single-threaded applications.</strong> In a Spring Boot or any multi-threaded Java app, this will create multiple instances and break the Singleton guarantee.</p>
+    </div>
+
+    <!-- ─────────────────────────────────────────── -->
+    <!-- APPROACH 3: Synchronized Method             -->
+    <!-- ─────────────────────────────────────────── -->
+    <h2 id="synchronized">🟠 Approach 3 — Thread-Safe (Synchronized Method)</h2>
+    <p>Adds <code>synchronized</code> to <code>getInstance()</code> — only one thread can execute it at a time. Thread-safe but <strong>performance bottleneck</strong>: every call to <code>getInstance()</code> acquires a lock even after instance is created.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-title">SynchronizedSingleton.java 🐢 Thread-Safe but Slow</span>
+        <button class="copy-btn">Copy</button>
+      </div>
+      <pre><code class="language-java">public class SynchronizedSingleton {
+
+    private static SynchronizedSingleton instance;
+
+    private SynchronizedSingleton() {
+        System.out.println("SynchronizedSingleton created");
+    }
+
+    // synchronized ensures only ONE thread can enter at a time
+    // ✅ Thread-safe — but 🐢 every call acquires the lock (100x slower!)
+    public static synchronized SynchronizedSingleton getInstance() {
+        if (instance == null) {
+            instance = new SynchronizedSingleton();
+        }
+        return instance;
+    }
+}
+
+// Problem: After instance is created (99.99% of calls),
+// ALL threads STILL wait to acquire the lock unnecessarily.
+// In a high-traffic Spring app, this is a performance bottleneck.</code></pre>
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Property</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Thread Safe</td><td class="pro">✅ Yes</td></tr>
+          <tr><td>Lazy Loading</td><td class="pro">✅ Yes</td></tr>
+          <tr><td>Performance</td><td class="con">❌ Poor — every call locks, even post-init</td></tr>
+          <tr><td>Use When</td><td>Simple low-traffic, single-threaded code. Avoid in production.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ─────────────────────────────────────────── -->
+    <!-- APPROACH 4: Double-Checked Locking          -->
+    <!-- ─────────────────────────────────────────── -->
+    <h2 id="dcl">🟢 Approach 4 — Double-Checked Locking (DCL)</h2>
+    <p>Fixes the performance problem of Approach 3. Only locks when creating — after instance exists, no lock needed. Requires <code>volatile</code> to prevent instruction reordering by the JVM/CPU.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-title">DCLSingleton.java ✅ Thread-Safe + Performant</span>
+        <button class="copy-btn">Copy</button>
+      </div>
+      <pre><code class="language-java">public class DCLSingleton {
+
+    // volatile: prevents CPU instruction reordering during object creation
+    // Without volatile, a thread might see a partially constructed object
+    private static volatile DCLSingleton instance;
+
+    private DCLSingleton() {
+        System.out.println("DCLSingleton created");
+    }
+
+    public static DCLSingleton getInstance() {
+
+        // 1st CHECK — no lock needed if already created (99.99% of calls go here)
+        if (instance == null) {
+
+            // Lock only when instance might need to be created
+            synchronized (DCLSingleton.class) {
+
+                // 2nd CHECK — inside the lock, verify again
+                // (another thread might have created it between 1st check and lock)
+                if (instance == null) {
+                    instance = new DCLSingleton(); // ← only ONE thread ever reaches here
+                }
+            }
+        }
+        return instance; // fast path — no lock for subsequent calls
+    }
+}
+
+// Why volatile is critical:
+// Object creation has 3 steps internally:
+//   1. Allocate memory
+//   2. Initialize the object (constructor)
+//   3. Assign reference to 'instance'
+//
+// CPU can reorder → step 3 before step 2!
+// Thread B might see instance != null but object not yet initialized.
+// volatile forces "happens-before" relationship — step 3 only after step 2.</code></pre>
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Property</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Thread Safe</td><td class="pro">✅ Yes (with volatile)</td></tr>
+          <tr><td>Lazy Loading</td><td class="pro">✅ Yes</td></tr>
+          <tr><td>Performance</td><td class="pro">✅ Good — lock only during creation</td></tr>
+          <tr><td>Complexity</td><td class="con">⚠️ Easy to get wrong (forget volatile)</td></tr>
+          <tr><td>Use When</td><td>Need lazy loading in multi-threaded environment</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ─────────────────────────────────────────── -->
+    <!-- APPROACH 5: BILL PUGH — BEST PRACTICE       -->
+    <!-- ─────────────────────────────────────────── -->
+    <h2 id="billpugh">⭐ Approach 5 — Bill Pugh Singleton (Static Inner Class)</h2>
+    <p>The <strong>most recommended approach</strong> for most use cases. Invented by <em>Bill Pugh</em> in 2004. Uses a <strong>static inner holder class</strong> — instance is NOT created until <code>getInstance()</code> is called. JVM class loading guarantee makes it thread-safe with <strong>zero synchronization overhead</strong>.</p>
+
+    <div class="info-box tip">
+      <span class="info-icon">💡</span>
+      <p><strong>Why it works:</strong> Java's class loader only loads the inner <code>SingletonHolder</code> class when it's first referenced (inside <code>getInstance()</code>). Class loading is thread-safe by the JVM — no <code>synchronized</code> needed.</p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-title">BillPughSingleton.java ⭐ RECOMMENDED — Lazy + Thread-Safe + No Lock</span>
+        <button class="copy-btn">Copy</button>
+      </div>
+      <pre><code class="language-java">public class BillPughSingleton {
+
+    // Private constructor — prevents external instantiation
+    private BillPughSingleton() {
+        // Guard against reflection attack
+        if (SingletonHolder.INSTANCE != null) {
+            throw new IllegalStateException("Use getInstance() — Singleton already created!");
+        }
+        System.out.println("BillPughSingleton instantiated");
+    }
+
+    // ─── Static Inner Holder Class ────────────────────────────
+    // This class is NOT loaded when BillPughSingleton is loaded.
+    // It is loaded ONLY when getInstance() is called for the first time.
+    // JVM class loading is thread-safe → no synchronized keyword needed!
+    private static class SingletonHolder {
+        private static final BillPughSingleton INSTANCE = new BillPughSingleton();
+        //                                                 ↑
+        //                    Created HERE — when SingletonHolder is first loaded
+        //                    This happens exactly ONCE, automatically thread-safe
+    }
+
+    // Public access point
+    public static BillPughSingleton getInstance() {
+        return SingletonHolder.INSTANCE;
+        // ↑ Triggers SingletonHolder class loading (if not loaded already)
+        //   After first load, this is just a field read — super fast!
+    }
+
+    // Prevent deserialization from creating a new instance
+    protected Object readResolve() {
+        return getInstance();
+    }
+
+    // ─── Your actual business methods ────────────────────────
+    public void connect() {
+        System.out.println("Connected! Instance hashCode: " + hashCode());
+    }
+}
+
+// ─── Usage ────────────────────────────────────────────────────
+public class Main {
+    public static void main(String[] args) throws InterruptedException {
+        // Simulate multiple threads calling getInstance() simultaneously
+        Runnable task = () -> {
+            BillPughSingleton s = BillPughSingleton.getInstance();
+            s.connect();
+            System.out.println(Thread.currentThread().getName()
+                + " → hashCode: " + s.hashCode());
+        };
+
+        Thread t1 = new Thread(task, "Thread-1");
+        Thread t2 = new Thread(task, "Thread-2");
+        Thread t3 = new Thread(task, "Thread-3");
+
+        t1.start(); t2.start(); t3.start();
+        t1.join();  t2.join();  t3.join();
+
+        // All 3 threads get the SAME hashCode — proves single instance
+    }
+}
+
+// OUTPUT (hashCode same for all threads):
+// BillPughSingleton instantiated  ← printed only ONCE
+// Connected! Instance hashCode: 12345678
+// Thread-1 → hashCode: 12345678
+// Thread-2 → hashCode: 12345678
+// Thread-3 → hashCode: 12345678</code></pre>
+    </div>
+
+    <h3>Real-World Example — Database Connection Pool with Bill Pugh</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-title">ConnectionPool.java — Production-Grade Bill Pugh</span>
+        <button class="copy-btn">Copy</button>
+      </div>
+      <pre><code class="language-java">import java.sql.Connection;
+import java.sql.DriverManager;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+
+public class ConnectionPool {
+
+    private static final int POOL_SIZE = 10;
+    private final BlockingQueue&lt;Connection&gt; pool;
+    private final String jdbcUrl;
+
+    // Private constructor — expensive initialization
+    private ConnectionPool() {
+        this.jdbcUrl = System.getenv().getOrDefault("DB_URL", "jdbc:mysql://localhost:3306/app");
+        this.pool = new ArrayBlockingQueue&lt;&gt;(POOL_SIZE);
+        try {
+            for (int i = 0; i &lt; POOL_SIZE; i++) {
+                pool.add(DriverManager.getConnection(jdbcUrl, "root", "secret"));
+            }
+            System.out.println("Connection pool initialized with " + POOL_SIZE + " connections");
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to initialize connection pool", e);
+        }
+    }
+
+    // Bill Pugh Holder — lazy, thread-safe, no lock
+    private static class Holder {
+        private static final ConnectionPool INSTANCE = new ConnectionPool();
+    }
+
+    public static ConnectionPool getInstance() {
+        return Holder.INSTANCE;
+    }
+
+    public Connection getConnection() throws InterruptedException {
+        return pool.take(); // blocks until a connection is available
+    }
+
+    public void returnConnection(Connection conn) {
+        pool.offer(conn); // return connection to pool
+    }
+
+    // Usage
+    public static void main(String[] args) throws Exception {
+        // First call → creates pool (expensive, once)
+        ConnectionPool pool1 = ConnectionPool.getInstance();
+
+        // Second call → returns same pool (instant, no cost)
+        ConnectionPool pool2 = ConnectionPool.getInstance();
+
+        System.out.println("Same pool? " + (pool1 == pool2)); // true
+
+        // Use connections
+        Connection conn = pool1.getConnection();
+        // ... use connection ...
+        pool1.returnConnection(conn);
+    }
+}</code></pre>
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Property</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Thread Safe</td><td class="pro">✅ Yes — JVM class loading guarantee</td></tr>
+          <tr><td>Lazy Loading</td><td class="pro">✅ Yes — inner class not loaded until needed</td></tr>
+          <tr><td>Performance</td><td class="pro">✅ Excellent — no synchronization overhead</td></tr>
+          <tr><td>Reflection Safe</td><td class="con">⚠️ Needs manual guard in constructor</td></tr>
+          <tr><td>Serialization Safe</td><td class="con">⚠️ Needs readResolve()</td></tr>
+          <tr><td>Complexity</td><td class="pro">✅ Simple and clean</td></tr>
+          <tr><td>Use When</td><td><strong>Default choice for most Java applications</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ─────────────────────────────────────────── -->
+    <!-- APPROACH 6: ENUM SINGLETON                  -->
+    <!-- ─────────────────────────────────────────── -->
+    <h2 id="enum">🔴 Approach 6 — Enum Singleton (Joshua Bloch's Recommendation)</h2>
+    <p>Using a Java <code>enum</code> with a single constant. <strong>Most robust</strong> — JVM guarantees exactly one instance even against reflection, serialization, and cloning. Recommended in <em>Effective Java</em> by Joshua Bloch as the preferred Singleton approach when you don't need lazy loading.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-title">AppConfig.java — Enum Singleton (Safest)</span>
+        <button class="copy-btn">Copy</button>
+      </div>
+      <pre><code class="language-java">// Enum Singleton — most concise, reflection-safe, serialization-safe
+public enum AppConfig {
+    INSTANCE; // ← Single constant = Single instance
+
+    // Fields
+    private final String dbUrl;
+    private final String appName;
+    private int maxRetries;
+
+    // Enum constructor — called exactly ONCE by JVM
+    AppConfig() {
+        this.dbUrl      = System.getenv().getOrDefault("DB_URL", "jdbc:h2:mem:testdb");
+        this.appName    = "MyApplication";
+        this.maxRetries = 3;
+        System.out.println("AppConfig enum initialized");
+    }
+
+    // Getters
+    public String getDbUrl()    { return dbUrl; }
+    public String getAppName()  { return appName; }
+    public int getMaxRetries()  { return maxRetries; }
+
+    // Setters for mutable config
+    public void setMaxRetries(int retries) {
+        this.maxRetries = retries;
+    }
+
+    // Business method
+    public void printConfig() {
+        System.out.println("App: " + appName + " | DB: " + dbUrl + " | Retries: " + maxRetries);
+    }
+}
+
+// Usage — access via INSTANCE constant
+public class Application {
+    public static void main(String[] args) {
+        // Access singleton
+        AppConfig config = AppConfig.INSTANCE;
+        config.printConfig();
+
+        // Works across all classes
+        String url = AppConfig.INSTANCE.getDbUrl();
+
+        // Enum is automatically:
+        // ✅ Thread-safe (JVM enum guarantee)
+        // ✅ Reflection-safe (JVM blocks reflective construction of enums)
+        // ✅ Serialization-safe (enum has built-in serialization)
+        // ✅ Clone-safe (enums cannot be cloned)
+
+        // Proof — reflection CANNOT break it:
+        try {
+            java.lang.reflect.Constructor&lt;AppConfig&gt; c =
+                AppConfig.class.getDeclaredConstructor(String.class, int.class);
+            c.setAccessible(true);
+            c.newInstance("HACK", 0); // ← JVM throws IllegalArgumentException!
+        } catch (Exception e) {
+            System.out.println("✅ Reflection blocked: " + e.getMessage());
+            // "Cannot reflectively create enum objects"
+        }
+    }
+}</code></pre>
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Property</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Thread Safe</td><td class="pro">✅ Yes — JVM enum guarantee</td></tr>
+          <tr><td>Lazy Loading</td><td class="con">❌ No — created at class load</td></tr>
+          <tr><td>Reflection Safe</td><td class="pro">✅ Yes — JVM prevents it</td></tr>
+          <tr><td>Serialization Safe</td><td class="pro">✅ Yes — built into enum</td></tr>
+          <tr><td>Clone Safe</td><td class="pro">✅ Yes — enum cannot be cloned</td></tr>
+          <tr><td>Inheritance</td><td class="con">❌ Cannot extend other classes</td></tr>
+          <tr><td>Use When</td><td>Need maximum safety; don't need lazy loading or inheritance</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ─────────────────────────────────────────── -->
+    <!-- MASTER COMPARISON TABLE                     -->
+    <!-- ─────────────────────────────────────────── -->
+    <h2>📊 Complete Comparison — All 6 Approaches</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Approach</th>
+            <th>Thread Safe</th>
+            <th>Lazy Init</th>
+            <th>Reflection Safe</th>
+            <th>Serial. Safe</th>
+            <th>Performance</th>
+            <th>Recommended</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1. Eager Init</strong></td>
+            <td class="pro">✅ Yes</td>
+            <td class="con">❌ No</td>
+            <td class="con">❌ No</td>
+            <td class="con">❌ No</td>
+            <td class="pro">✅ Fast</td>
+            <td>Simple cases only</td>
+          </tr>
+          <tr>
+            <td><strong>2. Lazy Init</strong></td>
+            <td class="con">❌ No</td>
+            <td class="pro">✅ Yes</td>
+            <td class="con">❌ No</td>
+            <td class="con">❌ No</td>
+            <td class="pro">✅ Fast</td>
+            <td>Single-thread only</td>
+          </tr>
+          <tr>
+            <td><strong>3. Synchronized</strong></td>
+            <td class="pro">✅ Yes</td>
+            <td class="pro">✅ Yes</td>
+            <td class="con">❌ No</td>
+            <td class="con">❌ No</td>
+            <td class="con">❌ Slow</td>
+            <td>❌ Avoid</td>
+          </tr>
+          <tr>
+            <td><strong>4. DCL</strong></td>
+            <td class="pro">✅ Yes*</td>
+            <td class="pro">✅ Yes</td>
+            <td class="con">❌ No</td>
+            <td class="con">❌ No</td>
+            <td class="pro">✅ Good</td>
+            <td>When DCL understood</td>
+          </tr>
+          <tr style="background:rgba(0,212,255,0.06)">
+            <td><strong>5. Bill Pugh ⭐</strong></td>
+            <td class="pro">✅ Yes</td>
+            <td class="pro">✅ Yes</td>
+            <td class="con">⚠️ Guard needed</td>
+            <td class="con">⚠️ readResolve needed</td>
+            <td class="pro">✅ Excellent</td>
+            <td><strong>✅ Most Java apps</strong></td>
+          </tr>
+          <tr>
+            <td><strong>6. Enum</strong></td>
+            <td class="pro">✅ Yes</td>
+            <td class="con">❌ No</td>
+            <td class="pro">✅ Yes</td>
+            <td class="pro">✅ Yes</td>
+            <td class="pro">✅ Fast</td>
+            <td>✅ When safety = priority</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-box tip">
+      <span class="info-icon">🏆</span>
+      <p><strong>Decision Guide:</strong> Need lazy loading + best performance → <strong>Bill Pugh</strong>. Need reflection + serialization safety → <strong>Enum</strong>. Simple app, no multi-threading → <strong>Eager</strong>. In Spring → just use <code>@Component</code> (Spring manages singleton lifecycle for you).</p>
+    </div>
+
+    <!-- How to BREAK Singleton -->
+    <h2>🔓 How to Break Singleton &amp; How to Prevent</h2>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-title">BreakSingleton.java — 3 Attacks + Fixes</span>
+        <button class="copy-btn">Copy</button>
+      </div>
+      <pre><code class="language-java">// ── Attack 1: Reflection ──────────────────────────────────────
+Constructor&lt;BillPughSingleton&gt; c = BillPughSingleton.class.getDeclaredConstructor();
+c.setAccessible(true);
+BillPughSingleton s2 = c.newInstance(); // creates 2nd instance without guard!
+
+// FIX: In constructor, throw if instance already exists:
+private BillPughSingleton() {
+    if (SingletonHolder.INSTANCE != null) {
+        throw new IllegalStateException("Singleton already exists! Use getInstance()");
+    }
+}
+
+// ── Attack 2: Serialization ────────────────────────────────────
+// Serialize instance → write to file → deserialize → NEW object!
+ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("singleton.ser"));
+out.writeObject(BillPughSingleton.getInstance());
+ObjectInputStream in = new ObjectInputStream(new FileInputStream("singleton.ser"));
+BillPughSingleton deserialized = (BillPughSingleton) in.readObject(); // new instance!
+
+// FIX: Add readResolve() method:
+protected Object readResolve() {
+    return getInstance(); // always return the existing instance
+}
+
+// ── Attack 3: Cloning ──────────────────────────────────────────
+BillPughSingleton cloned = (BillPughSingleton) getInstance().clone(); // new instance!
+
+// FIX: Override clone() to throw exception:
+@Override
+protected Object clone() throws CloneNotSupportedException {
+    throw new CloneNotSupportedException("Singleton cannot be cloned!");
+}
+
+// ── BEST FIX: Use Enum ─────────────────────────────────────────
+// Enum is immune to ALL 3 attacks automatically — JVM guarantees it.</code></pre>
+    </div>
+
+    <!-- Real World -->
+    <h2>🔍 Real-World Usage in Java &amp; Spring</h2>
     <ul>
-      <li><code>java.lang.Runtime.getRuntime()</code> — JVM Runtime instance</li>
-      <li><code>java.awt.Desktop.getDesktop()</code></li>
-      <li><code>java.lang.System.console()</code></li>
-      <li>Spring beans (default scope <code>singleton</code>) — Spring manages the lifecycle</li>
-      <li><code>HikariCP.HikariDataSource</code> — typically a singleton connection pool</li>
+      <li><code>java.lang.Runtime.getRuntime()</code> — Eager Singleton in JDK</li>
+      <li><code>java.awt.Desktop.getDesktop()</code> — OS desktop handle</li>
+      <li><code>java.lang.System.console()</code> — Console singleton</li>
+      <li><code>org.springframework.context.ApplicationContext</code> — Spring container manages singletons</li>
+      <li>Spring <code>@Component</code>, <code>@Service</code>, <code>@Repository</code> beans — singleton scope by default</li>
+      <li><code>HikariCP</code> connection pool — singleton via Spring's bean management</li>
+      <li>Spring Security's <code>SecurityContextHolder</code> — ThreadLocal-based singleton</li>
     </ul>
 
+    <!-- Interview Q&A -->
     <h2>🎤 Interview Q&amp;A</h2>
     <div class="accordion">
       <div class="accordion-item">
-        <button class="accordion-header">Q: What are the ways to break Singleton in Java and how to prevent them?<span class="accordion-icon">+</span></button>
+        <button class="accordion-header">Q: What is Bill Pugh Singleton and why is it the best approach?<span class="accordion-icon">+</span></button>
         <div class="accordion-body">
-          <p><strong>1. Reflection:</strong> <code>Constructor c = Singleton.class.getDeclaredConstructor(); c.setAccessible(true); Singleton s2 = c.newInstance();</code> — Fix: throw exception in constructor if instance already exists. <br><strong>2. Serialization/Deserialization:</strong> deserialization creates a new object. Fix: implement <code>readResolve()</code> to return existing instance. <br><strong>3. Cloning:</strong> <code>clone()</code> creates a new instance. Fix: override <code>clone()</code> to throw <code>CloneNotSupportedException</code>. <br><strong>Best fix:</strong> Use Enum Singleton — JVM guarantees protection against all three automatically.</p>
+          <p>Bill Pugh Singleton uses a <strong>static inner holder class</strong> to hold the singleton instance. It is the best because: <br>
+          <strong>(1) Lazy loading</strong> — inner class not loaded until <code>getInstance()</code> is first called. <br>
+          <strong>(2) Thread-safe</strong> — JVM class loading is inherently thread-safe (no <code>synchronized</code> needed). <br>
+          <strong>(3) No performance overhead</strong> — no lock, no volatile, just a field read after initialization. <br>
+          <strong>(4) Simple code</strong> — cleaner than DCL. Introduced by Bill Pugh in 2004 in the paper <em>"Initialization on Demand Holder"</em>.</p>
         </div>
       </div>
       <div class="accordion-item">
-        <button class="accordion-header">Q: Why is volatile needed in double-checked locking?<span class="accordion-icon">+</span></button>
+        <button class="accordion-header">Q: What is the difference between DCL and Bill Pugh Singleton?<span class="accordion-icon">+</span></button>
         <div class="accordion-body">
-          <p><code>volatile</code> prevents CPU instruction reordering. Without it, the JVM might reorder: <strong>(1)</strong> allocate memory, <strong>(2)</strong> assign reference to <code>instance</code>, <strong>(3)</strong> call constructor. Thread 2 could see a non-null but uninitialized object. <code>volatile</code> ensures the write to <code>instance</code> is fully visible to all threads only after the constructor completes.</p>
+          <p><strong>DCL</strong>: Uses <code>volatile</code> + <code>synchronized</code>. Correct if <code>volatile</code> is not forgotten. Programmer-managed thread safety. Slightly complex. <br>
+          <strong>Bill Pugh</strong>: Uses JVM's class loading guarantee (static inner class). No <code>volatile</code>, no <code>synchronized</code>. JVM-managed thread safety. Simpler and faster. Preferred over DCL in modern Java.</p>
         </div>
       </div>
       <div class="accordion-item">
-        <button class="accordion-header">Q: Is Singleton anti-pattern? When should you avoid it?<span class="accordion-icon">+</span></button>
+        <button class="accordion-header">Q: Why is volatile necessary in Double-Checked Locking?<span class="accordion-icon">+</span></button>
         <div class="accordion-body">
-          <p>Yes, some consider it an anti-pattern because: global state makes testing difficult, it hides dependencies, and it violates SRP. Prefer <strong>Dependency Injection</strong> (e.g., Spring singleton beans) over manual Singleton. Use Singleton sparingly — only for truly shared, stateless or carefully managed stateful resources like connection pools, loggers, or configuration.</p>
+          <p><code>volatile</code> prevents CPU instruction reordering. Object creation has 3 steps: (1) allocate memory, (2) call constructor, (3) assign reference. Without <code>volatile</code>, the CPU can reorder steps to: (1) allocate, (3) assign reference, (2) call constructor. Thread B checking <code>instance != null</code> would get a non-null reference to an <em>uninitialized</em> object and crash with NPE. <code>volatile</code> enforces the happens-before relationship.</p>
         </div>
       </div>
       <div class="accordion-item">
-        <button class="accordion-header">Q: What is the difference between Singleton pattern and Spring's @Scope("singleton")?<span class="accordion-icon">+</span></button>
+        <button class="accordion-header">Q: Which Singleton approach is reflection-proof?<span class="accordion-icon">+</span></button>
         <div class="accordion-body">
-          <p><strong>Singleton Pattern:</strong> one instance per JVM/ClassLoader, managed by the class itself, accessed via static method, difficult to test. <br><strong>Spring Singleton scope:</strong> one instance per Spring Application Context/IoC container, managed by Spring, injected via DI, fully testable with mock injection. Spring's is preferred in enterprise apps — it gives you IoC + lifecycle management + testability.</p>
+          <p><strong>Enum Singleton</strong> is the only approach that is 100% reflection-proof by JVM specification. You cannot use reflection to create a new enum instance — the JVM throws <code>IllegalArgumentException: Cannot reflectively create enum objects</code>. All other approaches (Eager, Lazy, DCL, Bill Pugh) can be broken via reflection unless you add a guard check in the constructor.</p>
         </div>
       </div>
       <div class="accordion-item">
-        <button class="accordion-header">Q: What happens to Singleton in a distributed/clustered environment?<span class="accordion-icon">+</span></button>
+        <button class="accordion-header">Q: What are the 3 ways to break a Singleton and their fixes?<span class="accordion-icon">+</span></button>
         <div class="accordion-body">
-          <p>Singleton is per-JVM. In a cluster with multiple JVM instances, each JVM has its own Singleton instance. If you need a truly global single instance across a cluster, use: <strong>(1)</strong> a distributed cache (Redis, Hazelcast) for shared state, <strong>(2)</strong> a database lock or leader election (ZooKeeper, etcd), <strong>(3)</strong> a shared service (microservice that owns the resource). Plain Singleton is not cluster-aware.</p>
+          <p><strong>1. Reflection</strong>: Use <code>getDeclaredConstructor().setAccessible(true).newInstance()</code>. Fix: throw in constructor if instance already exists. <br>
+          <strong>2. Serialization</strong>: Deserializing a serialized singleton creates a new object. Fix: implement <code>readResolve()</code> returning <code>getInstance()</code>. <br>
+          <strong>3. Cloning</strong>: <code>clone()</code> on a Cloneable object creates a copy. Fix: override <code>clone()</code> to throw <code>CloneNotSupportedException</code>. <br>
+          <strong>Best fix</strong>: Use <strong>Enum Singleton</strong> — JVM automatically prevents all three.</p>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">Q: What is the difference between Singleton Pattern and Spring's @Scope("singleton")?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body">
+          <p><strong>Singleton Pattern (GoF)</strong>: One instance per <em>JVM/ClassLoader</em>. Class manages its own lifecycle. Accessed via static <code>getInstance()</code>. Difficult to mock/test. Manual thread safety. <br>
+          <strong>Spring @Scope("singleton")</strong>: One instance per <em>Spring ApplicationContext</em>. Spring manages lifecycle (creation, DI, destruction). Injected via DI — testable with mocks. Thread safety is application responsibility. Multiple contexts → multiple instances. <strong>Prefer Spring's approach in enterprise apps.</strong></p>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">Q: Does Singleton violate any SOLID principles?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body">
+          <p><strong>SRP violation</strong>: The class is responsible for both its business logic AND for ensuring only one instance is created — two responsibilities. <br>
+          <strong>DIP violation</strong>: Classes calling <code>Singleton.getInstance()</code> hard-code their dependency on the concrete singleton — not an abstraction. <br>
+          <strong>Testability issue</strong>: Hard to replace with a mock in unit tests. <br>
+          <strong>Mitigation</strong>: Use Spring's IoC container — it manages singleton lifecycle externally, keeping your class clean and testable.</p>
         </div>
       </div>
     </div>
 
     <div class="info-box note">
       <span class="info-icon">📌</span>
-      <p><strong>Quick Comparison:</strong> Eager (simple) → DCL (lazy + thread-safe) → Enum (serialization-safe + simplest). For most Spring apps, just use <code>@Service</code> / <code>@Component</code> beans which are singleton by default.</p>
+      <p><strong>Summary:</strong> 
+        <code>Lazy (unsafe)</code> → 
+        <code>Eager</code> → 
+        <code>Synchronized (slow)</code> → 
+        <code>DCL + volatile</code> → 
+        <strong><code>Bill Pugh ⭐ (best for most)</code></strong> → 
+        <code>Enum (safest)</code>. 
+        In Spring Boot? Just use <code>@Component</code> — Spring handles it all.
+      </p>
     </div>
 
     <footer class="site-footer">
