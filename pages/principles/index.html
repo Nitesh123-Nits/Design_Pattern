@@ -29,7 +29,7 @@
 
     <!-- 1. DRY -->
     <section class="section-block" id="dry">
-      <h2>1. DRY (Don't Repeat Yourself)</h2>
+      <h2><span class="head-num">1.</span> DRY (Don't Repeat Yourself)</h2>
       <p><strong>Definition:</strong> "Every piece of knowledge must have a single, unambiguous, authoritative representation within a system."</p>
       <p>Code duplication is the root of many software bugs. If logic is duplicated, a change in requirements means updating code in multiple places — and developers inevitably forget to update one of them.</p>
 
@@ -73,7 +73,7 @@ public void updateUser(User user) {
 
     <!-- 2. KISS -->
     <section class="section-block" id="kiss">
-      <h2>2. KISS (Keep It Simple, Stupid)</h2>
+      <h2><span class="head-num">2.</span> KISS (Keep It Simple, Stupid)</h2>
       <p><strong>Definition:</strong> Most systems work best if they are kept simple rather than made complicated. Simplicity should be a key goal in design.</p>
       <p>Do not use advanced design patterns, complex reflections, or massive generic structures when a simple <code>if-else</code> or standard loop solves the problem effectively and is easier for the next developer to read.</p>
       
@@ -105,7 +105,7 @@ public String getWeekday(int day) {
 
     <!-- 3. YAGNI -->
     <section class="section-block" id="yagni">
-      <h2>3. YAGNI (You Aren't Gonna Need It)</h2>
+      <h2><span class="head-num">3.</span> YAGNI (You Aren't Gonna Need It)</h2>
       <p><strong>Definition:</strong> "Always implement things when you actually need them, never when you just foresee that you need them."</p>
       <p>Writing code for features that <em>might</em> be needed in the future wastes time, introduces bugs, bloats the codebase, and usually results in the wrong architecture because the future requirements weren't fully understood yet.</p>
       <ul>
@@ -134,7 +134,7 @@ public class Database {
 
     <!-- 4. Law of Demeter -->
     <section class="section-block" id="lod">
-      <h2>4. Law of Demeter (LoD)</h2>
+      <h2><span class="head-num">4.</span> Law of Demeter (LoD)</h2>
       <p><strong>Definition:</strong> The Principle of Least Knowledge. A module should not know about the inner details of the objects it manipulates. "Don't talk to strangers."</p>
       <p>An object <code>O</code> should only invoke methods of:</p>
       <ol>
@@ -178,7 +178,7 @@ public class CustomerDashboard {
 
     <!-- 5. Composition vs Inheritance -->
     <section class="section-block" id="composition">
-      <h2>5. Composition Over Inheritance</h2>
+      <h2><span class="head-num">5.</span> Composition Over Inheritance</h2>
       <p><strong>Definition:</strong> Classes should achieve polymorphic behavior and code reuse by their composition (containing instances of other classes) rather than inheritance from a base or parent class.</p>
       <p>Inheritance introduces deep, rigid hierarchies (IS-A) that break encapsulation and are extremely difficult to change. Composition (HAS-A) allows assembling behavior dynamically at runtime and leads to flat, modular designs.</p>
 
@@ -222,7 +222,7 @@ class Duck {
 
     <!-- 6. Aggregation vs Composition -->
     <section class="section-block" id="aggregation">
-      <h2>6. Aggregation vs Composition</h2>
+      <h2><span class="head-num">6.</span> Aggregation vs Composition</h2>
       <p>These are two types of associations in OOP describing how objects relate.</p>
       
       <div class="table-wrapper">
