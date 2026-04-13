@@ -151,6 +151,9 @@ body::before {
   transition: background var(--transition);
   display: none;
 }
+#menu-toggle::before {
+  content: '☰';
+}
 #menu-toggle:hover { background: var(--bg-card-hover); }
 
 /* Sidebar */
