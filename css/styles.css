@@ -315,11 +315,16 @@ strong { color: var(--text-primary); font-weight: 600; }
   display: inline-block;
   font-weight: 700;
   box-shadow: 0 0 10px rgba(255,255,255,0.2);
+  /* Reset in case parent has background-clip */
+  -webkit-text-fill-color: var(--bg-primary);
+  -webkit-background-clip: initial;
+  background-clip: initial;
 }
 
 h1 .head-num {
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
   color: var(--text-primary);
+  -webkit-text-fill-color: var(--text-primary); /* override h1 transparency */
   box-shadow: 0 0 15px var(--accent-glow);
   padding: 2px 10px;
   border-radius: 6px;
