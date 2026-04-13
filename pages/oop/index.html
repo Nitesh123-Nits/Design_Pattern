@@ -140,12 +140,8 @@
       <p><strong>Definition:</strong> Inheritance lets a child class acquire properties and methods from a parent class using the <code>extends</code> keyword. It promotes code reuse and establishes an IS-A relationship.</p>
 
       <div class="code-block">
-        <div class="code-header">
-          <div class="code-dots"><span></span><span></span><span></span></div>
-          <span class="code-title">Animal Hierarchy</span>
-          <button class="copy-btn">Copy</button>
-        </div>
-        <pre><code class="language-java">// Base (Parent) class
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Animal Hierarchy - Base (Parent) class</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Base (Parent) class
 public abstract class Animal {
     protected String name;
     protected int age;
@@ -166,9 +162,12 @@ public abstract class Animal {
     public String getInfo() {
         return name + " (age: " + age + ")";
     }
-}
+}</code></pre>
+    </div>
 
-// Child class 1
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Animal Hierarchy - Child class 1</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Child class 1
 public class Dog extends Animal {
     private String breed;
 
@@ -191,9 +190,12 @@ public class Dog extends Animal {
     public String getInfo() {
         return super.getInfo() + " | Breed: " + breed; // extend parent method
     }
-}
+}</code></pre>
+    </div>
 
-// Child class 2
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Animal Hierarchy - Child class 2</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Child class 2
 public class Cat extends Animal {
     private boolean isIndoor;
 
@@ -206,9 +208,12 @@ public class Cat extends Animal {
     public String makeSound() {
         return "Meow!";
     }
-}
+}</code></pre>
+    </div>
 
-// Demo
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Animal Hierarchy - Demo</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Demo
 public class Main {
     public static void main(String[] args) {
         Dog dog = new Dog("Rex", 3, "Labrador");
@@ -222,7 +227,7 @@ public class Main {
         System.out.println(cat.makeSound());  // Meow!
     }
 }</code></pre>
-      </div>
+    </div>
 
       <div class="info-box warning">
         <span class="info-icon"></span>
@@ -264,12 +269,8 @@ public class Main {
       <p><strong>Definition:</strong> Polymorphism allows objects of different types to be treated through a common interface. "One interface, many implementations." Two types: <strong>Compile-time</strong> (overloading) and <strong>Runtime</strong> (overriding).</p>
 
       <div class="code-block">
-        <div class="code-header">
-          <div class="code-dots"><span></span><span></span><span></span></div>
-          <span class="code-title">Runtime Polymorphism</span>
-          <button class="copy-btn">Copy</button>
-        </div>
-        <pre><code class="language-java">// Polymorphism with a Payment system
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Runtime Polymorphism - Polymorphism with a Payment system</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Polymorphism with a Payment system
 public interface PaymentProcessor {
     void processPayment(double amount);
     default String getCurrency() { return "USD"; }
@@ -298,9 +299,12 @@ public class UPIProcessor implements PaymentProcessor {
     }
     @Override
     public String getCurrency() { return "INR"; }
-}
+}</code></pre>
+    </div>
 
-// Client code — works with ANY PaymentProcessor
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Runtime Polymorphism - Client code — works with ANY PaymentProcessor</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Client code — works with ANY PaymentProcessor
 public class Checkout {
     // Runtime polymorphism: the actual type is determined at runtime
     public void checkout(PaymentProcessor processor, double amount) {
@@ -325,15 +329,18 @@ public class Checkout {
         System.out.println(calc.add(1.5, 2.5));     // double version
         System.out.println(calc.add(1, 2, 3));      // three args version
     }
-}
+}</code></pre>
+    </div>
 
-// Compile-time polymorphism — method overloading
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Runtime Polymorphism - Compile-time polymorphism — method overloading</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Compile-time polymorphism — method overloading
 class Calculator {
     public int add(int a, int b) { return a + b; }
     public double add(double a, double b) { return a + b; }
     public int add(int a, int b, int c) { return a + b + c; }
 }</code></pre>
-      </div>
+    </div>
 
       <h3>Interview Q&amp;A</h3>
       <div class="accordion">
@@ -378,12 +385,8 @@ class Calculator {
       </div>
 
       <div class="code-block">
-        <div class="code-header">
-          <div class="code-dots"><span></span><span></span><span></span></div>
-          <span class="code-title">Vehicle Abstraction</span>
-          <button class="copy-btn">Copy</button>
-        </div>
-        <pre><code class="language-java">// Abstract class — partial abstraction (some concrete methods)
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Vehicle Abstraction - Abstract class — partial abstraction (some concrete methods)</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Abstract class — partial abstraction (some concrete methods)
 public abstract class Vehicle {
     protected String brand;
     protected int year;
@@ -401,9 +404,12 @@ public abstract class Vehicle {
     // Abstract methods — each vehicle defines its own behavior
     public abstract double calculateFuelCost(double km);
     public abstract String getVehicleType();
-}
+}</code></pre>
+    </div>
 
-// Interface — full abstraction / contract
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Vehicle Abstraction - Interface — full abstraction / contract</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Interface — full abstraction / contract
 public interface GPS {
     void getCurrentLocation();
     default void navigate(String destination) {
@@ -414,9 +420,12 @@ public interface GPS {
 public interface ElectricVehicle {
     void chargeBattery();
     int getBatteryLevel();
-}
+}</code></pre>
+    </div>
 
-// Concrete class implementing everything
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Vehicle Abstraction - Concrete class implementing everything</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Concrete class implementing everything
 public class TeslaModel3 extends Vehicle implements GPS, ElectricVehicle {
     private int batteryLevel;
 
@@ -456,7 +465,7 @@ public class TeslaModel3 extends Vehicle implements GPS, ElectricVehicle {
         System.out.printf("Cost for 100km: $%.2f%n", tesla.calculateFuelCost(100));
     }
 }</code></pre>
-      </div>
+    </div>
 
       <h3>Interview Q&amp;A</h3>
       <div class="accordion">

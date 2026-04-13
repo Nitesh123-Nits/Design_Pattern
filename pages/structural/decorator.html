@@ -31,20 +31,26 @@
 
     <h2>Java Implementation</h2>
     <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Coffee Shop — Classic Decorator</span><button class="copy-btn">Copy</button></div>
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Component interface</span><button class="copy-btn">Copy</button></div>
       <pre><code class="language-java">// Component interface
 public interface Coffee {
     String getDescription();
     double getCost();
-}
+}</code></pre>
+    </div>
 
-// Concrete Component
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Concrete Component</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Concrete Component
 public class SimpleCoffee implements Coffee {
     @Override public String getDescription() { return "Simple Coffee"; }
     @Override public double getCost() { return 1.00; }
-}
+}</code></pre>
+    </div>
 
-// Abstract Decorator — wraps a Coffee and IS a Coffee
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Abstract Decorator — wraps a Coffee and IS a Coffee</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Abstract Decorator — wraps a Coffee and IS a Coffee
 public abstract class CoffeeDecorator implements Coffee {
     protected final Coffee coffee;  // wraps the component
 
@@ -57,9 +63,12 @@ public abstract class CoffeeDecorator implements Coffee {
 
     @Override
     public double getCost() { return coffee.getCost(); }
-}
+}</code></pre>
+    </div>
 
-// Concrete Decorators — each adds one feature
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Concrete Decorators — each adds one feature</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Concrete Decorators — each adds one feature
 public class MilkDecorator extends CoffeeDecorator {
     public MilkDecorator(Coffee coffee) { super(coffee); }
     @Override public String getDescription() { return coffee.getDescription() + ", Milk"; }
@@ -86,9 +95,12 @@ public class VanillaSyrupDecorator extends CoffeeDecorator {
     }
     @Override public String getDescription() { return coffee.getDescription() + ", Vanilla x" + shots; }
     @Override public double getCost()        { return coffee.getCost() + (0.30 * shots); }
-}
+}</code></pre>
+    </div>
 
-// Usage — compose at runtime
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Usage — compose at runtime</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Usage — compose at runtime
 public class CoffeeShop {
     public static void main(String[] args) {
         // Order 1: Plain coffee
@@ -112,15 +124,18 @@ public class CoffeeShop {
 
     <h3>Java IO — Real-World Decorator in the JDK</h3>
     <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Java IO Streams</span><button class="copy-btn">Copy</button></div>
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Java IO Streams - Every IO wrapping is Decorator in action:</span><button class="copy-btn">Copy</button></div>
       <pre><code class="language-java">// Every IO wrapping is Decorator in action:
 InputStream raw    = new FileInputStream("data.txt");             // component
 InputStream buffed = new BufferedInputStream(raw);                 // decorator: adds buffering
 InputStream gzipped = new GZIPInputStream(buffed);                // decorator: adds decompression
 InputStreamReader reader = new InputStreamReader(gzipped, "UTF-8"); // decorator: bytes→chars
-BufferedReader br = new BufferedReader(reader);                    // decorator: adds readLine()
+BufferedReader br = new BufferedReader(reader);                    // decorator: adds readLine()</code></pre>
+    </div>
 
-// Each decorator adds a feature without subclassing FileInputStream into every combination</code></pre>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Java IO Streams - Each decorator adds a feature without subclassing FileInputStream into every combination</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Each decorator adds a feature without subclassing FileInputStream into every combination</code></pre>
     </div>
 
     <h2>Interview Q&amp;A</h2>

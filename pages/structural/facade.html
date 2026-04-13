@@ -31,7 +31,7 @@
 
     <h2>Java Implementation</h2>
     <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">E-Commerce Order Facade</span><button class="copy-btn">Copy</button></div>
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">E-Commerce Order Facade - Complex Subsystem Classes</span><button class="copy-btn">Copy</button></div>
       <pre><code class="language-java">//  Complex Subsystem Classes 
 
 public class InventoryService {
@@ -78,9 +78,12 @@ public class LoyaltyPointsService {
         int points = (int)(amount * 10);
         System.out.println("Adding " + points + " loyalty points to " + userId);
     }
-}
+}</code></pre>
+    </div>
 
-//  Facade — One simple method replaces all subsystem calls 
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">E-Commerce Order Facade - Facade — One simple method replaces all subsystem calls</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">//  Facade — One simple method replaces all subsystem calls 
 public class OrderFacade {
     private final InventoryService inventory;
     private final PaymentProcessor payment;
@@ -128,9 +131,12 @@ public class OrderFacade {
         System.out.println("=== Order Complete: " + orderId + " ===\n");
         return orderId;
     }
-}
+}</code></pre>
+    </div>
 
-//  Client — only deals with Facade 
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">E-Commerce Order Facade - Client — only deals with Facade</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">//  Client — only deals with Facade 
 public class CheckoutController {
     private final OrderFacade orderFacade = new OrderFacade();
 

@@ -39,34 +39,46 @@ public class UserService {
       </div>
 
       <div class="code-block">
-        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Following SRP</span><button class="copy-btn">Copy</button></div>
-        <pre><code class="language-java">// Each class has ONE reason to change
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Following SRP - Each class has ONE reason to change</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Each class has ONE reason to change</code></pre>
+    </div>
 
-// Responsibility 1: User persistence
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Following SRP - Responsibility 1: User persistence</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Responsibility 1: User persistence
 public class UserRepository {
     public void save(User user) {
         // Only database interaction logic here
         System.out.println("Saving user to DB: " + user.getName());
     }
-}
+}</code></pre>
+    </div>
 
-// Responsibility 2: Report generation
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Following SRP - Responsibility 2: Report generation</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Responsibility 2: Report generation
 public class UserReportService {
     public String generateReport(User user) {
         // Only reporting logic here
         return "User Report for: " + user.getName();
     }
-}
+}</code></pre>
+    </div>
 
-// Responsibility 3: Email sending
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Following SRP - Responsibility 3: Email sending</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Responsibility 3: Email sending
 public class EmailService {
     public void sendWelcomeEmail(User user) {
         // Only email logic here
         System.out.println("Sending welcome email to: " + user.getEmail());
     }
-}
+}</code></pre>
+    </div>
 
-// Orchestration: UserService now just coordinates
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Following SRP - Orchestration: UserService now just coordinates</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Orchestration: UserService now just coordinates
 public class UserService {
     private final UserRepository repo;
     private final EmailService emailService;
@@ -82,7 +94,7 @@ public class UserService {
         // Each collaborator can change independently
     }
 }</code></pre>
-      </div>
+    </div>
 
       <div class="accordion">
         <div class="accordion-item">
@@ -102,13 +114,16 @@ public class UserService {
       <p><strong>"Software entities should be open for extension, but closed for modification."</strong> — Add new functionality by creating new code, not changing existing tested code.</p>
 
       <div class="code-block">
-        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">OCP with Strategy Pattern</span><button class="copy-btn">Copy</button></div>
-        <pre><code class="language-java">// Closed for modification — shape interface never changes
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">OCP with Strategy Pattern - Closed for modification — shape interface never changes</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Closed for modification — shape interface never changes
 public interface Shape {
     double area();
-}
+}</code></pre>
+    </div>
 
-// Open for extension — add new shapes without touching existing code
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">OCP with Strategy Pattern - Open for extension — add new shapes without touching existing code</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Open for extension — add new shapes without touching existing code
 public class Circle implements Shape {
     private double radius;
     public Circle(double radius) { this.radius = radius; }
@@ -121,27 +136,36 @@ public class Rectangle implements Shape {
     public Rectangle(double w, double h) { this.width = w; this.height = h; }
     @Override
     public double area() { return width * height; }
-}
+}</code></pre>
+    </div>
 
-// NEW shape added — zero changes to existing code!
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">OCP with Strategy Pattern - NEW shape added — zero changes to existing code!</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// NEW shape added — zero changes to existing code!
 public class Triangle implements Shape {
     private double base, height;
     public Triangle(double base, double height) { this.base = base; this.height = height; }
     @Override
     public double area() { return 0.5 * base * height; }
-}
+}</code></pre>
+    </div>
 
-// AreaCalculator is CLOSED for modification
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">OCP with Strategy Pattern - AreaCalculator is CLOSED for modification</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// AreaCalculator is CLOSED for modification
 public class AreaCalculator {
     public double totalArea(List&lt;Shape&gt; shapes) {
         return shapes.stream().mapToDouble(Shape::area).sum();
     }
-}
+}</code></pre>
+    </div>
 
-// Usage
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">OCP with Strategy Pattern - Usage</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Usage
 List&lt;Shape&gt; shapes = List.of(new Circle(5), new Rectangle(4, 6), new Triangle(3, 8));
 System.out.println(new AreaCalculator().totalArea(shapes)); // Works for ANY shape!</code></pre>
-      </div>
+    </div>
 
       <div class="accordion">
         <div class="accordion-item">
@@ -161,34 +185,40 @@ System.out.println(new AreaCalculator().totalArea(shapes)); // Works for ANY sha
       <p><strong>"Subtypes must be substitutable for their base types."</strong> — If S extends T, then objects of type T may be replaced with objects of type S without altering correctness.</p>
 
       <div class="code-block">
-        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">LSP Violation — Square extends Rectangle</span><button class="copy-btn">Copy</button></div>
-        <pre><code class="language-java">// Classic LSP violation
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Classic LSP violation</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Classic LSP violation
 class Rectangle {
     protected int width, height;
     public void setWidth(int w) { this.width = w; }
     public void setHeight(int h) { this.height = h; }
     public int area() { return width * height; }
-}
+}</code></pre>
+    </div>
 
-// PROBLEM: Square overrides setters to maintain equality — violates Rectangle's contract
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">PROBLEM: Square overrides setters to maintain equality — violates Rectangle's contract</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// PROBLEM: Square overrides setters to maintain equality — violates Rectangle's contract
 class Square extends Rectangle {
     @Override
     public void setWidth(int w) { this.width = w; this.height = w; } // ← forces height = width
     @Override
     public void setHeight(int h) { this.height = h; this.width = h; } // ← forces width = height
-}
+}</code></pre>
+    </div>
 
-// This code BREAKS when a Square is passed where Rectangle is expected
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">This code BREAKS when a Square is passed where Rectangle is expected</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// This code BREAKS when a Square is passed where Rectangle is expected
 void testRectangle(Rectangle r) {
     r.setWidth(5);
     r.setHeight(4);
     assert r.area() == 20; //  for Rectangle,  fails for Square (returns 16)
 }</code></pre>
-      </div>
+    </div>
 
       <div class="code-block">
-        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">LSP Fix — Common base Shape</span><button class="copy-btn">Copy</button></div>
-        <pre><code class="language-java">// Fix: Don't inherit if it violates substitutability
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Fix: Don't inherit if it violates substitutability</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Fix: Don't inherit if it violates substitutability
 public interface Shape {
     int area();
 }
@@ -203,9 +233,13 @@ public class Square implements Shape {
     private int side;
     public Square(int side) { this.side = side; }
     public int area() { return side * side; }
-}
-// Both are Shapes — each is substitutable for Shape — no violation!</code></pre>
-      </div>
+}</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Both are Shapes — each is substitutable for Shape — no violation!</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Both are Shapes — each is substitutable for Shape — no violation!</code></pre>
+    </div>
 
       <div class="accordion">
         <div class="accordion-item">
@@ -225,15 +259,18 @@ public class Square implements Shape {
       <p><strong>"Clients should not be forced to depend on methods they do not use."</strong> — Split large interfaces into smaller, more specific ones.</p>
 
       <div class="code-block">
-        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">ISP — Segregated Interfaces</span><button class="copy-btn">Copy</button></div>
-        <pre><code class="language-java">// BAD: Fat interface forces all implementors to implement ALL methods
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">BAD: Fat interface forces all implementors to implement ALL methods</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// BAD: Fat interface forces all implementors to implement ALL methods
 interface Worker {
     void work();
     void eat();    // ← Robots don't eat! Forced to implement with throws
     void sleep();  // ← Robots don't sleep!
-}
+}</code></pre>
+    </div>
 
-// GOOD: Segregated interfaces
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">GOOD: Segregated interfaces</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// GOOD: Segregated interfaces
 interface Workable {
     void work();
 }
@@ -244,24 +281,37 @@ interface Eatable {
 
 interface Sleepable {
     void sleep();
-}
+}</code></pre>
+    </div>
 
-// HumanWorker needs all three
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">HumanWorker needs all three</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// HumanWorker needs all three
 public class HumanWorker implements Workable, Eatable, Sleepable {
     public void work()  { System.out.println("Human working"); }
     public void eat()   { System.out.println("Human eating"); }
     public void sleep() { System.out.println("Human sleeping"); }
-}
+}</code></pre>
+    </div>
 
-// RobotWorker only needs Workable — clean!
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">RobotWorker only needs Workable — clean!</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// RobotWorker only needs Workable — clean!
 public class RobotWorker implements Workable {
     public void work() { System.out.println("Robot working 24/7"); }
     // No forced eat() or sleep() implementations!
-}
+}</code></pre>
+    </div>
 
-// Real-world: Spring Data JPA interfaces are segregated
-// CrudRepository, PagingAndSortingRepository, JpaRepository — each adds more contract</code></pre>
-      </div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Real-world: Spring Data JPA interfaces are segregated</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Real-world: Spring Data JPA interfaces are segregated</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">CrudRepository, PagingAndSortingRepository, JpaRepository — each adds more contract</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// CrudRepository, PagingAndSortingRepository, JpaRepository — each adds more contract</code></pre>
+    </div>
 
       <div class="accordion">
         <div class="accordion-item">
@@ -277,29 +327,38 @@ public class RobotWorker implements Workable {
       <p><strong>"High-level modules should not depend on low-level modules. Both should depend on abstractions."</strong> — Depend on interfaces/abstract classes, not concrete implementations.</p>
 
       <div class="code-block">
-        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">DIP with Spring Dependency Injection</span><button class="copy-btn">Copy</button></div>
-        <pre><code class="language-java">// Abstraction (interface) — both high and low-level depend on this
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">DIP with Spring Dependency Injection - Abstraction (interface) — both high and low-level depend on this</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Abstraction (interface) — both high and low-level depend on this
 public interface NotificationService {
     void send(String message, String recipient);
-}
+}</code></pre>
+    </div>
 
-// Low-level module 1
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">DIP with Spring Dependency Injection - Low-level module 1</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Low-level module 1
 public class EmailNotificationService implements NotificationService {
     @Override
     public void send(String message, String recipient) {
         System.out.println("EMAIL to " + recipient + ": " + message);
     }
-}
+}</code></pre>
+    </div>
 
-// Low-level module 2
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">DIP with Spring Dependency Injection - Low-level module 2</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Low-level module 2
 public class SMSNotificationService implements NotificationService {
     @Override
     public void send(String message, String recipient) {
         System.out.println("SMS to " + recipient + ": " + message);
     }
-}
+}</code></pre>
+    </div>
 
-// High-level module — depends on ABSTRACTION, not concrete class
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">DIP with Spring Dependency Injection - High-level module — depends on ABSTRACTION, not concrete class</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// High-level module — depends on ABSTRACTION, not concrete class
 @Service  // Spring manages this
 public class OrderService {
     // Inject via interface — Spring will provide the actual implementation
@@ -316,9 +375,12 @@ public class OrderService {
         // High-level module doesn't know or care if it's Email or SMS
         notificationService.send("Order confirmed: #" + order.getId(), order.getCustomerEmail());
     }
-}
+}</code></pre>
+    </div>
 
-// Spring configuration — swap implementations via config, no code changes!
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">DIP with Spring Dependency Injection - Spring configuration — swap implementations via config, no code changes!</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Spring configuration — swap implementations via config, no code changes!
 @Configuration
 public class AppConfig {
     @Bean
@@ -327,7 +389,7 @@ public class AppConfig {
         return new EmailNotificationService();
     }
 }</code></pre>
-      </div>
+    </div>
 
       <div class="accordion">
         <div class="accordion-item">

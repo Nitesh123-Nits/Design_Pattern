@@ -30,7 +30,7 @@
 
     <h2>Java Implementation</h2>
     <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Data Report Generator</span><button class="copy-btn">Copy</button></div>
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Data Report Generator - Abstract class with the template method</span><button class="copy-btn">Copy</button></div>
       <pre><code class="language-java">// Abstract class with the template method
 public abstract class ReportGenerator {
 
@@ -67,9 +67,12 @@ public abstract class ReportGenerator {
     // Hooks — optional overrides with default behavior
     protected boolean shouldAddSignature() { return false; }
     protected void addSignature() { System.out.println("Signed off."); }
-}
+}</code></pre>
+    </div>
 
-// Concrete subclass 1 — CSV report
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Data Report Generator - Concrete subclass 1 — CSV report</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Concrete subclass 1 — CSV report
 public class CSVReportGenerator extends ReportGenerator {
     @Override
     protected String getReportTitle() { return "CSV Sales Report"; }
@@ -84,9 +87,12 @@ public class CSVReportGenerator extends ReportGenerator {
     protected void applyFormatting() {
         System.out.println("Applying CSV formatting: comma-separated, UTF-8 encoded");
     }
-}
+}</code></pre>
+    </div>
 
-// Concrete subclass 2 — HTML report (with signature hook)
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Data Report Generator - Concrete subclass 2 — HTML report (with signature hook)</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Concrete subclass 2 — HTML report (with signature hook)
 public class HTMLReportGenerator extends ReportGenerator {
     @Override
     protected String getReportTitle() { return "HTML Sales Report"; }
@@ -111,9 +117,12 @@ public class HTMLReportGenerator extends ReportGenerator {
     protected void addSignature() {
         System.out.println("&lt;footer&gt;Report by Finance Team&lt;/footer&gt;");
     }
-}
+}</code></pre>
+    </div>
 
-// Usage
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Data Report Generator - Usage</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Usage
 public class Main {
     public static void main(String[] args) {
         List&lt;String&gt; salesData = List.of("Product A: $1000", "Product B: $2500", "Product C: $750");

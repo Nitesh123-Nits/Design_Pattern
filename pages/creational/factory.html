@@ -31,14 +31,17 @@
 
     <h2>Java Implementation</h2>
     <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Notification Factory — Real-World Example</span><button class="copy-btn">Copy</button></div>
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Product interface</span><button class="copy-btn">Copy</button></div>
       <pre><code class="language-java">// Product interface
 public interface Notification {
     void send(String title, String message);
     String getChannel();
-}
+}</code></pre>
+    </div>
 
-// Concrete Products
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Concrete Products</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Concrete Products
 public class EmailNotification implements Notification {
     private final String email;
     public EmailNotification(String email) { this.email = email; }
@@ -70,9 +73,12 @@ public class PushNotification implements Notification {
         System.out.println(" PUSH to device " + deviceToken + " | " + title + ": " + message);
     }
     @Override public String getChannel() { return "PUSH"; }
-}
+}</code></pre>
+    </div>
 
-// Creator (abstract) — defines the factory method
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Creator (abstract) — defines the factory method</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Creator (abstract) — defines the factory method
 public abstract class NotificationFactory {
     // Factory Method — subclasses override this
     public abstract Notification createNotification(String recipient);
@@ -83,9 +89,12 @@ public abstract class NotificationFactory {
         System.out.println("Sending via: " + notification.getChannel());
         notification.send(title, message);
     }
-}
+}</code></pre>
+    </div>
 
-// Concrete Creators
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Concrete Creators</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Concrete Creators
 public class EmailNotificationFactory extends NotificationFactory {
     @Override
     public Notification createNotification(String recipient) {
@@ -100,8 +109,12 @@ public class SMSNotificationFactory extends NotificationFactory {
     }
 }
 
-// --- Simple Factory (NOT GoF, but commonly asked) ---
-// A static factory: no subclasses, just a switch
+// --- Simple Factory (NOT GoF, but commonly asked) ---</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">A static factory: no subclasses, just a switch</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// A static factory: no subclasses, just a switch
 public class NotificationFactorySimple {
     public static Notification create(String type, String recipient) {
         return switch (type.toUpperCase()) {
@@ -111,9 +124,12 @@ public class NotificationFactorySimple {
             default -> throw new IllegalArgumentException("Unknown type: " + type);
         };
     }
-}
+}</code></pre>
+    </div>
 
-// Usage
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Usage</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Usage
 public class Main {
     public static void main(String[] args) {
         // Factory Method pattern

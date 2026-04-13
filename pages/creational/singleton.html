@@ -118,11 +118,7 @@
     <p>Instance is created only when first requested. <strong> Not safe for multi-threaded environments</strong> — two threads can create two instances simultaneously.</p>
 
     <div class="code-block">
-      <div class="code-header">
-        <div class="code-dots"><span></span><span></span><span></span></div>
-        <span class="code-title">LazySingleton.java  Not Thread-Safe</span>
-        <button class="copy-btn">Copy</button>
-      </div>
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">LazySingleton.java  Not Thread-Safe</span><button class="copy-btn">Copy</button></div>
       <pre><code class="language-java">public class LazySingleton {
 
     private static LazySingleton instance; // null initially
@@ -140,13 +136,32 @@
         }
         return instance;
     }
-}
+}</code></pre>
+    </div>
 
-//  Thread-unsafe scenario:
-// Thread A: if (instance == null) → true
-// Thread B: if (instance == null) → true  ← both pass check!
-// Thread A: instance = new LazySingleton() ← creates object 1
-// Thread B: instance = new LazySingleton() ← creates object 2 ← BROKEN!</code></pre>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">LazySingleton.java  Not Thread-Safe - Thread-unsafe scenario:</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">//  Thread-unsafe scenario:</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">LazySingleton.java  Not Thread-Safe - Thread A: if (instance == null) → true</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Thread A: if (instance == null) → true</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">LazySingleton.java  Not Thread-Safe - Thread B: if (instance == null) → true  ← both pass check!</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Thread B: if (instance == null) → true  ← both pass check!</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">LazySingleton.java  Not Thread-Safe - Thread A: instance = new LazySingleton() ← creates object 1</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Thread A: instance = new LazySingleton() ← creates object 1</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">LazySingleton.java  Not Thread-Safe - Thread B: instance = new LazySingleton() ← creates object 2 ← BROKEN!</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Thread B: instance = new LazySingleton() ← creates object 2 ← BROKEN!</code></pre>
     </div>
 
     <div class="info-box warning">
@@ -161,11 +176,7 @@
     <p>Adds <code>synchronized</code> to <code>getInstance()</code> — only one thread can execute it at a time. Thread-safe but <strong>performance bottleneck</strong>: every call to <code>getInstance()</code> acquires a lock even after instance is created.</p>
 
     <div class="code-block">
-      <div class="code-header">
-        <div class="code-dots"><span></span><span></span><span></span></div>
-        <span class="code-title">SynchronizedSingleton.java  Thread-Safe but Slow</span>
-        <button class="copy-btn">Copy</button>
-      </div>
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">SynchronizedSingleton.java  Thread-Safe but Slow</span><button class="copy-btn">Copy</button></div>
       <pre><code class="language-java">public class SynchronizedSingleton {
 
     private static SynchronizedSingleton instance;
@@ -182,11 +193,22 @@
         }
         return instance;
     }
-}
+}</code></pre>
+    </div>
 
-// Problem: After instance is created (99.99% of calls),
-// ALL threads STILL wait to acquire the lock unnecessarily.
-// In a high-traffic Spring app, this is a performance bottleneck.</code></pre>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">SynchronizedSingleton.java  Thread-Safe but Slow - Problem: After instance is created (99.99% of calls),</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Problem: After instance is created (99.99% of calls),</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">SynchronizedSingleton.java  Thread-Safe but Slow - ALL threads STILL wait to acquire the lock unnecessarily.</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// ALL threads STILL wait to acquire the lock unnecessarily.</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">SynchronizedSingleton.java  Thread-Safe but Slow - In a high-traffic Spring app, this is a performance bottleneck.</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// In a high-traffic Spring app, this is a performance bottleneck.</code></pre>
     </div>
 
     <div class="table-wrapper">
@@ -208,11 +230,7 @@
     <p>Fixes the performance problem of Approach 3. Only locks when creating — after instance exists, no lock needed. Requires <code>volatile</code> to prevent instruction reordering by the JVM/CPU.</p>
 
     <div class="code-block">
-      <div class="code-header">
-        <div class="code-dots"><span></span><span></span><span></span></div>
-        <span class="code-title">DCLSingleton.java  Thread-Safe + Performant</span>
-        <button class="copy-btn">Copy</button>
-      </div>
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">DCLSingleton.java  Thread-Safe + Performant</span><button class="copy-btn">Copy</button></div>
       <pre><code class="language-java">public class DCLSingleton {
 
     // volatile: prevents CPU instruction reordering during object creation
@@ -240,17 +258,36 @@
         }
         return instance; // fast path — no lock for subsequent calls
     }
-}
+}</code></pre>
+    </div>
 
-// Why volatile is critical:
-// Object creation has 3 steps internally:
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">DCLSingleton.java  Thread-Safe + Performant - Why volatile is critical:</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Why volatile is critical:</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">DCLSingleton.java  Thread-Safe + Performant - Object creation has 3 steps internally:</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Object creation has 3 steps internally:
 //   1. Allocate memory
 //   2. Initialize the object (constructor)
 //   3. Assign reference to 'instance'
-//
-// CPU can reorder → step 3 before step 2!
-// Thread B might see instance != null but object not yet initialized.
-// volatile forces "happens-before" relationship — step 3 only after step 2.</code></pre>
+//</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">DCLSingleton.java  Thread-Safe + Performant - CPU can reorder → step 3 before step 2!</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// CPU can reorder → step 3 before step 2!</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">DCLSingleton.java  Thread-Safe + Performant - Thread B might see instance != null but object not yet initialized.</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Thread B might see instance != null but object not yet initialized.</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">DCLSingleton.java  Thread-Safe + Performant - volatile forces "happens-before" relationship — step 3 only after step 2.</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// volatile forces "happens-before" relationship — step 3 only after step 2.</code></pre>
     </div>
 
     <div class="table-wrapper">
@@ -278,11 +315,7 @@
     </div>
 
     <div class="code-block">
-      <div class="code-header">
-        <div class="code-dots"><span></span><span></span><span></span></div>
-        <span class="code-title">BillPughSingleton.java  RECOMMENDED — Lazy + Thread-Safe + No Lock</span>
-        <button class="copy-btn">Copy</button>
-      </div>
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">BillPughSingleton.java  RECOMMENDED — Lazy + Thread-Safe + No Lock</span><button class="copy-btn">Copy</button></div>
       <pre><code class="language-java">public class BillPughSingleton {
 
     // Private constructor — prevents external instantiation
@@ -321,9 +354,12 @@
     public void connect() {
         System.out.println("Connected! Instance hashCode: " + hashCode());
     }
-}
+}</code></pre>
+    </div>
 
-//  Usage 
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Usage</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">//  Usage 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
         // Simulate multiple threads calling getInstance() simultaneously
@@ -343,14 +379,37 @@ public class Main {
 
         // All 3 threads get the SAME hashCode — proves single instance
     }
-}
+}</code></pre>
+    </div>
 
-// OUTPUT (hashCode same for all threads):
-// BillPughSingleton instantiated  ← printed only ONCE
-// Connected! Instance hashCode: 12345678
-// Thread-1 → hashCode: 12345678
-// Thread-2 → hashCode: 12345678
-// Thread-3 → hashCode: 12345678</code></pre>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">OUTPUT (hashCode same for all threads):</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// OUTPUT (hashCode same for all threads):</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">BillPughSingleton instantiated  ← printed only ONCE</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// BillPughSingleton instantiated  ← printed only ONCE</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Connected! Instance hashCode: 12345678</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Connected! Instance hashCode: 12345678</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Thread-1 → hashCode: 12345678</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Thread-1 → hashCode: 12345678</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Thread-2 → hashCode: 12345678</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Thread-2 → hashCode: 12345678</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Thread-3 → hashCode: 12345678</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Thread-3 → hashCode: 12345678</code></pre>
     </div>
 
     <h3>Real-World Example — Database Connection Pool with Bill Pugh</h3>
@@ -442,11 +501,7 @@ public class ConnectionPool {
     <p>Using a Java <code>enum</code> with a single constant. <strong>Most robust</strong> — JVM guarantees exactly one instance even against reflection, serialization, and cloning. Recommended in <em>Effective Java</em> by Joshua Bloch as the preferred Singleton approach when you don't need lazy loading.</p>
 
     <div class="code-block">
-      <div class="code-header">
-        <div class="code-dots"><span></span><span></span><span></span></div>
-        <span class="code-title">AppConfig.java — Enum Singleton (Safest)</span>
-        <button class="copy-btn">Copy</button>
-      </div>
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Enum Singleton — most concise, reflection-safe, serialization-safe</span><button class="copy-btn">Copy</button></div>
       <pre><code class="language-java">// Enum Singleton — most concise, reflection-safe, serialization-safe
 public enum AppConfig {
     INSTANCE; // ← Single constant = Single instance
@@ -478,9 +533,12 @@ public enum AppConfig {
     public void printConfig() {
         System.out.println("App: " + appName + " | DB: " + dbUrl + " | Retries: " + maxRetries);
     }
-}
+}</code></pre>
+    </div>
 
-// Usage — access via INSTANCE constant
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Usage — access via INSTANCE constant</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Usage — access via INSTANCE constant
 public class Application {
     public static void main(String[] args) {
         // Access singleton
@@ -608,46 +666,68 @@ public class Application {
     <!-- How to BREAK Singleton -->
     <h2>How to Break Singleton &amp; How to Prevent</h2>
     <div class="code-block">
-      <div class="code-header">
-        <div class="code-dots"><span></span><span></span><span></span></div>
-        <span class="code-title">BreakSingleton.java — 3 Attacks + Fixes</span>
-        <button class="copy-btn">Copy</button>
-      </div>
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Attack 1: Reflection</span><button class="copy-btn">Copy</button></div>
       <pre><code class="language-java">//  Attack 1: Reflection 
 Constructor&lt;BillPughSingleton&gt; c = BillPughSingleton.class.getDeclaredConstructor();
 c.setAccessible(true);
-BillPughSingleton s2 = c.newInstance(); // creates 2nd instance without guard!
+BillPughSingleton s2 = c.newInstance(); // creates 2nd instance without guard!</code></pre>
+    </div>
 
-// FIX: In constructor, throw if instance already exists:
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">FIX: In constructor, throw if instance already exists:</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// FIX: In constructor, throw if instance already exists:
 private BillPughSingleton() {
     if (SingletonHolder.INSTANCE != null) {
         throw new IllegalStateException("Singleton already exists! Use getInstance()");
     }
-}
+}</code></pre>
+    </div>
 
-//  Attack 2: Serialization 
-// Serialize instance → write to file → deserialize → NEW object!
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Attack 2: Serialization</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">//  Attack 2: Serialization</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Serialize instance → write to file → deserialize → NEW object!</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Serialize instance → write to file → deserialize → NEW object!
 ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("singleton.ser"));
 out.writeObject(BillPughSingleton.getInstance());
 ObjectInputStream in = new ObjectInputStream(new FileInputStream("singleton.ser"));
-BillPughSingleton deserialized = (BillPughSingleton) in.readObject(); // new instance!
+BillPughSingleton deserialized = (BillPughSingleton) in.readObject(); // new instance!</code></pre>
+    </div>
 
-// FIX: Add readResolve() method:
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">FIX: Add readResolve() method:</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// FIX: Add readResolve() method:
 protected Object readResolve() {
     return getInstance(); // always return the existing instance
-}
+}</code></pre>
+    </div>
 
-//  Attack 3: Cloning 
-BillPughSingleton cloned = (BillPughSingleton) getInstance().clone(); // new instance!
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Attack 3: Cloning</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">//  Attack 3: Cloning 
+BillPughSingleton cloned = (BillPughSingleton) getInstance().clone(); // new instance!</code></pre>
+    </div>
 
-// FIX: Override clone() to throw exception:
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">FIX: Override clone() to throw exception:</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// FIX: Override clone() to throw exception:
 @Override
 protected Object clone() throws CloneNotSupportedException {
     throw new CloneNotSupportedException("Singleton cannot be cloned!");
-}
+}</code></pre>
+    </div>
 
-//  BEST FIX: Use Enum 
-// Enum is immune to ALL 3 attacks automatically — JVM guarantees it.</code></pre>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">BEST FIX: Use Enum</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">//  BEST FIX: Use Enum</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Enum is immune to ALL 3 attacks automatically — JVM guarantees it.</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Enum is immune to ALL 3 attacks automatically — JVM guarantees it.</code></pre>
     </div>
 
     <!-- Real World -->

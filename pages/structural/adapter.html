@@ -31,15 +31,22 @@
 
     <h2>Java Implementation</h2>
     <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Payment Gateway Adapter</span><button class="copy-btn">Copy</button></div>
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Payment Gateway Adapter - Target Interface — what our system expects</span><button class="copy-btn">Copy</button></div>
       <pre><code class="language-java">//  Target Interface — what our system expects 
 public interface PaymentGateway {
     boolean processPayment(String orderId, double amount, String currency);
     String getTransactionStatus(String transactionId);
-}
+}</code></pre>
+    </div>
 
-//  Adaptee — existing third-party Stripe SDK (incompatible interface) 
-// We cannot modify this class (external library)
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Payment Gateway Adapter - Adaptee — existing third-party Stripe SDK (incompatible interface)</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">//  Adaptee — existing third-party Stripe SDK (incompatible interface)</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Payment Gateway Adapter - We cannot modify this class (external library)</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// We cannot modify this class (external library)
 public class StripePaymentSDK {
     public String chargeCard(double amountInCents, String curr, Map&lt;String, String&gt; metadata) {
         System.out.println("Stripe: Charging " + amountInCents + " cents in " + curr);
@@ -49,9 +56,12 @@ public class StripePaymentSDK {
     public Map&lt;String, Object&gt; retrieveCharge(String chargeId) {
         return Map.of("id", chargeId, "status", "succeeded", "amount", 9999);
     }
-}
+}</code></pre>
+    </div>
 
-//  Adaptee 2 — legacy PayPal SDK 
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Payment Gateway Adapter - Adaptee 2 — legacy PayPal SDK</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">//  Adaptee 2 — legacy PayPal SDK 
 public class PayPalLegacySDK {
     public void initiatePayment(String orderId, float usdAmount) {
         System.out.println("PayPal: Initiating $" + usdAmount + " for order " + orderId);
@@ -60,9 +70,12 @@ public class PayPalLegacySDK {
     public String checkPaymentState(String orderId) {
         return "COMPLETED";
     }
-}
+}</code></pre>
+    </div>
 
-//  Adapter 1 — Stripe 
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Payment Gateway Adapter - Adapter 1 — Stripe</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">//  Adapter 1 — Stripe 
 public class StripeAdapter implements PaymentGateway {
     private final StripePaymentSDK stripe;
 
@@ -85,9 +98,12 @@ public class StripeAdapter implements PaymentGateway {
         Map&lt;String, Object&gt; charge = stripe.retrieveCharge(transactionId);
         return (String) charge.get("status"); // adapt response format
     }
-}
+}</code></pre>
+    </div>
 
-//  Adapter 2 — PayPal 
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Payment Gateway Adapter - Adapter 2 — PayPal</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">//  Adapter 2 — PayPal 
 public class PayPalAdapter implements PaymentGateway {
     private final PayPalLegacySDK paypal;
     private String lastOrderId;
@@ -105,9 +121,12 @@ public class PayPalAdapter implements PaymentGateway {
     public String getTransactionStatus(String transactionId) {
         return paypal.checkPaymentState(lastOrderId); // adapt method name
     }
-}
+}</code></pre>
+    </div>
 
-//  Client — only knows PaymentGateway interface 
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Payment Gateway Adapter - Client — only knows PaymentGateway interface</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">//  Client — only knows PaymentGateway interface 
 public class OrderCheckoutService {
     private final PaymentGateway gateway;
 
@@ -119,9 +138,12 @@ public class OrderCheckoutService {
         boolean success = gateway.processPayment(orderId, amount, "USD");
         System.out.println("Payment " + (success ? "successful" : "failed"));
     }
-}
+}</code></pre>
+    </div>
 
-// Usage
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Payment Gateway Adapter - Usage</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Usage
 public class Main {
     public static void main(String[] args) {
         // Use Stripe — client totally unaware of Stripe's API

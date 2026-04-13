@@ -32,15 +32,21 @@
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Chat Room Mediator</span><button class="copy-btn">Copy</button></div>
       <pre><code class="language-java">import java.util.ArrayList;
-import java.util.List;
+import java.util.List;</code></pre>
+    </div>
 
-// Mediator interface
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Chat Room Mediator - Mediator interface</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Mediator interface
 public interface ChatMediator {
     void sendMessage(String message, User sender);
     void addUser(User user);
-}
+}</code></pre>
+    </div>
 
-// Colleague
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Chat Room Mediator - Colleague</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Colleague
 public abstract class User {
     protected final ChatMediator mediator;
     protected final String name;
@@ -57,9 +63,12 @@ public abstract class User {
     }
 
     public String getName() { return name; }
-}
+}</code></pre>
+    </div>
 
-// Concrete Mediator
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Chat Room Mediator - Concrete Mediator</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Concrete Mediator
 public class ChatRoom implements ChatMediator {
     private final List&lt;User&gt; users = new ArrayList&lt;&gt;();
 
@@ -73,9 +82,12 @@ public class ChatRoom implements ChatMediator {
             .filter(u -> u != sender) // don't echo to sender
             .forEach(u -> u.receive(message, sender.getName()));
     }
-}
+}</code></pre>
+    </div>
 
-// Concrete User
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Chat Room Mediator - Concrete User</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Concrete User
 public class ChatUser extends User {
     public ChatUser(ChatMediator mediator, String name) {
         super(mediator, name);
@@ -86,9 +98,12 @@ public class ChatUser extends User {
     public void receive(String message, String from) {
         System.out.println("  [" + name + " received from " + from + "]: " + message);
     }
-}
+}</code></pre>
+    </div>
 
-// Specialized user — only receives messages
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Chat Room Mediator - Specialized user — only receives messages</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Specialized user — only receives messages
 public class AdminUser extends User {
     public AdminUser(ChatMediator mediator) {
         super(mediator, "ADMIN");
@@ -99,9 +114,12 @@ public class AdminUser extends User {
     public void receive(String message, String from) {
         System.out.println("   [ADMIN monitoring from " + from + "]: " + message);
     }
-}
+}</code></pre>
+    </div>
 
-// Usage
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Chat Room Mediator - Usage</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Usage
 public class Main {
     public static void main(String[] args) {
         ChatMediator chatRoom = new ChatRoom();

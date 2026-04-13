@@ -34,9 +34,12 @@
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">E-Commerce Order Event System</span><button class="copy-btn">Copy</button></div>
       <pre><code class="language-java">import java.util.ArrayList;
-import java.util.List;
+import java.util.List;</code></pre>
+    </div>
 
-//  Event Object 
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">E-Commerce Order Event System - Event Object</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">//  Event Object 
 public class OrderEvent {
     public enum Type { PLACED, SHIPPED, DELIVERED, CANCELLED }
     private final String orderId;
@@ -51,21 +54,30 @@ public class OrderEvent {
     public String getOrderId() { return orderId; }
     public Type getType()      { return type; }
     public double getAmount()  { return amount; }
-}
+}</code></pre>
+    </div>
 
-//  Observer Interface 
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">E-Commerce Order Event System - Observer Interface</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">//  Observer Interface 
 public interface OrderObserver {
     void onOrderEvent(OrderEvent event);
-}
+}</code></pre>
+    </div>
 
-//  Subject Interface 
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">E-Commerce Order Event System - Subject Interface</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">//  Subject Interface 
 public interface OrderSubject {
     void subscribe(OrderObserver observer);
     void unsubscribe(OrderObserver observer);
     void notifyObservers(OrderEvent event);
-}
+}</code></pre>
+    </div>
 
-//  Concrete Subject 
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">E-Commerce Order Event System - Concrete Subject</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">//  Concrete Subject 
 public class OrderService implements OrderSubject {
     private final List&lt;OrderObserver&gt; observers = new ArrayList&lt;&gt;();
 
@@ -95,9 +107,12 @@ public class OrderService implements OrderSubject {
         System.out.println("\n Order shipped: " + orderId);
         notifyObservers(new OrderEvent(orderId, OrderEvent.Type.SHIPPED, 0));
     }
-}
+}</code></pre>
+    </div>
 
-//  Concrete Observers 
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">E-Commerce Order Event System - Concrete Observers</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">//  Concrete Observers 
 public class EmailNotificationObserver implements OrderObserver {
     @Override
     public void onOrderEvent(OrderEvent event) {
@@ -136,9 +151,12 @@ public class AnalyticsObserver implements OrderObserver {
             System.out.println(" ANALYTICS: Orders=" + totalOrders + " Revenue=$" + totalRevenue);
         }
     }
-}
+}</code></pre>
+    </div>
 
-// Usage
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">E-Commerce Order Event System - Usage</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Usage
 public class Main {
     public static void main(String[] args) {
         OrderService orderService = new OrderService();
@@ -159,7 +177,7 @@ public class Main {
 
     <h3>Spring Framework — Built-in Observer via ApplicationEvent</h3>
     <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Spring Events (Production-Grade)</span><button class="copy-btn">Copy</button></div>
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Spring Events (Production-Grade) - Event</span><button class="copy-btn">Copy</button></div>
       <pre><code class="language-java">// Event
 public class OrderPlacedEvent extends ApplicationEvent {
     private final String orderId;
@@ -168,9 +186,12 @@ public class OrderPlacedEvent extends ApplicationEvent {
         this.orderId = orderId;
     }
     public String getOrderId() { return orderId; }
-}
+}</code></pre>
+    </div>
 
-// Publisher (Subject)
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Spring Events (Production-Grade) - Publisher (Subject)</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Publisher (Subject)
 @Service
 public class OrderService {
     @Autowired private ApplicationEventPublisher publisher;
@@ -179,18 +200,24 @@ public class OrderService {
         // business logic...
         publisher.publishEvent(new OrderPlacedEvent(this, orderId));
     }
-}
+}</code></pre>
+    </div>
 
-// Listener (Observer)
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Spring Events (Production-Grade) - Listener (Observer)</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Listener (Observer)
 @Component
 public class EmailListener {
     @EventListener
     public void handleOrderPlaced(OrderPlacedEvent event) {
         System.out.println("Sending email for order: " + event.getOrderId());
     }
-}
+}</code></pre>
+    </div>
 
-// Async Listener
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Spring Events (Production-Grade) - Async Listener</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Async Listener
 @Component
 public class AnalyticsListener {
     @Async

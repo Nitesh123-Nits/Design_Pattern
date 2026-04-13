@@ -31,7 +31,7 @@
 
     <h2>Java Implementation</h2>
     <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">E-Commerce Discount Strategy</span><button class="copy-btn">Copy</button></div>
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">E-Commerce Discount Strategy - Strategy interface — the contract for all algorithms</span><button class="copy-btn">Copy</button></div>
       <pre><code class="language-java">// Strategy interface — the contract for all algorithms
 @FunctionalInterface
 public interface DiscountStrategy {
@@ -53,9 +53,12 @@ public interface DiscountStrategy {
     static DiscountStrategy buyOneGetOne() {
         return price -> price / 2; // halves the price (2 items for price of 1)
     }
-}
+}</code></pre>
+    </div>
 
-// Context — uses a strategy
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">E-Commerce Discount Strategy - Context — uses a strategy</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Context — uses a strategy
 public class ShoppingCart {
     private List&lt;Double&gt; items = new ArrayList&lt;&gt;();
     private DiscountStrategy discountStrategy;
@@ -76,9 +79,12 @@ public class ShoppingCart {
         System.out.printf("Subtotal: $%.2f | After discount: $%.2f%n", subtotal, discounted);
         return discounted;
     }
-}
+}</code></pre>
+    </div>
 
-// Classic OO approach (without lambdas)
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">E-Commerce Discount Strategy - Classic OO approach (without lambdas)</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Classic OO approach (without lambdas)
 public class SeasonalDiscountStrategy implements DiscountStrategy {
     private final String season;
     public SeasonalDiscountStrategy(String season) { this.season = season; }
@@ -92,9 +98,12 @@ public class SeasonalDiscountStrategy implements DiscountStrategy {
             default           -> price;
         };
     }
-}
+}</code></pre>
+    </div>
 
-// Usage — Strategy changes at runtime
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">E-Commerce Discount Strategy - Usage — Strategy changes at runtime</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Usage — Strategy changes at runtime
 public class Main {
     public static void main(String[] args) {
         ShoppingCart cart = new ShoppingCart();

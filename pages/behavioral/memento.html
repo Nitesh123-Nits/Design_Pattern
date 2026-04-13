@@ -24,10 +24,17 @@
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Game Checkpoint / Undo System</span><button class="copy-btn">Copy</button></div>
       <pre><code class="language-java">import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.Deque;</code></pre>
+    </div>
 
-// Memento — stores a snapshot of the Originator's state
-// Made as an inner record for encapsulation (Java 16+)
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Game Checkpoint / Undo System - Memento — stores a snapshot of the Originator's state</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Memento — stores a snapshot of the Originator's state</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Game Checkpoint / Undo System - Made as an inner record for encapsulation (Java 16+)</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Made as an inner record for encapsulation (Java 16+)
 public class GameCharacter {
 
     //  Memento (inner) 
@@ -71,9 +78,12 @@ public class GameCharacter {
     public void printStatus() {
         System.out.printf("  Status: %s | HP:%d | LVL:%d | Gold:%d%n", location, health, level, gold);
     }
-}
+}</code></pre>
+    </div>
 
-// Caretaker — manages the history of mementos
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Game Checkpoint / Undo System - Caretaker — manages the history of mementos</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Caretaker — manages the history of mementos
 public class GameSaveManager {
     private final Deque&lt;GameCharacter.Memento&gt; history = new ArrayDeque&lt;&gt;();
 
@@ -90,9 +100,12 @@ public class GameSaveManager {
     }
 
     public int checkpointCount() { return history.size(); }
-}
+}</code></pre>
+    </div>
 
-// Usage
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Game Checkpoint / Undo System - Usage</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Usage
 public class Main {
     public static void main(String[] args) {
         GameCharacter hero = new GameCharacter("Village");

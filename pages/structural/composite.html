@@ -32,9 +32,12 @@
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">File System — Classic Composite</span><button class="copy-btn">Copy</button></div>
       <pre><code class="language-java">import java.util.ArrayList;
-import java.util.List;
+import java.util.List;</code></pre>
+    </div>
 
-// Component — unified interface for leaves and composites
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Component — unified interface for leaves and composites</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Component — unified interface for leaves and composites
 public abstract class FileSystemItem {
     protected final String name;
     public FileSystemItem(String name) { this.name = name; }
@@ -43,9 +46,12 @@ public abstract class FileSystemItem {
     // Optional: add/remove — only composites implement these meaningfully
     public void add(FileSystemItem item) { throw new UnsupportedOperationException(); }
     public void remove(FileSystemItem item) { throw new UnsupportedOperationException(); }
-}
+}</code></pre>
+    </div>
 
-// Leaf — no children
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Leaf — no children</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Leaf — no children
 public class File extends FileSystemItem {
     private final long sizeBytes;
 
@@ -60,9 +66,12 @@ public class File extends FileSystemItem {
     public void printStructure(String indent) {
         System.out.printf("%s %s (%d KB)%n", indent, name, sizeBytes / 1024);
     }
-}
+}</code></pre>
+    </div>
 
-// Composite — has children (can be files or other folders)
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Composite — has children (can be files or other folders)</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Composite — has children (can be files or other folders)
 public class Folder extends FileSystemItem {
     private final List&lt;FileSystemItem&gt; children = new ArrayList&lt;&gt;();
 
@@ -82,9 +91,12 @@ public class Folder extends FileSystemItem {
         System.out.printf("%s %s/ (%d KB total)%n", indent, name, getSize() / 1024);
         children.forEach(child -> child.printStructure(indent + "  "));
     }
-}
+}</code></pre>
+    </div>
 
-// Usage
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Usage</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Usage
 public class Main {
     public static void main(String[] args) {
         // Build file system tree
