@@ -8,6 +8,8 @@ const SEARCH_INDEX = [
   { name: 'OOP Concepts', cat: 'Core', url: '../../pages/oop/index.html', icon: '🧬' },
   // SOLID
   { name: 'SOLID Principles', cat: 'Core', url: '../../pages/solid/index.html', icon: '🏛️' },
+  // Principles
+  { name: 'Design Principles', cat: 'Core', url: '../../pages/principles/index.html', icon: '💡' },
   // Creational
   { name: 'Singleton', cat: 'Creational', url: '../../pages/creational/singleton.html', icon: '1️⃣' },
   { name: 'Factory Method', cat: 'Creational', url: '../../pages/creational/factory.html', icon: '🏭' },
@@ -45,6 +47,7 @@ function getSidebarHTML(rootPath = '') {
         <li><a href="${rootPath}index.html"><span class="nav-icon">🏠</span> Home</a></li>
         <li><a href="${rootPath}pages/oop/index.html"><span class="nav-icon">🧬</span> OOP Concepts</a></li>
         <li><a href="${rootPath}pages/solid/index.html"><span class="nav-icon">🏛️</span> SOLID Principles</a></li>
+        <li><a href="${rootPath}pages/principles/index.html"><span class="nav-icon">💡</span> Design Principles</a></li>
       </ul>
     </div>
     <div class="sidebar-divider"></div>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Essential Design Principles — JavaPatterns</title>
+  <meta name="description" content="Core software engineering principles: DRY, KISS, YAGNI, Law of Demeter, and Composition over Inheritance explained with Java." />
+  <link rel="stylesheet" href="../../css/styles.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" /></head>
+<body>
+<header class="site-header">
+  <button id="menu-toggle"></button>
+  <a href="../../index.html" class="logo"><div class="logo-icon"></div><span>JavaPatterns</span></a>
+  <div class="search-bar">
+    <span class="search-icon"></span>
+    <input type="text" id="search-input" placeholder="Search patterns..." autocomplete="off" />
+    <div id="search-results"></div>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar" data-root="../../"></nav>
+  <main class="main-content">
+
+    <div class="page-header">
+      <div class="breadcrumb"><a href="../../index.html">Home</a><span class="sep">›</span><span>Design Principles</span></div>
+      <div class="badges"><span class="badge badge-principles">Best Practices</span></div>
+      <h1>Design Principles</h1>
+      <p>Beyond SOLID and Design Patterns, these foundational principles (DRY, KISS, YAGNI, Law of Demeter, Composition) will drastically improve your code quality, maintainability, and architecture.</p>
+    </div>
+
+    <!-- 1. DRY -->
+    <section class="section-block" id="dry">
+      <h2>1. DRY (Don't Repeat Yourself)</h2>
+      <p><strong>Definition:</strong> "Every piece of knowledge must have a single, unambiguous, authoritative representation within a system."</p>
+      <p>Code duplication is the root of many software bugs. If logic is duplicated, a change in requirements means updating code in multiple places — and developers inevitably forget to update one of them.</p>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">DRY Violation & Fix</span><button class="copy-btn">Copy</button></div>
+        <pre><code class="language-java">// BAD (WET: Write Everything Twice)
+public void saveUser(User user) {
+    if (user.getEmail() == null || !user.getEmail().contains("@")) {
+        throw new IllegalArgumentException("Invalid email");
+    }
+    // save logic...
+}
+public void updateUser(User user) {
+    if (user.getEmail() == null || !user.getEmail().contains("@")) {
+        throw new IllegalArgumentException("Invalid email");
+    }
+    // update logic...
+}
+
+// GOOD (DRY)
+private void validateEmail(String email) {
+    if (email == null || !email.contains("@")) {
+        throw new IllegalArgumentException("Invalid email");
+    }
+}
+public void saveUser(User user) {
+    validateEmail(user.getEmail());
+    // save logic...
+}
+public void updateUser(User user) {
+    validateEmail(user.getEmail());
+    // update logic...
+}</code></pre>
+      </div>
+      
+      <div class="info-box warning">
+        <span class="info-icon"></span>
+        <p><strong>Warning:</strong> Beware of forced DRY. Sometimes two pieces of code look identical right now, but they represent entirely different business concepts that will evolve separately. Prematurely combining them tightly couples unrelated contexts code (violating SRP).</p>
+      </div>
+    </section>
+
+    <!-- 2. KISS -->
+    <section class="section-block" id="kiss">
+      <h2>2. KISS (Keep It Simple, Stupid)</h2>
+      <p><strong>Definition:</strong> Most systems work best if they are kept simple rather than made complicated. Simplicity should be a key goal in design.</p>
+      <p>Do not use advanced design patterns, complex reflections, or massive generic structures when a simple <code>if-else</code> or standard loop solves the problem effectively and is easier for the next developer to read.</p>
+    </section>
+
+    <!-- 3. YAGNI -->
+    <section class="section-block" id="yagni">
+      <h2>3. YAGNI (You Aren't Gonna Need It)</h2>
+      <p><strong>Definition:</strong> "Always implement things when you actually need them, never when you just foresee that you need them."</p>
+      <p>Writing code for features that <em>might</em> be needed in the future wastes time, introduces bugs, bloats the codebase, and usually results in the wrong architecture because the future requirements weren't fully understood yet.</p>
+      <ul>
+        <li>Don't build a complex caching layer on day 1 if traffic is low.</li>
+        <li>Don't create abstract factories if you currently only have exactly one database type.</li>
+        <li>Focus on the requirements of the current sprint.</li>
+      </ul>
+    </section>
+
+    <!-- 4. Law of Demeter -->
+    <section class="section-block" id="lod">
+      <h2>4. Law of Demeter (LoD)</h2>
+      <p><strong>Definition:</strong> The Principle of Least Knowledge. A module should not know about the inner details of the objects it manipulates. "Don't talk to strangers."</p>
+      <p>An object <code>O</code> should only invoke methods of:</p>
+      <ol>
+        <li>Itself</li>
+        <li>Objects passed via method parameters</li>
+        <li>Objects it instantiates</li>
+        <li>Its direct dependencies/fields</li>
+      </ol>
+      <p>It explicitly restricts "train wrecks" like: <code>object.getChild().getGrandchild().doSomething()</code>.</p>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Law of Demeter Example</span><button class="copy-btn">Copy</button></div>
+        <pre><code class="language-java">// BAD (Train Wreck, violates LoD)
+public class CustomerDashboard {
+    public void printZipCode(Customer customer) {
+        // Dashboard knows Customer has an Address, and Address has a ZipCode
+        // This tightly couples Dashboard to Address!
+        String zip = customer.getAddress().getZipCode();
+        System.out.println(zip);
+    }
+}
+
+// GOOD 
+public class Customer {
+    private Address address;
+    // Customer delegates the call, hiding internal structure
+    public String getZipCode() {
+        return this.address.getZipCode();
+    }
+}
+
+public class CustomerDashboard {
+    public void printZipCode(Customer customer) {
+        // Dashboard only talks to its direct friend, Customer
+        String zip = customer.getZipCode();
+        System.out.println(zip);
+    }
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- 5. Composition vs Inheritance -->
+    <section class="section-block" id="composition">
+      <h2>5. Composition Over Inheritance</h2>
+      <p><strong>Definition:</strong> Classes should achieve polymorphic behavior and code reuse by their composition (containing instances of other classes) rather than inheritance from a base or parent class.</p>
+      <p>Inheritance introduces deep, rigid hierarchies (IS-A) that break encapsulation and are extremely difficult to change. Composition (HAS-A) allows assembling behavior dynamically at runtime and leads to flat, modular designs.</p>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Inheritance vs Composition</span><button class="copy-btn">Copy</button></div>
+        <pre><code class="language-java">// BAD: Inheritance leads to combinatorial explosions
+class Animal {}
+class FlyingAnimal extends Animal {}
+class SwimmingAnimal extends Animal {}
+class Bird extends FlyingAnimal {} 
+class Duck extends Bird {} // Wait, a duck swims too! How do we inherit SwimmingAnimal?
+
+// GOOD: Composition enables modular capabilities
+interface FlyBehavior { void fly(); }
+interface SwimBehavior { void swim(); }
+
+class Wings implements FlyBehavior {
+    public void fly() { System.out.println("Flapping wings"); }
+}
+class WebbedFeet implements SwimBehavior {
+    public void swim() { System.out.println("Paddling"); }
+}
+
+class Duck {
+    // Duck is COMPOSED with behaviors
+    private FlyBehavior flying;
+    private SwimBehavior swimming;
+
+    public Duck(FlyBehavior flying, SwimBehavior swimming) {
+        this.flying = flying;
+        this.swimming = swimming;
+    }
+
+    public void move() {
+        flying.fly();
+        swimming.swim();
+    }
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- 6. Aggregation vs Composition -->
+    <section class="section-block" id="aggregation">
+      <h2>6. Aggregation vs Composition</h2>
+      <p>These are two types of associations in OOP describing how objects relate.</p>
+      
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Property</th>
+              <th>Composition</th>
+              <th>Aggregation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Type</strong></td>
+              <td>"Part-of" (Strong relationship)</td>
+              <td>"Has-a" (Weak relationship)</td>
+            </tr>
+            <tr>
+              <td><strong>Lifecycle</strong></td>
+              <td>Child dies if Parent dies</td>
+              <td>Child can exist independently of Parent</td>
+            </tr>
+            <tr>
+              <td><strong>Real-World Example</strong></td>
+              <td>House & Room. If house is destroyed, rooms are destroyed.</td>
+              <td>Department & Professor. If department closes, professor still exists.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+    <footer class="site-footer">
+      <p>JavaPatterns • <a href="../../index.html">← Back to Home</a></p>
+    </footer>
+  </main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="../../js/main.js"></script>
+</body>
+</html>

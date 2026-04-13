@@ -35,6 +35,7 @@
   --behavioral:    #ffd93d;
   --oop:           #4fc3f7;
   --solid:         #ff6b6b;
+  --principles:    #ff9800;
 }
 
 /* ── Reset & Base ──────────────────────────────────────────── */
@@ -368,6 +369,7 @@ li { color: var(--text-secondary); margin-bottom: 6px; }
 .pattern-card.behavioral::after { background: var(--behavioral); }
 .pattern-card.oop::after { background: var(--oop); }
 .pattern-card.solid::after { background: var(--solid); }
+.pattern-card.principles::after { background: var(--principles); }
 
 .pattern-card:hover {
   transform: translateY(-4px);
@@ -415,6 +417,7 @@ li { color: var(--text-secondary); margin-bottom: 6px; }
 .badge-behavioral  { background: rgba(255,217,61,0.12); color: var(--behavioral); border: 1px solid rgba(255,217,61,0.25); }
 .badge-oop         { background: rgba(79,195,247,0.12); color: var(--oop); border: 1px solid rgba(79,195,247,0.25); }
 .badge-solid       { background: rgba(255,107,107,0.12); color: var(--solid); border: 1px solid rgba(255,107,107,0.25); }
+.badge-principles  { background: rgba(255,152,0,0.12); color: var(--principles); border: 1px solid rgba(255,152,0,0.25); }
 .badge-easy        { background: rgba(6,255,165,0.12); color: var(--creational); border: 1px solid rgba(6,255,165,0.2); }
 .badge-medium      { background: rgba(255,217,61,0.12); color: var(--behavioral); border: 1px solid rgba(255,217,61,0.2); }
 .badge-hard        { background: rgba(255,107,107,0.12); color: var(--solid); border: 1px solid rgba(255,107,107,0.2); }
