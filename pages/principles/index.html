@@ -76,6 +76,31 @@ public void updateUser(User user) {
       <h2>2. KISS (Keep It Simple, Stupid)</h2>
       <p><strong>Definition:</strong> Most systems work best if they are kept simple rather than made complicated. Simplicity should be a key goal in design.</p>
       <p>Do not use advanced design patterns, complex reflections, or massive generic structures when a simple <code>if-else</code> or standard loop solves the problem effectively and is easier for the next developer to read.</p>
+      
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">KISS Example</span><button class="copy-btn">Copy</button></div>
+        <pre><code class="language-java">// BAD (Over-engineered)
+public String getWeekday(int day) {
+    List&lt;String&gt; days = Arrays.asList("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun");
+    return days.stream().skip(day - 1).findFirst().orElseThrow(
+        () -&gt; new IllegalArgumentException("Invalid day")
+    );
+}
+
+// GOOD (KISS - Simple and readable)
+public String getWeekday(int day) {
+    switch (day) {
+        case 1: return "Mon";
+        case 2: return "Tue";
+        case 3: return "Wed";
+        case 4: return "Thu";
+        case 5: return "Fri";
+        case 6: return "Sat";
+        case 7: return "Sun";
+        default: throw new IllegalArgumentException("Invalid day");
+    }
+}</code></pre>
+      </div>
     </section>
 
     <!-- 3. YAGNI -->
@@ -88,6 +113,23 @@ public void updateUser(User user) {
         <li>Don't create abstract factories if you currently only have exactly one database type.</li>
         <li>Focus on the requirements of the current sprint.</li>
       </ul>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">YAGNI Example</span><button class="copy-btn">Copy</button></div>
+        <pre><code class="language-java">// BAD (Building for future possibilities that may never happen)
+public interface IDatabase { /* ... */ }
+public class MySQLDatabase implements IDatabase { /* ... */ }
+public class MongoDatabase implements IDatabase { /* ... */ }
+public class DatabaseFactory {
+    // "We might need Mongo in the future, let's build the whole factory structure now!"
+}
+
+// GOOD (YAGNI - Build what you need today)
+public class Database {
+    // Just connect to MySQL, which is all we currently need.
+    // If we ever need Mongo, we will refactor THEN, not now.
+}</code></pre>
+      </div>
     </section>
 
     <!-- 4. Law of Demeter -->
@@ -210,6 +252,29 @@ class Duck {
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Composition vs Aggregation</span><button class="copy-btn">Copy</button></div>
+        <pre><code class="language-java">// 1. COMPOSITION (Strong, Part-of)
+public class House {
+    private final Room room;
+
+    public House() {
+        // Room is created inside. If House is garbage collected, Room dies too.
+        this.room = new Room(); 
+    }
+}
+
+// 2. AGGREGATION (Weak, Has-a)
+public class Department {
+    private final List&lt;Professor&gt; professors;
+
+    public Department(List&lt;Professor&gt; professors) {
+        // Professors are passed in. If Department closes, Professors still exist.
+        this.professors = professors; 
+    }
+}</code></pre>
       </div>
 
     </section>
