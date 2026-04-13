@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Builder Pattern in Java — JavaPatterns</title>
+  <meta name="description" content="Builder design pattern in Java with complete code examples, method chaining, Lombok, and interview questions." />
+  <link rel="stylesheet" href="../../css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+</head>
+<body>
+<header class="site-header">
+  <button id="menu-toggle">☰</button>
+  <a href="../../index.html" class="logo"><div class="logo-icon">♟</div><span>JavaPatterns</span></a>
+  <div class="search-bar"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar" data-root="../../"></nav>
+  <main class="main-content">
+    <div class="page-header">
+      <div class="breadcrumb"><a href="../../index.html">Home</a><span class="sep">›</span><a href="index.html">Creational</a><span class="sep">›</span><span>Builder</span></div>
+      <div class="badges"><span class="badge badge-creational">Creational</span><span class="badge badge-medium">Medium</span></div>
+      <h1>🔨 Builder Pattern</h1>
+      <p>Constructs a complex object step by step. Separates the construction of a complex object from its representation, allowing the same construction process to create different representations.</p>
+    </div>
+
+    <h2>🎯 When to Use</h2>
+    <ul>
+      <li>When an object has many optional parameters (Telescoping Constructor problem)</li>
+      <li>When construction must be done step-by-step</li>
+      <li>When you want immutable objects with many fields</li>
+      <li>When you need to vary object representation (different configurations)</li>
+    </ul>
+
+    <h2>🗺️ UML Structure</h2>
+    <div class="uml-diagram"><pre>
+  ┌────────────────┐       ┌─────────────────┐
+  │    Director    │──────▶│  Builder (iface) │
+  ├────────────────┤       ├─────────────────┤
+  │+construct()    │       │+setPartA()       │
+  └────────────────┘       │+setPartB()       │
+                           │+build(): Product │
+                           └─────────────────┘
+                                    ▲
+                           ┌────────┴────────┐
+                           │ConcreteBuilder  │
+                           ├─────────────────┤
+                           │+setPartA()       │
+                           │+setPartB()       │
+                           │+build(): Product │
+                           └─────────────────┘</pre></div>
+
+    <h2>💻 Java Implementation</h2>
+
+    <h3>Classic Builder (Inner Class) — Preferred in Java</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">HttpRequest.java</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Complex object with many optional parameters
+public final class HttpRequest {
+
+    // Required fields
+    private final String url;
+    private final String method;
+
+    // Optional fields — would be a telescoping constructor nightmare
+    private final Map&lt;String, String&gt; headers;
+    private final String body;
+    private final int timeoutMs;
+    private final boolean followRedirects;
+    private final String contentType;
+
+    // Private constructor — only Builder can call this
+    private HttpRequest(Builder builder) {
+        this.url             = builder.url;
+        this.method          = builder.method;
+        this.headers         = Collections.unmodifiableMap(builder.headers);
+        this.body            = builder.body;
+        this.timeoutMs       = builder.timeoutMs;
+        this.followRedirects = builder.followRedirects;
+        this.contentType     = builder.contentType;
+    }
+
+    // Getters only — immutable object
+    public String getUrl()          { return url; }
+    public String getMethod()       { return method; }
+    public String getBody()         { return body; }
+    public int getTimeoutMs()       { return timeoutMs; }
+    public boolean isFollowRedirects() { return followRedirects; }
+    public Map&lt;String, String&gt; getHeaders() { return headers; }
+
+    @Override
+    public String toString() {
+        return method + " " + url + " (timeout=" + timeoutMs + "ms, redirects=" + followRedirects + ")";
+    }
+
+    // ─── Static Inner Builder ───────────────────────────────────
+    public static class Builder {
+        // Required
+        private final String url;
+        private final String method;
+
+        // Optional — defaults set here
+        private Map&lt;String, String&gt; headers = new HashMap&lt;&gt;();
+        private String body = null;
+        private int timeoutMs = 5000;
+        private boolean followRedirects = true;
+        private String contentType = "application/json";
+
+        // Constructor for required parameters only
+        public Builder(String method, String url) {
+            if (url == null || url.isBlank()) throw new IllegalArgumentException("URL required");
+            this.method = method.toUpperCase();
+            this.url    = url;
+        }
+
+        // Each setter returns 'this' for method chaining
+        public Builder header(String key, String value) {
+            this.headers.put(key, value);
+            return this;
+        }
+
+        public Builder body(String body) {
+            this.body = body;
+            return this;
+        }
+
+        public Builder timeout(int ms) {
+            if (ms &lt;= 0) throw new IllegalArgumentException("Timeout must be positive");
+            this.timeoutMs = ms;
+            return this;
+        }
+
+        public Builder followRedirects(boolean follow) {
+            this.followRedirects = follow;
+            return this;
+        }
+
+        public Builder contentType(String contentType) {
+            this.contentType = contentType;
+            return this;
+        }
+
+        // Terminal method — creates the immutable object
+        public HttpRequest build() {
+            // Final validation before building
+            if ("POST".equals(method) || "PUT".equals(method)) {
+                if (body == null) throw new IllegalStateException("Body required for " + method);
+            }
+            return new HttpRequest(this);
+        }
+    }
+}
+
+// Usage — Fluent, readable API
+public class Main {
+    public static void main(String[] args) {
+        // GET request — minimal configuration
+        HttpRequest getRequest = new HttpRequest.Builder("GET", "https://api.example.com/users")
+                .header("Authorization", "Bearer eyJhbGci...")
+                .header("Accept", "application/json")
+                .timeout(3000)
+                .build();
+
+        // POST request — full configuration
+        HttpRequest postRequest = new HttpRequest.Builder("POST", "https://api.example.com/users")
+                .header("Authorization", "Bearer eyJhbGci...")
+                .header("X-Request-ID", "req-123")
+                .body("{\"name\":\"Alice\",\"email\":\"alice@example.com\"}")
+                .contentType("application/json")
+                .timeout(10000)
+                .followRedirects(false)
+                .build();
+
+        System.out.println(getRequest);
+        System.out.println(postRequest);
+    }
+}</code></pre>
+    </div>
+
+    <h3>Lombok @Builder — Industry Shortcut</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">User.java with Lombok</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">import lombok.Builder;
+import lombok.Value;
+
+@Value  // immutable — all fields final, no setters
+@Builder(toBuilder = true)  // generates Builder class automatically
+public class User {
+    String id;
+    String name;
+    String email;
+    String role;
+    boolean active;
+
+    // Usage
+    public static void main(String[] args) {
+        User user = User.builder()
+                .id("usr-001")
+                .name("Alice")
+                .email("alice@example.com")
+                .role("ADMIN")
+                .active(true)
+                .build();
+
+        // toBuilder: copy + modify
+        User updated = user.toBuilder()
+                .role("USER")
+                .build();
+    }
+}</code></pre>
+    </div>
+
+    <h2>📊 Pros &amp; Cons</h2>
+    <div class="table-wrapper"><table class="pros-cons-table">
+      <thead><tr><th>Aspect</th><th>Detail</th></tr></thead>
+      <tbody>
+        <tr><td class="pro">✅ Readable</td><td>Fluent API reads almost like English</td></tr>
+        <tr><td class="pro">✅ Immutability</td><td>Final fields set only via builder</td></tr>
+        <tr><td class="pro">✅ Validation</td><td>Validate at build time before object creation</td></tr>
+        <tr><td class="pro">✅ Optional params</td><td>No need for multiple constructors (telescoping)</td></tr>
+        <tr><td class="con">❌ Verbosity</td><td>Lots of boilerplate (use Lombok to mitigate)</td></tr>
+        <tr><td class="con">❌ Incomplete builds</td><td>Developer might forget to set required fields</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>🔍 Real-World Usage</h2>
+    <ul>
+      <li><code>StringBuilder</code> — classic Java Builder for string construction</li>
+      <li><code>java.util.stream.Stream.Builder</code></li>
+      <li><code>HttpClient.newBuilder()</code> (Java 11+)</li>
+      <li>Spring's <code>UriComponentsBuilder</code>, <code>MockMvcRequestBuilders</code></li>
+      <li>Lombok's <code>@Builder</code> — industry standard for DTOs / entities</li>
+    </ul>
+
+    <h2>🎤 Interview Q&amp;A</h2>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">Q: What problem does Builder pattern solve that constructors cannot?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p>The <strong>Telescoping Constructor</strong> anti-pattern: when a class has many optional parameters, you end up with multiple overloaded constructors (or one with many nulls). This is error-prone — parameters of the same type can be accidentally swapped. Builder solves this with named setters for each field, validation before construction, and immutability of the final object.</p></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">Q: How is Builder different from Factory patterns?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p><strong>Factory</strong>: Creates objects in one step, returning a product. Focuses on <em>which type</em> to create. <br><strong>Builder</strong>: Creates complex objects step by step. Focuses on <em>how to assemble</em> a single complex object. Factory is about polymorphism; Builder is about construction.</p></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">Q: How do you enforce mandatory fields with Builder?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p>(1) Put mandatory params in the Builder's constructor: <code>new Builder("GET", "https://...")</code>. (2) Throw exceptions in <code>build()</code> if required fields are null. (3) Use Step Builder pattern — method chain forces each required step before allowing the next (advanced). Lombok's <code>@Builder</code> supports <code>@NonNull</code> annotation to throw NPE for null required fields.</p></div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <p>JavaPatterns • <a href="abstract-factory.html">← Abstract Factory</a> | <a href="prototype.html">Prototype →</a></p>
+    </footer>
+  </main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="../../js/main.js"></script>
+</body>
+</html>

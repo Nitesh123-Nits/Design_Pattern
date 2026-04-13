@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SOLID Principles in Java — JavaPatterns</title>
+  <meta name="description" content="All 5 SOLID principles explained with Java code: SRP, OCP, LSP, ISP, DIP with examples and interview questions." />
+  <link rel="stylesheet" href="../../css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+</head>
+<body>
+<header class="site-header">
+  <button id="menu-toggle">☰</button>
+  <a href="../../index.html" class="logo"><div class="logo-icon">♟</div><span>JavaPatterns</span></a>
+  <div class="search-bar"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar" data-root="../../"></nav>
+  <main class="main-content">
+
+    <div class="page-header">
+      <div class="breadcrumb"><a href="../../index.html">Home</a><span class="sep">›</span><span>SOLID Principles</span></div>
+      <div class="badges"><span class="badge badge-solid">🏛️ Best Practices</span></div>
+      <h1>SOLID Principles in Java</h1>
+      <p>SOLID is a set of 5 design principles for writing maintainable, scalable, and testable object-oriented code. Coined by Robert C. Martin (Uncle Bob).</p>
+    </div>
+
+    <!-- S - SRP -->
+    <section class="section-block" id="srp">
+      <h2>S — Single Responsibility Principle</h2>
+      <p><strong>"A class should have one, and only one, reason to change."</strong> — A class should do one thing and do it well. If a class handles multiple concerns, changes to one concern may break the other.</p>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">❌ Violating SRP</span><button class="copy-btn">Copy</button></div>
+        <pre><code class="language-java">// BAD: This class has 3 responsibilities
+public class UserService {
+    public void createUser(User user) { /* DB logic */ }
+    public String generateReport(User user) { /* Reporting logic */ }
+    public void sendWelcomeEmail(User user) { /* Email logic */ }
+    // If email logic changes, this class changes. If DB logic changes, this class changes too.
+}</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">✅ Following SRP</span><button class="copy-btn">Copy</button></div>
+        <pre><code class="language-java">// Each class has ONE reason to change
+
+// Responsibility 1: User persistence
+public class UserRepository {
+    public void save(User user) {
+        // Only database interaction logic here
+        System.out.println("Saving user to DB: " + user.getName());
+    }
+}
+
+// Responsibility 2: Report generation
+public class UserReportService {
+    public String generateReport(User user) {
+        // Only reporting logic here
+        return "User Report for: " + user.getName();
+    }
+}
+
+// Responsibility 3: Email sending
+public class EmailService {
+    public void sendWelcomeEmail(User user) {
+        // Only email logic here
+        System.out.println("Sending welcome email to: " + user.getEmail());
+    }
+}
+
+// Orchestration: UserService now just coordinates
+public class UserService {
+    private final UserRepository repo;
+    private final EmailService emailService;
+
+    public UserService(UserRepository repo, EmailService emailService) {
+        this.repo = repo;
+        this.emailService = emailService;
+    }
+
+    public void registerUser(User user) {
+        repo.save(user);
+        emailService.sendWelcomeEmail(user);
+        // Each collaborator can change independently
+    }
+}</code></pre>
+      </div>
+
+      <div class="accordion">
+        <div class="accordion-item">
+          <button class="accordion-header">Q: How do you identify SRP violations in code?<span class="accordion-icon">+</span></button>
+          <div class="accordion-body"><p>Look for: (1) classes with more than one "reason to change" — ask "why would this class change?", (2) large classes with many methods doing unrelated things, (3) method names that don't share a common theme (e.g., <code>save()</code>,<code>generatePDF()</code>,<code>sendEmail()</code> in the same class), (4) classes that need to import many unrelated packages.</p></div>
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-header">Q: Can SRP lead to too many classes?<span class="accordion-icon">+</span></button>
+          <div class="accordion-body"><p>Yes — over-application can cause "class explosion" and indirection. The key is balance. A class should be small and focused, but splitting trivial togethers creates unnecessary complexity. SRP is about <em>cohesion</em>: methods in a class should all work towards the same purpose.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- O - OCP -->
+    <section class="section-block" id="ocp">
+      <h2>O — Open/Closed Principle</h2>
+      <p><strong>"Software entities should be open for extension, but closed for modification."</strong> — Add new functionality by creating new code, not changing existing tested code.</p>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">✅ OCP with Strategy Pattern</span><button class="copy-btn">Copy</button></div>
+        <pre><code class="language-java">// Closed for modification — shape interface never changes
+public interface Shape {
+    double area();
+}
+
+// Open for extension — add new shapes without touching existing code
+public class Circle implements Shape {
+    private double radius;
+    public Circle(double radius) { this.radius = radius; }
+    @Override
+    public double area() { return Math.PI * radius * radius; }
+}
+
+public class Rectangle implements Shape {
+    private double width, height;
+    public Rectangle(double w, double h) { this.width = w; this.height = h; }
+    @Override
+    public double area() { return width * height; }
+}
+
+// NEW shape added — zero changes to existing code!
+public class Triangle implements Shape {
+    private double base, height;
+    public Triangle(double base, double height) { this.base = base; this.height = height; }
+    @Override
+    public double area() { return 0.5 * base * height; }
+}
+
+// AreaCalculator is CLOSED for modification
+public class AreaCalculator {
+    public double totalArea(List&lt;Shape&gt; shapes) {
+        return shapes.stream().mapToDouble(Shape::area).sum();
+    }
+}
+
+// Usage
+List&lt;Shape&gt; shapes = List.of(new Circle(5), new Rectangle(4, 6), new Triangle(3, 8));
+System.out.println(new AreaCalculator().totalArea(shapes)); // Works for ANY shape!</code></pre>
+      </div>
+
+      <div class="accordion">
+        <div class="accordion-item">
+          <button class="accordion-header">Q: How is OCP achieved in Spring Framework?<span class="accordion-icon">+</span></button>
+          <div class="accordion-body"><p>Spring uses OCP extensively: (1) <strong>Dependency Injection</strong> — inject different implementations without changing consumers, (2) <strong>AOP (Aspect-Oriented Programming)</strong> — add cross-cutting concerns (logging, security) without modifying business classes, (3) <strong>Strategy Pattern</strong> in <code>AuthenticationProvider</code>, <code>HandlerMapping</code> etc. — swap implementations via configuration.</p></div>
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-header">Q: Is it possible to be truly "closed" for modification?<span class="accordion-icon">+</span></button>
+          <div class="accordion-body"><p>No — no class can be closed to all possible changes. The goal is to anticipate the most likely axes of change and use abstractions to protect against them. You can't predict every future requirement, but OCP encourages identifying variation points and encapsulating them behind interfaces or abstract classes.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- L - LSP -->
+    <section class="section-block" id="lsp">
+      <h2>L — Liskov Substitution Principle</h2>
+      <p><strong>"Subtypes must be substitutable for their base types."</strong> — If S extends T, then objects of type T may be replaced with objects of type S without altering correctness.</p>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">❌ LSP Violation — Square extends Rectangle</span><button class="copy-btn">Copy</button></div>
+        <pre><code class="language-java">// Classic LSP violation
+class Rectangle {
+    protected int width, height;
+    public void setWidth(int w) { this.width = w; }
+    public void setHeight(int h) { this.height = h; }
+    public int area() { return width * height; }
+}
+
+// PROBLEM: Square overrides setters to maintain equality — violates Rectangle's contract
+class Square extends Rectangle {
+    @Override
+    public void setWidth(int w) { this.width = w; this.height = w; } // ← forces height = width
+    @Override
+    public void setHeight(int h) { this.height = h; this.width = h; } // ← forces width = height
+}
+
+// This code BREAKS when a Square is passed where Rectangle is expected
+void testRectangle(Rectangle r) {
+    r.setWidth(5);
+    r.setHeight(4);
+    assert r.area() == 20; // ✅ for Rectangle, ❌ fails for Square (returns 16)
+}</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">✅ LSP Fix — Common base Shape</span><button class="copy-btn">Copy</button></div>
+        <pre><code class="language-java">// Fix: Don't inherit if it violates substitutability
+public interface Shape {
+    int area();
+}
+
+public class Rectangle implements Shape {
+    private int width, height;
+    public Rectangle(int w, int h) { this.width = w; this.height = h; }
+    public int area() { return width * height; }
+}
+
+public class Square implements Shape {
+    private int side;
+    public Square(int side) { this.side = side; }
+    public int area() { return side * side; }
+}
+// Both are Shapes — each is substitutable for Shape — no violation!</code></pre>
+      </div>
+
+      <div class="accordion">
+        <div class="accordion-item">
+          <button class="accordion-header">Q: How do you detect LSP violations?<span class="accordion-icon">+</span></button>
+          <div class="accordion-body"><p>(1) If a subclass throws <code>UnsupportedOperationException</code> for methods inherited from the parent — it's an LSP violation (common with the <code>Collections.unmodifiableList()</code>-style pattern). (2) If client code checks <code>instanceof</code> before calling methods — violation likely. (3) If a subclass weakens preconditions or strengthens postconditions of the parent contract. (4) If unit tests written for the parent class fail when a subclass is substituted.</p></div>
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-header">Q: How does LSP relate to the Open/Closed Principle?<span class="accordion-icon">+</span></button>
+          <div class="accordion-body"><p>OCP says "extend without modifying." LSP ensures that extensions (subclasses) are truly compatible replacements. Without LSP, OCP breaks down — extending a class creates a subclass that <em>can't</em> be used as a drop-in replacement, forcing changes in client code. They work together: OCP defines the goal, LSP defines the correctness constraint on extensions.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- I - ISP -->
+    <section class="section-block" id="isp">
+      <h2>I — Interface Segregation Principle</h2>
+      <p><strong>"Clients should not be forced to depend on methods they do not use."</strong> — Split large interfaces into smaller, more specific ones.</p>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">✅ ISP — Segregated Interfaces</span><button class="copy-btn">Copy</button></div>
+        <pre><code class="language-java">// BAD: Fat interface forces all implementors to implement ALL methods
+interface Worker {
+    void work();
+    void eat();    // ← Robots don't eat! Forced to implement with throws
+    void sleep();  // ← Robots don't sleep!
+}
+
+// GOOD: Segregated interfaces
+interface Workable {
+    void work();
+}
+
+interface Eatable {
+    void eat();
+}
+
+interface Sleepable {
+    void sleep();
+}
+
+// HumanWorker needs all three
+public class HumanWorker implements Workable, Eatable, Sleepable {
+    public void work()  { System.out.println("Human working"); }
+    public void eat()   { System.out.println("Human eating"); }
+    public void sleep() { System.out.println("Human sleeping"); }
+}
+
+// RobotWorker only needs Workable — clean!
+public class RobotWorker implements Workable {
+    public void work() { System.out.println("Robot working 24/7"); }
+    // No forced eat() or sleep() implementations!
+}
+
+// Real-world: Spring Data JPA interfaces are segregated
+// CrudRepository, PagingAndSortingRepository, JpaRepository — each adds more contract</code></pre>
+      </div>
+
+      <div class="accordion">
+        <div class="accordion-item">
+          <button class="accordion-header">Q: How is ISP applied in the Java standard library?<span class="accordion-icon">+</span></button>
+          <div class="accordion-body"><p>Examples: (1) <code>Readable</code>, <code>Writable</code>, <code>Closeable</code> — each is a separate interface rather than one <code>Stream</code> interface forcing all. (2) <code>Iterable</code> vs <code>Collection</code> vs <code>List</code> — progressively more capable. (3) <code>Runnable</code> vs <code>Callable</code> — separate for different async needs. (4) Spring's <code>ApplicationEventPublisher</code>, <code>ApplicationContext</code> — different capability layers.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- D - DIP -->
+    <section class="section-block" id="dip">
+      <h2>D — Dependency Inversion Principle</h2>
+      <p><strong>"High-level modules should not depend on low-level modules. Both should depend on abstractions."</strong> — Depend on interfaces/abstract classes, not concrete implementations.</p>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">✅ DIP with Spring Dependency Injection</span><button class="copy-btn">Copy</button></div>
+        <pre><code class="language-java">// Abstraction (interface) — both high and low-level depend on this
+public interface NotificationService {
+    void send(String message, String recipient);
+}
+
+// Low-level module 1
+public class EmailNotificationService implements NotificationService {
+    @Override
+    public void send(String message, String recipient) {
+        System.out.println("EMAIL to " + recipient + ": " + message);
+    }
+}
+
+// Low-level module 2
+public class SMSNotificationService implements NotificationService {
+    @Override
+    public void send(String message, String recipient) {
+        System.out.println("SMS to " + recipient + ": " + message);
+    }
+}
+
+// High-level module — depends on ABSTRACTION, not concrete class
+@Service  // Spring manages this
+public class OrderService {
+    // Inject via interface — Spring will provide the actual implementation
+    private final NotificationService notificationService;
+
+    // Constructor injection (preferred)
+    @Autowired
+    public OrderService(NotificationService notificationService) {
+        this.notificationService = notificationService;
+    }
+
+    public void placeOrder(Order order) {
+        // Process order...
+        // High-level module doesn't know or care if it's Email or SMS
+        notificationService.send("Order confirmed: #" + order.getId(), order.getCustomerEmail());
+    }
+}
+
+// Spring configuration — swap implementations via config, no code changes!
+@Configuration
+public class AppConfig {
+    @Bean
+    public NotificationService notificationService() {
+        // Switch between Email, SMS, Push — high-level code unchanged
+        return new EmailNotificationService();
+    }
+}</code></pre>
+      </div>
+
+      <div class="accordion">
+        <div class="accordion-item">
+          <button class="accordion-header">Q: What is the difference between Dependency Injection and Dependency Inversion?<span class="accordion-icon">+</span></button>
+          <div class="accordion-body"><p><strong>Dependency Inversion Principle (DIP)</strong> is the <em>concept</em>: high-level modules should depend on abstractions. <strong>Dependency Injection (DI)</strong> is the <em>technique</em> to achieve it: provide dependencies from outside rather than creating them internally (constructor injection, setter injection, field injection). IoC containers like Spring implement DI to facilitate DIP.</p></div>
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-header">Q: Why is constructor injection preferred over field injection in Spring?<span class="accordion-icon">+</span></button>
+          <div class="accordion-body"><p>(1) <strong>Immutability</strong>: Constructor-injected fields can be <code>final</code>. (2) <strong>Testability</strong>: Inject mocks directly in unit tests without Spring context. (3) <strong>Detecting circular dependencies</strong> at startup. (4) <strong>Explicit contracts</strong>: All required dependencies are visible in the constructor signature. Field injection hides dependencies and requires reflection.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <p>JavaPatterns • SOLID Principles • <a href="../../index.html">← Back to Home</a></p>
+    </footer>
+  </main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="../../js/main.js"></script>
+</body>
+</html>

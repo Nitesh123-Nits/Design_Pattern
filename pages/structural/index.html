@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Structural Design Patterns — JavaPatterns</title>
+  <link rel="stylesheet" href="../../css/styles.css" />
+</head>
+<body>
+<header class="site-header">
+  <button id="menu-toggle">☰</button>
+  <a href="../../index.html" class="logo"><div class="logo-icon">♟</div><span>JavaPatterns</span></a>
+  <div class="search-bar"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar" data-root="../../"></nav>
+  <main class="main-content">
+    <div class="page-header">
+      <div class="breadcrumb"><a href="../../index.html">Home</a><span class="sep">›</span><span>Structural Patterns</span></div>
+      <div class="badges"><span class="badge badge-structural">🏢 Structural</span></div>
+      <h1>Structural Design Patterns</h1>
+      <p>Structural patterns explain how to assemble objects and classes into larger structures, while keeping these structures flexible and efficient.</p>
+    </div>
+    <div class="cards-grid">
+      <a href="adapter.html" class="pattern-card structural"><div class="card-icon">🔌</div><h3>Adapter</h3><p>Converts incompatible interfaces. Plug legacy/third-party code into your system.</p><span class="badge badge-easy" style="margin-top:auto">Easy</span></a>
+      <a href="bridge.html" class="pattern-card structural"><div class="card-icon">🌉</div><h3>Bridge</h3><p>Separates abstraction from implementation — both can vary independently.</p><span class="badge badge-hard" style="margin-top:auto">Hard</span></a>
+      <a href="composite.html" class="pattern-card structural"><div class="card-icon">🌳</div><h3>Composite</h3><p>Tree structures where leaves and branches are treated uniformly.</p><span class="badge badge-medium" style="margin-top:auto">Medium</span></a>
+      <a href="decorator.html" class="pattern-card structural"><div class="card-icon">🎨</div><h3>Decorator</h3><p>Dynamically add responsibilities to objects. Alternative to subclassing.</p><span class="badge badge-medium" style="margin-top:auto">Medium</span></a>
+      <a href="facade.html" class="pattern-card structural"><div class="card-icon">🏢</div><h3>Facade</h3><p>Simplified API for complex subsystems. Used in every Spring service layer.</p><span class="badge badge-easy" style="margin-top:auto">Easy</span></a>
+      <a href="flyweight.html" class="pattern-card structural"><div class="card-icon">🪶</div><h3>Flyweight</h3><p>Share intrinsic state among many fine-grained objects to save memory.</p><span class="badge badge-hard" style="margin-top:auto">Hard</span></a>
+      <a href="proxy.html" class="pattern-card structural"><div class="card-icon">🔒</div><h3>Proxy</h3><p>Surrogate object for access control, caching, lazy loading. How Spring AOP works.</p><span class="badge badge-medium" style="margin-top:auto">Medium</span></a>
+    </div>
+    <footer class="site-footer"><p>JavaPatterns • <a href="../../index.html">← Home</a></p></footer>
+  </main>
+</div>
+<script src="../../js/main.js"></script>
+</body>
+</html>

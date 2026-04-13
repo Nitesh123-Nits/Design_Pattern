@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Creational Design Patterns — JavaPatterns</title>
+  <link rel="stylesheet" href="../../css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+</head>
+<body>
+<header class="site-header">
+  <button id="menu-toggle">☰</button>
+  <a href="../../index.html" class="logo"><div class="logo-icon">♟</div><span>JavaPatterns</span></a>
+  <div class="search-bar"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar" data-root="../../"></nav>
+  <main class="main-content">
+    <div class="page-header">
+      <div class="breadcrumb"><a href="../../index.html">Home</a><span class="sep">›</span><span>Creational Patterns</span></div>
+      <div class="badges"><span class="badge badge-creational">🏗️ Creational</span></div>
+      <h1>Creational Design Patterns</h1>
+      <p>Creational patterns deal with <strong>object creation mechanisms</strong>. They provide ways to create objects while hiding the instantiation logic, making the code more flexible and reusable.</p>
+    </div>
+    <div class="cards-grid">
+      <a href="singleton.html" class="pattern-card creational"><div class="card-icon">1️⃣</div><h3>Singleton</h3><p>Ensures only one instance of a class exists globally. Common for DB pools, loggers, config.</p><span class="badge badge-easy" style="margin-top:auto">Easy</span></a>
+      <a href="factory.html" class="pattern-card creational"><div class="card-icon">🏭</div><h3>Factory Method</h3><p>Delegates object creation to subclasses. Promotes loose coupling via interfaces.</p><span class="badge badge-medium" style="margin-top:auto">Medium</span></a>
+      <a href="abstract-factory.html" class="pattern-card creational"><div class="card-icon">🔧</div><h3>Abstract Factory</h3><p>Creates families of related objects. Think cross-platform UI toolkits.</p><span class="badge badge-medium" style="margin-top:auto">Medium</span></a>
+      <a href="builder.html" class="pattern-card creational"><div class="card-icon">🔨</div><h3>Builder</h3><p>Constructs complex objects step by step. Solves telescoping constructor problem.</p><span class="badge badge-medium" style="margin-top:auto">Medium</span></a>
+      <a href="prototype.html" class="pattern-card creational"><div class="card-icon">📋</div><h3>Prototype</h3><p>Clones existing objects. Useful when object creation is expensive.</p><span class="badge badge-easy" style="margin-top:auto">Easy</span></a>
+    </div>
+    <footer class="site-footer"><p>JavaPatterns • <a href="../../index.html">← Home</a></p></footer>
+  </main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="../../js/main.js"></script>
+</body>
+</html>

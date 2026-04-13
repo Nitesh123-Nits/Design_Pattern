@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java Design Patterns — Complete Reference Guide</title>
+  <meta name="description" content="Comprehensive reference for all 23 GoF Design Patterns, SOLID Principles, and OOP Concepts with Java code examples and interview questions." />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+</head>
+<body>
+<!-- Header -->
+<header class="site-header">
+  <button id="menu-toggle" aria-label="Toggle sidebar">☰</button>
+  <a href="index.html" class="logo">
+    <div class="logo-icon">♟</div>
+    <span>JavaPatterns</span>
+  </a>
+  <div class="search-bar">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Search patterns, concepts..." autocomplete="off" />
+    <div id="search-results"></div>
+  </div>
+</header>
+
+<!-- Layout -->
+<div class="layout">
+  <nav class="sidebar" id="sidebar" data-root=""></nav>
+  <main class="main-content">
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-badge">☕ Java Developer's Reference</div>
+      <h1>Master Design Patterns &amp;<br>OOP in Java</h1>
+      <p>The complete, interview-ready guide to all 23 GoF Design Patterns, SOLID Principles, and OOP concepts — with detailed Java code and explanations.</p>
+
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-num">23</span>
+          <span class="stat-label">Design Patterns</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">5</span>
+          <span class="stat-label">SOLID Principles</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">4</span>
+          <span class="stat-label">OOP Pillars</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">150+</span>
+          <span class="stat-label">Interview Q&amp;A</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- OOP & SOLID Quick Links -->
+    <section class="category-section fade-up">
+      <div class="cards-grid" style="grid-template-columns: repeat(auto-fill, minmax(340px,1fr));">
+        <a href="pages/oop/index.html" class="pattern-card oop">
+          <div class="card-icon">🧬</div>
+          <h3>OOP Concepts</h3>
+          <p>Encapsulation, Inheritance, Polymorphism, and Abstraction with real Java examples and interview questions.</p>
+          <span class="badge badge-oop" style="margin-top:auto">4 Pillars</span>
+        </a>
+        <a href="pages/solid/index.html" class="pattern-card solid">
+          <div class="card-icon">🏛️</div>
+          <h3>SOLID Principles</h3>
+          <p>Single Responsibility, Open/Closed, Liskov, Interface Segregation, and Dependency Inversion with Java examples.</p>
+          <span class="badge badge-solid" style="margin-top:auto">5 Principles</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Creational Patterns -->
+    <section class="category-section fade-up fade-up-delay-1">
+      <div class="category-header">
+        <div class="cat-icon" style="background:rgba(6,255,165,0.1);color:var(--creational)">🏗️</div>
+        <div class="cat-info">
+          <h2 style="color:var(--creational)">Creational Patterns</h2>
+          <p>Object creation mechanisms — control how objects are instantiated</p>
+        </div>
+        <a href="pages/creational/index.html" class="badge badge-creational" style="margin-left:auto">View All</a>
+      </div>
+      <div class="cards-grid">
+        <a href="pages/creational/singleton.html" class="pattern-card creational">
+          <div class="card-icon">1️⃣</div>
+          <h3>Singleton</h3>
+          <p>Ensures only one instance exists globally. Thread-safe with double-checked locking.</p>
+          <span class="badge badge-easy" style="margin-top:auto">Easy</span>
+        </a>
+        <a href="pages/creational/factory.html" class="pattern-card creational">
+          <div class="card-icon">🏭</div>
+          <h3>Factory Method</h3>
+          <p>Delegates object creation to subclasses. Promotes loose coupling.</p>
+          <span class="badge badge-medium" style="margin-top:auto">Medium</span>
+        </a>
+        <a href="pages/creational/abstract-factory.html" class="pattern-card creational">
+          <div class="card-icon">🔧</div>
+          <h3>Abstract Factory</h3>
+          <p>Creates families of related objects without specifying concrete classes.</p>
+          <span class="badge badge-medium" style="margin-top:auto">Medium</span>
+        </a>
+        <a href="pages/creational/builder.html" class="pattern-card creational">
+          <div class="card-icon">🔨</div>
+          <h3>Builder</h3>
+          <p>Constructs complex objects step by step. Separates construction from representation.</p>
+          <span class="badge badge-medium" style="margin-top:auto">Medium</span>
+        </a>
+        <a href="pages/creational/prototype.html" class="pattern-card creational">
+          <div class="card-icon">📋</div>
+          <h3>Prototype</h3>
+          <p>Creates new objects by cloning an existing prototype.</p>
+          <span class="badge badge-easy" style="margin-top:auto">Easy</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Structural Patterns -->
+    <section class="category-section fade-up fade-up-delay-2">
+      <div class="category-header">
+        <div class="cat-icon" style="background:rgba(240,147,251,0.1);color:var(--structural)">🏢</div>
+        <div class="cat-info">
+          <h2 style="color:var(--structural)">Structural Patterns</h2>
+          <p>Assemble objects and classes into larger structures while keeping them flexible</p>
+        </div>
+        <a href="pages/structural/index.html" class="badge badge-structural" style="margin-left:auto">View All</a>
+      </div>
+      <div class="cards-grid">
+        <a href="pages/structural/adapter.html" class="pattern-card structural">
+          <div class="card-icon">🔌</div>
+          <h3>Adapter</h3>
+          <p>Converts an interface into another that clients expect. Plugs incompatible interfaces together.</p>
+          <span class="badge badge-easy" style="margin-top:auto">Easy</span>
+        </a>
+        <a href="pages/structural/bridge.html" class="pattern-card structural">
+          <div class="card-icon">🌉</div>
+          <h3>Bridge</h3>
+          <p>Separates abstraction from implementation so both can vary independently.</p>
+          <span class="badge badge-hard" style="margin-top:auto">Hard</span>
+        </a>
+        <a href="pages/structural/composite.html" class="pattern-card structural">
+          <div class="card-icon">🌳</div>
+          <h3>Composite</h3>
+          <p>Composes objects into tree structures. Clients treat individual objects and compositions uniformly.</p>
+          <span class="badge badge-medium" style="margin-top:auto">Medium</span>
+        </a>
+        <a href="pages/structural/decorator.html" class="pattern-card structural">
+          <div class="card-icon">🎨</div>
+          <h3>Decorator</h3>
+          <p>Attaches responsibilities to an object dynamically. Alternative to subclassing for extension.</p>
+          <span class="badge badge-medium" style="margin-top:auto">Medium</span>
+        </a>
+        <a href="pages/structural/facade.html" class="pattern-card structural">
+          <div class="card-icon">🏢</div>
+          <h3>Facade</h3>
+          <p>Provides a simplified interface to a complex subsystem.</p>
+          <span class="badge badge-easy" style="margin-top:auto">Easy</span>
+        </a>
+        <a href="pages/structural/flyweight.html" class="pattern-card structural">
+          <div class="card-icon">🪶</div>
+          <h3>Flyweight</h3>
+          <p>Uses sharing to efficiently support a large number of fine-grained objects.</p>
+          <span class="badge badge-hard" style="margin-top:auto">Hard</span>
+        </a>
+        <a href="pages/structural/proxy.html" class="pattern-card structural">
+          <div class="card-icon">🔒</div>
+          <h3>Proxy</h3>
+          <p>Provides a surrogate or placeholder to control access to another object.</p>
+          <span class="badge badge-medium" style="margin-top:auto">Medium</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Behavioral Patterns -->
+    <section class="category-section fade-up fade-up-delay-3">
+      <div class="category-header">
+        <div class="cat-icon" style="background:rgba(255,217,61,0.1);color:var(--behavioral)">⚙️</div>
+        <div class="cat-info">
+          <h2 style="color:var(--behavioral)">Behavioral Patterns</h2>
+          <p>Define how objects communicate and distribute responsibility</p>
+        </div>
+        <a href="pages/behavioral/index.html" class="badge badge-behavioral" style="margin-left:auto">View All</a>
+      </div>
+      <div class="cards-grid">
+        <a href="pages/behavioral/chain-of-responsibility.html" class="pattern-card behavioral">
+          <div class="card-icon">⛓️</div>
+          <h3>Chain of Responsibility</h3>
+          <p>Passes request along a chain of handlers. Each handler decides to process or forward.</p>
+          <span class="badge badge-medium" style="margin-top:auto">Medium</span>
+        </a>
+        <a href="pages/behavioral/command.html" class="pattern-card behavioral">
+          <div class="card-icon">📝</div>
+          <h3>Command</h3>
+          <p>Encapsulates a request as an object, enabling undo/redo and queued operations.</p>
+          <span class="badge badge-medium" style="margin-top:auto">Medium</span>
+        </a>
+        <a href="pages/behavioral/interpreter.html" class="pattern-card behavioral">
+          <div class="card-icon">🔤</div>
+          <h3>Interpreter</h3>
+          <p>Defines a grammar for a language and provides an interpreter to deal with that grammar.</p>
+          <span class="badge badge-hard" style="margin-top:auto">Hard</span>
+        </a>
+        <a href="pages/behavioral/iterator.html" class="pattern-card behavioral">
+          <div class="card-icon">🔄</div>
+          <h3>Iterator</h3>
+          <p>Provides a way to access elements of a collection without exposing its underlying representation.</p>
+          <span class="badge badge-easy" style="margin-top:auto">Easy</span>
+        </a>
+        <a href="pages/behavioral/mediator.html" class="pattern-card behavioral">
+          <div class="card-icon">📡</div>
+          <h3>Mediator</h3>
+          <p>Defines an object that encapsulates how a set of objects interact. Promotes loose coupling.</p>
+          <span class="badge badge-medium" style="margin-top:auto">Medium</span>
+        </a>
+        <a href="pages/behavioral/memento.html" class="pattern-card behavioral">
+          <div class="card-icon">💾</div>
+          <h3>Memento</h3>
+          <p>Captures and externalizes an object's internal state for later restoration.</p>
+          <span class="badge badge-medium" style="margin-top:auto">Medium</span>
+        </a>
+        <a href="pages/behavioral/observer.html" class="pattern-card behavioral">
+          <div class="card-icon">👁️</div>
+          <h3>Observer</h3>
+          <p>Defines a one-to-many dependency. When one object changes state, all dependents are notified.</p>
+          <span class="badge badge-easy" style="margin-top:auto">Easy</span>
+        </a>
+        <a href="pages/behavioral/state.html" class="pattern-card behavioral">
+          <div class="card-icon">🔁</div>
+          <h3>State</h3>
+          <p>Allows an object to alter its behavior when its internal state changes.</p>
+          <span class="badge badge-medium" style="margin-top:auto">Medium</span>
+        </a>
+        <a href="pages/behavioral/strategy.html" class="pattern-card behavioral">
+          <div class="card-icon">♟️</div>
+          <h3>Strategy</h3>
+          <p>Defines a family of algorithms and makes them interchangeable at runtime.</p>
+          <span class="badge badge-easy" style="margin-top:auto">Easy</span>
+        </a>
+        <a href="pages/behavioral/template-method.html" class="pattern-card behavioral">
+          <div class="card-icon">📐</div>
+          <h3>Template Method</h3>
+          <p>Defines the skeleton of an algorithm in the superclass, letting subclasses override specific steps.</p>
+          <span class="badge badge-easy" style="margin-top:auto">Easy</span>
+        </a>
+        <a href="pages/behavioral/visitor.html" class="pattern-card behavioral">
+          <div class="card-icon">🚶</div>
+          <h3>Visitor</h3>
+          <p>Lets you add further operations to objects without modifying them. Separates algorithm from structure.</p>
+          <span class="badge badge-hard" style="margin-top:auto">Hard</span>
+        </a>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <p>Built for Java developers 🚀 • All 23 GoF Patterns • SOLID • OOP • Interview Ready</p>
+    </footer>
+  </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

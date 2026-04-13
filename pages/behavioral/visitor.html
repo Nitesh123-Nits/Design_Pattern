@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visitor Pattern in Java — JavaPatterns</title>
+  <link rel="stylesheet" href="../../css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+</head>
+<body>
+<header class="site-header">
+  <button id="menu-toggle">☰</button>
+  <a href="../../index.html" class="logo"><div class="logo-icon">♟</div><span>JavaPatterns</span></a>
+  <div class="search-bar"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar" data-root="../../"></nav>
+  <main class="main-content">
+    <div class="page-header">
+      <div class="breadcrumb"><a href="../../index.html">Home</a><span class="sep">›</span><a href="index.html">Behavioral</a><span class="sep">›</span><span>Visitor</span></div>
+      <div class="badges"><span class="badge badge-behavioral">Behavioral</span><span class="badge badge-hard">Hard</span></div>
+      <h1>🚶 Visitor Pattern</h1>
+      <p>Lets you add further operations to objects without modifying them. Separates algorithms from the objects on which they operate. Uses double dispatch.</p>
+    </div>
+
+    <h2>🎯 When to Use</h2>
+    <ul>
+      <li>When you need to add many distinct operations to an object structure</li>
+      <li>When the object structure rarely changes, but you frequently add new operations</li>
+      <li>AST traversal in compilers, document rendering, tax calculations across different item types</li>
+    </ul>
+
+    <h2>💻 Java Implementation</h2>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Tax Calculator Visitor</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Visitor interface — one method per element type
+public interface TaxVisitor {
+    double visit(FoodItem item);
+    double visit(ElectronicsItem item);
+    double visit(LuxuryItem item);
+}
+
+// Element interface — accepts any visitor
+public interface ShoppingItem {
+    String getName();
+    double getPrice();
+    double accept(TaxVisitor visitor); // double dispatch
+}
+
+// Concrete elements
+public class FoodItem implements ShoppingItem {
+    private final String name;
+    private final double price;
+    public FoodItem(String name, double price) { this.name = name; this.price = price; }
+    public String getName()  { return name; }
+    public double getPrice() { return price; }
+
+    @Override
+    public double accept(TaxVisitor visitor) {
+        return visitor.visit(this); // dispatch to correct visitor method
+    }
+}
+
+public class ElectronicsItem implements ShoppingItem {
+    private final String name;
+    private final double price;
+    public ElectronicsItem(String name, double price) { this.name = name; this.price = price; }
+    public String getName()  { return name; }
+    public double getPrice() { return price; }
+
+    @Override
+    public double accept(TaxVisitor visitor) { return visitor.visit(this); }
+}
+
+public class LuxuryItem implements ShoppingItem {
+    private final String name;
+    private final double price;
+    public LuxuryItem(String name, double price) { this.name = name; this.price = price; }
+    public String getName()  { return name; }
+    public double getPrice() { return price; }
+
+    @Override
+    public double accept(TaxVisitor visitor) { return visitor.visit(this); }
+}
+
+// Concrete Visitor 1 — Standard Tax
+public class StandardTaxVisitor implements TaxVisitor {
+    public double visit(FoodItem item)       { return item.getPrice() * 0.05; }  // 5% GST
+    public double visit(ElectronicsItem i)   { return i.getPrice() * 0.18; }     // 18% GST
+    public double visit(LuxuryItem item)     { return item.getPrice() * 0.28; }  // 28% GST
+}
+
+// Concrete Visitor 2 — Export Tax (add operations WITHOUT modifying elements)
+public class ExportTaxVisitor implements TaxVisitor {
+    public double visit(FoodItem item)       { return item.getPrice() * 0.10; }
+    public double visit(ElectronicsItem i)   { return i.getPrice() * 0.25; }
+    public double visit(LuxuryItem item)     { return item.getPrice() * 0.40; }
+}
+
+// Usage
+import java.util.List;
+public class Main {
+    public static void main(String[] args) {
+        List&lt;ShoppingItem&gt; cart = List.of(
+            new FoodItem("Rice (5kg)", 200),
+            new ElectronicsItem("Laptop", 50000),
+            new LuxuryItem("Designer Watch", 150000)
+        );
+
+        TaxVisitor standardTax = new StandardTaxVisitor();
+        TaxVisitor exportTax   = new ExportTaxVisitor();
+
+        System.out.println("=== Standard Tax ===");
+        cart.forEach(item -> {
+            double tax = item.accept(standardTax); // polymorphic dispatch
+            System.out.printf("%s: Price=%.0f Tax=%.0f Total=%.0f%n",
+                item.getName(), item.getPrice(), tax, item.getPrice() + tax);
+        });
+
+        System.out.println("\n=== Export Tax ===");
+        double total = cart.stream().mapToDouble(item -> {
+            double tax = item.accept(exportTax);
+            System.out.printf("%s: Tax=%.0f%n", item.getName(), tax);
+            return item.getPrice() + tax;
+        }).sum();
+        System.out.println("Total: " + total);
+    }
+}</code></pre>
+    </div>
+
+    <h2>🎤 Interview Q&amp;A</h2>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">Q: What is double dispatch and how does Visitor use it?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p>In single dispatch (standard Java polymorphism), the method called depends on the runtime type of the <em>object</em>. In <strong>double dispatch</strong>, the method called depends on the runtime types of <em>both</em> the object AND the argument. Visitor achieves this: <code>item.accept(visitor)</code> dispatches on item type; inside <code>accept()</code>, <code>visitor.visit(this)</code> dispatches on visitor type — two runtime types determine the method.</p></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">Q: What is the drawback of Visitor pattern?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p>Adding a new element type requires updating ALL visitors — violates OCP from the element's perspective. Visitor is a trade-off: it's OCP-friendly for adding operations, but OCP-unfriendly for adding new element types. Use it only when the element hierarchy is stable and new operations are frequent. Java 17+ sealed classes + pattern matching (<code>switch</code>) can replace Visitor in some cases.</p></div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <p>JavaPatterns • <a href="template-method.html">← Template Method</a> | <a href="../../index.html">← Home</a></p>
+    </footer>
+  </main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="../../js/main.js"></script>
+</body>
+</html>

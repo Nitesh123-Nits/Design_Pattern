@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prototype Pattern in Java — JavaPatterns</title>
+  <meta name="description" content="Prototype design pattern in Java — shallow vs deep copy, Cloneable, copy constructors, interview questions." />
+  <link rel="stylesheet" href="../../css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+</head>
+<body>
+<header class="site-header">
+  <button id="menu-toggle">☰</button>
+  <a href="../../index.html" class="logo"><div class="logo-icon">♟</div><span>JavaPatterns</span></a>
+  <div class="search-bar"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar" data-root="../../"></nav>
+  <main class="main-content">
+    <div class="page-header">
+      <div class="breadcrumb"><a href="../../index.html">Home</a><span class="sep">›</span><a href="index.html">Creational</a><span class="sep">›</span><span>Prototype</span></div>
+      <div class="badges"><span class="badge badge-creational">Creational</span><span class="badge badge-easy">Easy</span></div>
+      <h1>📋 Prototype Pattern</h1>
+      <p>Creates new objects by cloning an existing prototype object. Useful when object creation is expensive and you want copies with slight modifications.</p>
+    </div>
+
+    <h2>🎯 When to Use</h2>
+    <ul>
+      <li>When creating an object is expensive (DB load, API call, complex init)</li>
+      <li>When you need many similar objects with minor differences</li>
+      <li>When you want to hide the complexity of creating new instances from the client</li>
+      <li>Game development: clone enemy/character templates</li>
+    </ul>
+
+    <h2>💻 Java Implementation</h2>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Prototype — Shallow vs Deep Copy</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">import java.util.ArrayList;
+import java.util.List;
+
+// Prototype interface
+public interface Prototype&lt;T&gt; {
+    T clone();
+}
+
+// ── Shallow Copy (default Java clone) ───────────────────────
+public class Address {
+    public String city;
+    public String street;
+    public Address(String city, String street) { this.city = city; this.street = street; }
+}
+
+// ── Deep Copy Example ────────────────────────────────────────
+public class Employee implements Prototype&lt;Employee&gt; {
+    private String name;
+    private String role;
+    private List&lt;String&gt; skills;   // mutable collection — deep copy needed
+    private Address address;        // mutable object — deep copy needed
+
+    public Employee(String name, String role, List&lt;String&gt; skills, Address address) {
+        this.name    = name;
+        this.role    = role;
+        this.skills  = new ArrayList&lt;&gt;(skills);  // defensive copy
+        this.address = address;
+    }
+
+    // Deep clone — copy collections and mutable objects
+    @Override
+    public Employee clone() {
+        return new Employee(
+            this.name,
+            this.role,
+            new ArrayList&lt;&gt;(this.skills),          // deep copy the list
+            new Address(this.address.city, this.address.street) // deep copy address
+        );
+    }
+
+    public void addSkill(String skill) { skills.add(skill); }
+    public void setRole(String role)   { this.role = role; }
+    public void setCity(String city)   { this.address.city = city; }
+
+    @Override
+    public String toString() {
+        return name + " | " + role + " | " + skills + " | " + address.city;
+    }
+}
+
+// ── Prototype Registry ────────────────────────────────────────
+public class EmployeeRegistry {
+    private static final Map&lt;String, Employee&gt; templates = new HashMap&lt;&gt;();
+
+    static {
+        // Pre-built templates — expensive to create, clone cheaply
+        templates.put("JUNIOR_DEV", new Employee("", "Junior Developer",
+            List.of("Java", "Git"), new Address("Remote", "N/A")));
+
+        templates.put("SENIOR_DEV", new Employee("", "Senior Developer",
+            List.of("Java", "Spring", "Kubernetes", "System Design"),
+            new Address("Remote", "N/A")));
+
+        templates.put("ARCHITECT", new Employee("", "Solution Architect",
+            List.of("Java", "AWS", "Design Patterns", "Microservices"),
+            new Address("HQ", "Tech Park")));
+    }
+
+    public static Employee create(String role, String name) {
+        Employee template = templates.get(role);
+        if (template == null) throw new IllegalArgumentException("Unknown role: " + role);
+        Employee copy = template.clone(); // Clone the template
+        // Customize the clone
+        return copy;
+    }
+}
+
+// Usage
+public class Main {
+    public static void main(String[] args) {
+        Employee dev1 = EmployeeRegistry.create("SENIOR_DEV", "Alice");
+        Employee dev2 = EmployeeRegistry.create("SENIOR_DEV", "Bob");
+
+        dev1.addSkill("React");       // Only affects dev1
+        dev1.setCity("New York");     // Deep copy — doesn't affect dev2
+
+        System.out.println(dev1);     // Senior Developer | [Java, Spring, K8s, SD, React] | New York
+        System.out.println(dev2);     // Senior Developer | [Java, Spring, K8s, SD] | Remote
+    }
+}</code></pre>
+    </div>
+
+    <h2>🎤 Interview Q&amp;A</h2>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">Q: What is the difference between shallow copy and deep copy?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p><strong>Shallow Copy:</strong> Copies primitive fields by value, but object references are shared. If you modify a list in the copy, the original is also affected. Java's default <code>Object.clone()</code> does a shallow copy. <br><strong>Deep Copy:</strong> Recursively copies all nested objects so the clone is completely independent. Must be implemented manually (copy constructors, serialization, or manual field copying).</p></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">Q: Why is Java's Cloneable considered broken?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p>(1) <code>Cloneable</code> has no <code>clone()</code> method — it's just a marker interface. (2) <code>Object.clone()</code> is <code>protected</code>, requiring you to override and make it public. (3) The contract is fragile and poorly specified. (4) It does shallow copy by default, which is unsafe for mutable fields. <br><strong>Alternatives:</strong> Copy constructors (<code>new Employee(other)</code>) or copy factory methods are preferred by Joshua Bloch (Effective Java).</p></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">Q: How can you do a deep copy of an object in Java?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p>(1) <strong>Copy constructor</strong> — manually copy all fields: <code>new Employee(other)</code>. (2) <strong>Serialization</strong> — serialize to bytes then deserialize (works automatically for deep copy if all classes are Serializable, but slow). (3) <strong>Libraries</strong> — Apache Commons' <code>SerializationUtils.clone()</code>, or Kryo for fast serialization. (4) <strong>Mapping libraries</strong> — MapStruct or ModelMapper.</p></div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <p>JavaPatterns • <a href="builder.html">← Builder</a> | <a href="../structural/index.html">Structural Patterns →</a></p>
+    </footer>
+  </main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="../../js/main.js"></script>
+</body>
+</html>

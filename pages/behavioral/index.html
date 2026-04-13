@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Behavioral Design Patterns — JavaPatterns</title>
+  <link rel="stylesheet" href="../../css/styles.css" />
+</head>
+<body>
+<header class="site-header">
+  <button id="menu-toggle">☰</button>
+  <a href="../../index.html" class="logo"><div class="logo-icon">♟</div><span>JavaPatterns</span></a>
+  <div class="search-bar"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar" data-root="../../"></nav>
+  <main class="main-content">
+    <div class="page-header">
+      <div class="breadcrumb"><a href="../../index.html">Home</a><span class="sep">›</span><span>Behavioral Patterns</span></div>
+      <div class="badges"><span class="badge badge-behavioral">⚙️ Behavioral</span></div>
+      <h1>Behavioral Design Patterns</h1>
+      <p>Behavioral patterns are concerned with algorithms and the assignment of responsibilities between objects — how objects interact and distribute responsibility.</p>
+    </div>
+    <div class="cards-grid">
+      <a href="chain-of-responsibility.html" class="pattern-card behavioral"><div class="card-icon">⛓️</div><h3>Chain of Responsibility</h3><p>Pass request along handler chain. Each handler decides to process or pass on.</p><span class="badge badge-medium" style="margin-top:auto">Medium</span></a>
+      <a href="command.html" class="pattern-card behavioral"><div class="card-icon">📝</div><h3>Command</h3><p>Encapsulate requests as objects for queuing, undo/redo, and logging.</p><span class="badge badge-medium" style="margin-top:auto">Medium</span></a>
+      <a href="interpreter.html" class="pattern-card behavioral"><div class="card-icon">🔤</div><h3>Interpreter</h3><p>Defines grammar and interpreter. Used in Spring EL, SQL parsers.</p><span class="badge badge-hard" style="margin-top:auto">Hard</span></a>
+      <a href="iterator.html" class="pattern-card behavioral"><div class="card-icon">🔄</div><h3>Iterator</h3><p>Sequential access to collection elements without exposing internals.</p><span class="badge badge-easy" style="margin-top:auto">Easy</span></a>
+      <a href="mediator.html" class="pattern-card behavioral"><div class="card-icon">📡</div><h3>Mediator</h3><p>Centralized communication object. Reduces chaotic dependencies between objects.</p><span class="badge badge-medium" style="margin-top:auto">Medium</span></a>
+      <a href="memento.html" class="pattern-card behavioral"><div class="card-icon">💾</div><h3>Memento</h3><p>Save and restore object state. Powers undo/redo and checkpoints.</p><span class="badge badge-medium" style="margin-top:auto">Medium</span></a>
+      <a href="observer.html" class="pattern-card behavioral"><div class="card-icon">👁️</div><h3>Observer</h3><p>One-to-many notifications. Foundation of event-driven and reactive systems.</p><span class="badge badge-easy" style="margin-top:auto">Easy</span></a>
+      <a href="state.html" class="pattern-card behavioral"><div class="card-icon">🔁</div><h3>State</h3><p>Object changes behavior when its internal state changes. Like a state machine.</p><span class="badge badge-medium" style="margin-top:auto">Medium</span></a>
+      <a href="strategy.html" class="pattern-card behavioral"><div class="card-icon">♟️</div><h3>Strategy</h3><p>Interchangeable algorithms at runtime. Eliminates complex if/else chains.</p><span class="badge badge-easy" style="margin-top:auto">Easy</span></a>
+      <a href="template-method.html" class="pattern-card behavioral"><div class="card-icon">📐</div><h3>Template Method</h3><p>Define algorithm skeleton in base class; subclasses fill in specific steps.</p><span class="badge badge-easy" style="margin-top:auto">Easy</span></a>
+      <a href="visitor.html" class="pattern-card behavioral"><div class="card-icon">🚶</div><h3>Visitor</h3><p>Add operations to object structures without modifying them.</p><span class="badge badge-hard" style="margin-top:auto">Hard</span></a>
+    </div>
+    <footer class="site-footer"><p>JavaPatterns • <a href="../../index.html">← Home</a></p></footer>
+  </main>
+</div>
+<script src="../../js/main.js"></script>
+</body>
+</html>

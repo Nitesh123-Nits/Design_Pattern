@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chain of Responsibility Pattern in Java — JavaPatterns</title>
+  <link rel="stylesheet" href="../../css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+</head>
+<body>
+<header class="site-header">
+  <button id="menu-toggle">☰</button>
+  <a href="../../index.html" class="logo"><div class="logo-icon">♟</div><span>JavaPatterns</span></a>
+  <div class="search-bar"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar" data-root="../../"></nav>
+  <main class="main-content">
+    <div class="page-header">
+      <div class="breadcrumb"><a href="../../index.html">Home</a><span class="sep">›</span><a href="index.html">Behavioral</a><span class="sep">›</span><span>Chain of Responsibility</span></div>
+      <div class="badges"><span class="badge badge-behavioral">Behavioral</span><span class="badge badge-medium">Medium</span></div>
+      <h1>⛓️ Chain of Responsibility</h1>
+      <p>Passes a request along a chain of handlers. Each handler decides either to process the request or to pass it to the next handler in the chain.</p>
+    </div>
+
+    <h2>🎯 When to Use</h2>
+    <ul>
+      <li>When more than one object may handle a request and the handler isn't known a priori</li>
+      <li>When you want to issue a request to one of several objects without specifying the receiver explicitly</li>
+      <li>Middleware pipelines, filter chains, logging levels</li>
+      <li>Spring Security filter chain, Java Servlet filters</li>
+    </ul>
+
+    <h2>💻 Java Implementation</h2>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Purchase Approval Chain</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// ── Handler Interface ─────────────────────────────────────────
+public abstract class ApprovalHandler {
+    protected ApprovalHandler nextHandler;
+
+    public ApprovalHandler setNext(ApprovalHandler next) {
+        this.nextHandler = next;
+        return next; // enables chaining: handler1.setNext(handler2).setNext(handler3)
+    }
+
+    public abstract void handleRequest(PurchaseRequest request);
+
+    protected void passToNext(PurchaseRequest request) {
+        if (nextHandler != null) {
+            nextHandler.handleRequest(request);
+        } else {
+            System.out.println("❌ Request denied: $" + request.getAmount() + " — no approver available");
+        }
+    }
+}
+
+public class PurchaseRequest {
+    private final String purpose;
+    private final double amount;
+    public PurchaseRequest(String purpose, double amount) { this.purpose = purpose; this.amount = amount; }
+    public String getPurpose() { return purpose; }
+    public double getAmount() { return amount; }
+}
+
+// ── Concrete Handlers ─────────────────────────────────────────
+public class TeamLeadHandler extends ApprovalHandler {
+    private static final double LIMIT = 1000.0;
+
+    @Override
+    public void handleRequest(PurchaseRequest request) {
+        if (request.getAmount() &lt;= LIMIT) {
+            System.out.printf("✅ TEAM LEAD approved $%.2f for '%s'%n",
+                request.getAmount(), request.getPurpose());
+        } else {
+            System.out.printf("⏩ TEAM LEAD passing $%.2f to Manager%n", request.getAmount());
+            passToNext(request);
+        }
+    }
+}
+
+public class ManagerHandler extends ApprovalHandler {
+    private static final double LIMIT = 10000.0;
+
+    @Override
+    public void handleRequest(PurchaseRequest request) {
+        if (request.getAmount() &lt;= LIMIT) {
+            System.out.printf("✅ MANAGER approved $%.2f for '%s'%n",
+                request.getAmount(), request.getPurpose());
+        } else {
+            System.out.printf("⏩ MANAGER passing $%.2f to Director%n", request.getAmount());
+            passToNext(request);
+        }
+    }
+}
+
+public class DirectorHandler extends ApprovalHandler {
+    private static final double LIMIT = 100000.0;
+
+    @Override
+    public void handleRequest(PurchaseRequest request) {
+        if (request.getAmount() &lt;= LIMIT) {
+            System.out.printf("✅ DIRECTOR approved $%.2f for '%s'%n",
+                request.getAmount(), request.getPurpose());
+        } else {
+            System.out.printf("⏩ DIRECTOR passing $%.2f to CEO%n", request.getAmount());
+            passToNext(request);
+        }
+    }
+}
+
+public class CEOHandler extends ApprovalHandler {
+    @Override
+    public void handleRequest(PurchaseRequest request) {
+        // CEO approves everything (final handler)
+        System.out.printf("✅ CEO approved $%.2f for '%s'%n",
+            request.getAmount(), request.getPurpose());
+    }
+}
+
+// Usage
+public class Main {
+    public static void main(String[] args) {
+        // Build the chain
+        ApprovalHandler teamLead = new TeamLeadHandler();
+        ApprovalHandler manager  = new ManagerHandler();
+        ApprovalHandler director = new DirectorHandler();
+        ApprovalHandler ceo      = new CEOHandler();
+
+        teamLead.setNext(manager).setNext(director).setNext(ceo);
+
+        // Same entry point — each request finds its appropriate approver
+        teamLead.handleRequest(new PurchaseRequest("Office supplies", 500));
+        teamLead.handleRequest(new PurchaseRequest("Team training", 5000));
+        teamLead.handleRequest(new PurchaseRequest("Software licenses", 50000));
+        teamLead.handleRequest(new PurchaseRequest("Acquisition", 500000));
+    }
+}</code></pre>
+    </div>
+
+    <h2>🔍 Real-World Usage</h2>
+    <ul>
+      <li>Spring Security Filter Chain — each filter handles or passes</li>
+      <li>Java Servlet Filter Chain (<code>FilterChain.doFilter()</code>)</li>
+      <li>Logging levels (DEBUG → INFO → WARN → ERROR)</li>
+      <li>Exception handling chains (<code>try-catch</code> hierarchy)</li>
+    </ul>
+
+    <h2>🎤 Interview Q&amp;A</h2>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">Q: How does Spring Security implement Chain of Responsibility?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p>Spring Security has a <code>SecurityFilterChain</code> — an ordered list of <code>Filter</code>s. Each filter (e.g., <code>JwtAuthenticationFilter</code>, <code>UsernamePasswordAuthenticationFilter</code>, <code>ExceptionTranslationFilter</code>) processes the request, optionally modifies the SecurityContext, then calls <code>chain.doFilter()</code> to pass to the next. The chain is configured with <code>HttpSecurity</code> in Spring Boot and is a textbook CoR implementation.</p></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">Q: What are the downsides of Chain of Responsibility?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p>(1) No guarantee of handling — request might reach end without being processed. (2) Debugging is harder — hard to see which handler will respond without stepping through. (3) Performance — chain traversal adds overhead for each request. (4) Ordering matters — improper chain setup can lead to wrong handler handling a request.</p></div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <p>JavaPatterns • <a href="index.html">← Behavioral</a> | <a href="command.html">Command →</a></p>
+    </footer>
+  </main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="../../js/main.js"></script>
+</body>
+</html>

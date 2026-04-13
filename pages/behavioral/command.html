@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Command Pattern in Java — JavaPatterns</title>
+  <meta name="description" content="Command design pattern in Java — encapsulate requests, undo/redo, queuing, Spring @Async, interview questions." />
+  <link rel="stylesheet" href="../../css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+</head>
+<body>
+<header class="site-header">
+  <button id="menu-toggle">☰</button>
+  <a href="../../index.html" class="logo"><div class="logo-icon">♟</div><span>JavaPatterns</span></a>
+  <div class="search-bar"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar" data-root="../../"></nav>
+  <main class="main-content">
+    <div class="page-header">
+      <div class="breadcrumb"><a href="../../index.html">Home</a><span class="sep">›</span><a href="index.html">Behavioral</a><span class="sep">›</span><span>Command</span></div>
+      <div class="badges"><span class="badge badge-behavioral">Behavioral</span><span class="badge badge-medium">Medium</span></div>
+      <h1>📝 Command Pattern</h1>
+      <p>Encapsulates a request as an object, allowing parameterization, queuing, logging, and undoable operations. Decouples the sender of a request from the object that handles it.</p>
+    </div>
+
+    <h2>🎯 When to Use</h2>
+    <ul>
+      <li>Undo/Redo functionality (text editors, IDEs)</li>
+      <li>Queuing and scheduling requests (job queues, task schedulers)</li>
+      <li>Transactional behavior — commit/rollback batch of operations</li>
+      <li>Macro recording — record then replay sequences of actions</li>
+    </ul>
+
+    <h2>💻 Java Implementation</h2>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Text Editor with Undo/Redo</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">import java.util.ArrayDeque;
+import java.util.Deque;
+
+// ── Command Interface ─────────────────────────────────────────
+public interface Command {
+    void execute();
+    void undo();
+}
+
+// ── Receiver — the object that actually does the work ─────────
+public class TextDocument {
+    private StringBuilder content = new StringBuilder();
+
+    public void insertText(int position, String text) {
+        content.insert(position, text);
+        System.out.println("Document: \"" + content + "\"");
+    }
+
+    public void deleteText(int position, int length) {
+        content.delete(position, position + length);
+        System.out.println("Document: \"" + content + "\"");
+    }
+
+    public String getContent() { return content.toString(); }
+    public int length() { return content.length(); }
+}
+
+// ── Concrete Commands ─────────────────────────────────────────
+public class InsertTextCommand implements Command {
+    private final TextDocument doc;
+    private final int position;
+    private final String text;
+
+    public InsertTextCommand(TextDocument doc, int position, String text) {
+        this.doc = doc;
+        this.position = position;
+        this.text = text;
+    }
+
+    @Override
+    public void execute() {
+        doc.insertText(position, text);
+    }
+
+    @Override
+    public void undo() {
+        // Reverse: delete what we inserted
+        doc.deleteText(position, text.length());
+    }
+}
+
+public class DeleteTextCommand implements Command {
+    private final TextDocument doc;
+    private final int position;
+    private final int length;
+    private String deletedText; // saved for undo
+
+    public DeleteTextCommand(TextDocument doc, int position, int length) {
+        this.doc = doc;
+        this.position = position;
+        this.length = length;
+    }
+
+    @Override
+    public void execute() {
+        // Save before deleting (for undo)
+        deletedText = doc.getContent().substring(position, position + length);
+        doc.deleteText(position, length);
+    }
+
+    @Override
+    public void undo() {
+        // Restore the deleted text
+        doc.insertText(position, deletedText);
+    }
+}
+
+// ── Invoker — manages command execution and history ───────────
+public class TextEditor {
+    private final TextDocument doc = new TextDocument();
+    private final Deque&lt;Command&gt; undoStack = new ArrayDeque&lt;&gt;();
+    private final Deque&lt;Command&gt; redoStack = new ArrayDeque&lt;&gt;();
+
+    public void executeCommand(Command cmd) {
+        cmd.execute();
+        undoStack.push(cmd);
+        redoStack.clear(); // new action clears redo history
+    }
+
+    public void undo() {
+        if (undoStack.isEmpty()) { System.out.println("Nothing to undo"); return; }
+        Command cmd = undoStack.pop();
+        cmd.undo();
+        redoStack.push(cmd);
+        System.out.println("[UNDO performed]");
+    }
+
+    public void redo() {
+        if (redoStack.isEmpty()) { System.out.println("Nothing to redo"); return; }
+        Command cmd = redoStack.pop();
+        cmd.execute();
+        undoStack.push(cmd);
+        System.out.println("[REDO performed]");
+    }
+
+    public TextDocument getDocument() { return doc; }
+}
+
+// Usage
+public class Main {
+    public static void main(String[] args) {
+        TextEditor editor = new TextEditor();
+
+        editor.executeCommand(new InsertTextCommand(editor.getDocument(), 0, "Hello"));
+        editor.executeCommand(new InsertTextCommand(editor.getDocument(), 5, " World"));
+        editor.executeCommand(new DeleteTextCommand(editor.getDocument(), 5, 6)); // delete " World"
+
+        editor.undo(); // restore " World"
+        editor.undo(); // remove " World" again
+        editor.redo(); // re-insert " World"
+    }
+}</code></pre>
+    </div>
+
+    <h2>🎤 Interview Q&amp;A</h2>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">Q: What are the four participants in the Command pattern?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p><strong>Command</strong>: Interface with <code>execute()</code> and optionally <code>undo()</code>. <br><strong>ConcreteCommand</strong>: Binds an action to a Receiver — knows how to execute and undo. <br><strong>Receiver</strong>: The actual object that knows how to perform the operation. <br><strong>Invoker</strong>: Asks the command to carry out a request; may maintain a history for undo/redo.</p></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">Q: How does Java's Runnable relate to Command pattern?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p><code>Runnable</code> is a simplified Command pattern — <code>run()</code> is the <code>execute()</code> method. <code>ExecutorService</code> is the Invoker. <code>ThreadPoolExecutor</code> queues and executes <code>Runnable</code>s. Java 8's <code>Callable</code> extends this with a return value. Lambdas make defining commands extremely concise: <code>executor.submit(() -&gt; doWork())</code>.</p></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">Q: How would you implement a transactional batch using Command pattern?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p>Create a <code>BatchCommand</code> (Composite Command) that holds a list of commands. In <code>execute()</code>: execute all commands sequentially. On failure: call <code>undo()</code> on all previously executed commands in reverse order (simulating rollback). This is essentially how database transactions work conceptually.</p></div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <p>JavaPatterns • <a href="chain-of-responsibility.html">← Chain of Responsibility</a> | <a href="interpreter.html">Interpreter →</a></p>
+    </footer>
+  </main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="../../js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interpreter Pattern in Java — JavaPatterns</title>
+  <link rel="stylesheet" href="../../css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+</head>
+<body>
+<header class="site-header">
+  <button id="menu-toggle">☰</button>
+  <a href="../../index.html" class="logo"><div class="logo-icon">♟</div><span>JavaPatterns</span></a>
+  <div class="search-bar"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar" data-root="../../"></nav>
+  <main class="main-content">
+    <div class="page-header">
+      <div class="breadcrumb"><a href="../../index.html">Home</a><span class="sep">›</span><a href="index.html">Behavioral</a><span class="sep">›</span><span>Interpreter</span></div>
+      <div class="badges"><span class="badge badge-behavioral">Behavioral</span><span class="badge badge-hard">Hard</span></div>
+      <h1>🔤 Interpreter Pattern</h1>
+      <p>Given a language, defines a representation for its grammar along with an interpreter that uses the representation to interpret sentences in the language.</p>
+    </div>
+
+    <h2>🎯 When to Use</h2>
+    <ul>
+      <li>When you have a domain-specific language (DSL) to interpret</li>
+      <li>Simple expression evaluators (math, boolean logic)</li>
+      <li>Spring Expression Language (SpEL) — <code>#{1 + 2}</code></li>
+      <li>SQL parsers, regular expression engines, scripting engines</li>
+    </ul>
+
+    <h2>💻 Java Implementation</h2>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Boolean Expression Interpreter</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">import java.util.Map;
+
+// Abstract Expression
+public interface BooleanExpression {
+    boolean interpret(Map&lt;String, Boolean&gt; context);
+}
+
+// Terminal expressions (leaves)
+public class VariableExpression implements BooleanExpression {
+    private final String name;
+    public VariableExpression(String name) { this.name = name; }
+
+    @Override
+    public boolean interpret(Map&lt;String, Boolean&gt; context) {
+        return context.getOrDefault(name, false);
+    }
+}
+
+public class LiteralExpression implements BooleanExpression {
+    private final boolean value;
+    public LiteralExpression(boolean value) { this.value = value; }
+
+    @Override
+    public boolean interpret(Map&lt;String, Boolean&gt; context) { return value; }
+}
+
+// Non-terminal (composite) expressions
+public class AndExpression implements BooleanExpression {
+    private final BooleanExpression left, right;
+    public AndExpression(BooleanExpression l, BooleanExpression r) { left=l; right=r; }
+
+    @Override
+    public boolean interpret(Map&lt;String, Boolean&gt; ctx) {
+        return left.interpret(ctx) && right.interpret(ctx);
+    }
+}
+
+public class OrExpression implements BooleanExpression {
+    private final BooleanExpression left, right;
+    public OrExpression(BooleanExpression l, BooleanExpression r) { left=l; right=r; }
+
+    @Override
+    public boolean interpret(Map&lt;String, Boolean&gt; ctx) {
+        return left.interpret(ctx) || right.interpret(ctx);
+    }
+}
+
+public class NotExpression implements BooleanExpression {
+    private final BooleanExpression expr;
+    public NotExpression(BooleanExpression expr) { this.expr = expr; }
+
+    @Override
+    public boolean interpret(Map&lt;String, Boolean&gt; ctx) {
+        return !expr.interpret(ctx);
+    }
+}
+
+// Usage — build and evaluate: (isAdmin OR isManager) AND NOT isLocked
+public class Main {
+    public static void main(String[] args) {
+        // Build expression tree
+        BooleanExpression isAdmin   = new VariableExpression("isAdmin");
+        BooleanExpression isManager = new VariableExpression("isManager");
+        BooleanExpression isLocked  = new VariableExpression("isLocked");
+
+        BooleanExpression canAccess = new AndExpression(
+            new OrExpression(isAdmin, isManager),
+            new NotExpression(isLocked)
+        );
+
+        // Context 1: admin, not locked
+        Map&lt;String, Boolean&gt; adminCtx = Map.of("isAdmin", true, "isManager", false, "isLocked", false);
+        System.out.println("Admin access: " + canAccess.interpret(adminCtx)); // true
+
+        // Context 2: manager, locked
+        Map&lt;String, Boolean&gt; lockedMgr = Map.of("isAdmin", false, "isManager", true, "isLocked", true);
+        System.out.println("Locked manager: " + canAccess.interpret(lockedMgr)); // false
+
+        // Context 3: regular user
+        Map&lt;String, Boolean&gt; userCtx = Map.of("isAdmin", false, "isManager", false, "isLocked", false);
+        System.out.println("Regular user: " + canAccess.interpret(userCtx)); // false
+    }
+}</code></pre>
+    </div>
+
+    <h2>🎤 Interview Q&amp;A</h2>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">Q: What are the limitations of Interpreter pattern?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p>(1) Complex grammars lead to many classes (one per grammar rule). (2) Hard to maintain as grammar evolves. (3) Poor performance for complex expressions. For complex language parsing, use parser generators (ANTLR), PEG parsers, or established DSL frameworks. Interpreter is best for simple, small grammars.</p></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">Q: How does Spring SpEL relate to Interpreter pattern?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p>Spring Expression Language (SpEL) is a full Interpreter implementation. <code>ExpressionParser parser = new SpelExpressionParser();</code> parses and evaluates expressions like <code>"#{user.age > 18 && user.role == 'ADMIN'}"</code>. The parser builds an AST (Abstract Syntax Tree) from the grammar, then the interpreter evaluates it against a context — classic Interpreter pattern at enterprise scale.</p></div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <p>JavaPatterns • <a href="command.html">← Command</a> | <a href="iterator.html">Iterator →</a></p>
+    </footer>
+  </main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="../../js/main.js"></script>
+</body>
+</html>

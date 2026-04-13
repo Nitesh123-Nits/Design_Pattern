@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Observer Pattern in Java — JavaPatterns</title>
+  <meta name="description" content="Observer design pattern in Java — pub/sub, event listeners, Spring events, interview questions." />
+  <link rel="stylesheet" href="../../css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+</head>
+<body>
+<header class="site-header">
+  <button id="menu-toggle">☰</button>
+  <a href="../../index.html" class="logo"><div class="logo-icon">♟</div><span>JavaPatterns</span></a>
+  <div class="search-bar"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar" data-root="../../"></nav>
+  <main class="main-content">
+    <div class="page-header">
+      <div class="breadcrumb"><a href="../../index.html">Home</a><span class="sep">›</span><a href="index.html">Behavioral</a><span class="sep">›</span><span>Observer</span></div>
+      <div class="badges"><span class="badge badge-behavioral">Behavioral</span><span class="badge badge-easy">Easy</span></div>
+      <h1>👁️ Observer Pattern</h1>
+      <p>Defines a one-to-many dependency between objects so that when one object (Subject) changes state, all its dependents (Observers) are notified and updated automatically.</p>
+    </div>
+
+    <h2>🎯 When to Use</h2>
+    <ul>
+      <li>Event handling systems (GUI events, DOM events)</li>
+      <li>Pub/Sub messaging systems (Kafka, RabbitMQ)</li>
+      <li>Model-View-Controller (MVC) — model notifies views</li>
+      <li>Spring's <code>ApplicationEvent</code> system</li>
+      <li>Stock price notification systems</li>
+    </ul>
+
+    <h2>🗺️ UML Structure</h2>
+    <div class="uml-diagram"><pre>
+  ┌────────────────────┐         ┌──────────────┐
+  │ Subject (iface)    │1───────*│  Observer    │
+  ├────────────────────┤         ├──────────────┤
+  │+subscribe(obs)     │         │+update(event)│
+  │+unsubscribe(obs)   │         └──────────────┘
+  │+notifyObservers()  │                 ▲
+  └────────────────────┘          ┌──────┴──────┐
+             ▲              ┌─────────┐   ┌───────────┐
+  ┌──────────┴───────┐      │EmailObs │   │SMSObs     │
+  │ ConcreteSubject  │      └─────────┘   └───────────┘
+  ├──────────────────┤
+  │-observers: List  │
+  │-state            │
+  └──────────────────┘</pre></div>
+
+    <h2>💻 Java Implementation</h2>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">E-Commerce Order Event System</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">import java.util.ArrayList;
+import java.util.List;
+
+// ── Event Object ────────────────────────────────────────────
+public class OrderEvent {
+    public enum Type { PLACED, SHIPPED, DELIVERED, CANCELLED }
+    private final String orderId;
+    private final Type type;
+    private final double amount;
+
+    public OrderEvent(String orderId, Type type, double amount) {
+        this.orderId = orderId;
+        this.type    = type;
+        this.amount  = amount;
+    }
+    public String getOrderId() { return orderId; }
+    public Type getType()      { return type; }
+    public double getAmount()  { return amount; }
+}
+
+// ── Observer Interface ───────────────────────────────────────
+public interface OrderObserver {
+    void onOrderEvent(OrderEvent event);
+}
+
+// ── Subject Interface ────────────────────────────────────────
+public interface OrderSubject {
+    void subscribe(OrderObserver observer);
+    void unsubscribe(OrderObserver observer);
+    void notifyObservers(OrderEvent event);
+}
+
+// ── Concrete Subject ─────────────────────────────────────────
+public class OrderService implements OrderSubject {
+    private final List&lt;OrderObserver&gt; observers = new ArrayList&lt;&gt;();
+
+    @Override
+    public void subscribe(OrderObserver observer) {
+        observers.add(observer);
+        System.out.println("✅ Observer registered: " + observer.getClass().getSimpleName());
+    }
+
+    @Override
+    public void unsubscribe(OrderObserver observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(OrderEvent event) {
+        observers.forEach(obs -> obs.onOrderEvent(event));
+    }
+
+    // Business method — triggers notifications
+    public void placeOrder(String orderId, double amount) {
+        System.out.println("\n📦 Order placed: " + orderId);
+        notifyObservers(new OrderEvent(orderId, OrderEvent.Type.PLACED, amount));
+    }
+
+    public void shipOrder(String orderId) {
+        System.out.println("\n🚚 Order shipped: " + orderId);
+        notifyObservers(new OrderEvent(orderId, OrderEvent.Type.SHIPPED, 0));
+    }
+}
+
+// ── Concrete Observers ────────────────────────────────────────
+public class EmailNotificationObserver implements OrderObserver {
+    @Override
+    public void onOrderEvent(OrderEvent event) {
+        System.out.println("📧 EMAIL: Order " + event.getOrderId()
+            + " is " + event.getType() + " (Amount: $" + event.getAmount() + ")");
+    }
+}
+
+public class SMSNotificationObserver implements OrderObserver {
+    @Override
+    public void onOrderEvent(OrderEvent event) {
+        if (event.getType() == OrderEvent.Type.SHIPPED) { // only care about shipping
+            System.out.println("📱 SMS: Your order " + event.getOrderId() + " has been shipped!");
+        }
+    }
+}
+
+public class InventoryObserver implements OrderObserver {
+    @Override
+    public void onOrderEvent(OrderEvent event) {
+        if (event.getType() == OrderEvent.Type.PLACED) {
+            System.out.println("📊 INVENTORY: Reducing stock for order " + event.getOrderId());
+        }
+    }
+}
+
+public class AnalyticsObserver implements OrderObserver {
+    private int totalOrders = 0;
+    private double totalRevenue = 0;
+
+    @Override
+    public void onOrderEvent(OrderEvent event) {
+        if (event.getType() == OrderEvent.Type.PLACED) {
+            totalOrders++;
+            totalRevenue += event.getAmount();
+            System.out.println("📈 ANALYTICS: Orders=" + totalOrders + " Revenue=$" + totalRevenue);
+        }
+    }
+}
+
+// Usage
+public class Main {
+    public static void main(String[] args) {
+        OrderService orderService = new OrderService();
+
+        // Register observers — loose coupling, easy to add/remove
+        orderService.subscribe(new EmailNotificationObserver());
+        orderService.subscribe(new SMSNotificationObserver());
+        orderService.subscribe(new InventoryObserver());
+        orderService.subscribe(new AnalyticsObserver());
+
+        // Subject changes state — all observers notified
+        orderService.placeOrder("ORD-001", 99.99);
+        orderService.shipOrder("ORD-001");
+        orderService.placeOrder("ORD-002", 149.50);
+    }
+}</code></pre>
+    </div>
+
+    <h3>Spring Framework — Built-in Observer via ApplicationEvent</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Spring Events (Production-Grade)</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Event
+public class OrderPlacedEvent extends ApplicationEvent {
+    private final String orderId;
+    public OrderPlacedEvent(Object source, String orderId) {
+        super(source);
+        this.orderId = orderId;
+    }
+    public String getOrderId() { return orderId; }
+}
+
+// Publisher (Subject)
+@Service
+public class OrderService {
+    @Autowired private ApplicationEventPublisher publisher;
+
+    public void placeOrder(String orderId) {
+        // business logic...
+        publisher.publishEvent(new OrderPlacedEvent(this, orderId));
+    }
+}
+
+// Listener (Observer)
+@Component
+public class EmailListener {
+    @EventListener
+    public void handleOrderPlaced(OrderPlacedEvent event) {
+        System.out.println("Sending email for order: " + event.getOrderId());
+    }
+}
+
+// Async Listener
+@Component
+public class AnalyticsListener {
+    @Async
+    @EventListener
+    public void handleOrderPlaced(OrderPlacedEvent event) {
+        // Runs in a separate thread — non-blocking
+        System.out.println("Recording analytics for: " + event.getOrderId());
+    }
+}</code></pre>
+    </div>
+
+    <h2>🎤 Interview Q&amp;A</h2>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">Q: What is the difference between Observer and Pub/Sub patterns?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p><strong>Observer</strong>: Subject and Observers know about each other (direct reference). Tightly coupled to the subject. Synchronous — observer is called directly. <br><strong>Pub/Sub</strong>: Publisher and Subscribers are decoupled via a message broker (Kafka, RabbitMQ, Spring Events). Neither knows about the other. Can be asynchronous. More scalable but more infrastructure.</p></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">Q: What are the memory leak risks with Observer pattern?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p>If observers are never unregistered (<code>unsubscribe()</code>), the subject holds strong references to them, preventing garbage collection — classic memory leak. Solutions: (1) Use <code>WeakReference&lt;Observer&gt;</code> in the observers list. (2) Always unsubscribe when an observer is no longer needed (e.g., component destroyed). (3) Spring manages this for you with <code>@EventListener</code> beans.</p></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">Q: How does Observer relate to Reactive Programming?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p>Reactive Programming (RxJava, Project Reactor, Spring WebFlux) is an evolved form of Observer. It provides: (1) <strong>Backpressure</strong> — observer can signal it can't keep up, (2) <strong>Composable</strong> streams with operators (map, filter, flatMap), (3) <strong>Error handling</strong> in the reactive chain, (4) <strong>Completion signals</strong>. Java's <code>java.util.concurrent.Flow</code> (Java 9+) standardizes this as Reactive Streams.</p></div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <p>JavaPatterns • <a href="mediator.html">← Mediator</a> | <a href="state.html">State →</a></p>
+    </footer>
+  </main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="../../js/main.js"></script>
+</body>
+</html>

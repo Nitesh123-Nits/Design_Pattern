@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Abstract Factory Pattern in Java — JavaPatterns</title>
+  <meta name="description" content="Abstract Factory pattern in Java — families of objects, GUI factories, cross-platform examples with interview Q&A." />
+  <link rel="stylesheet" href="../../css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+</head>
+<body>
+<header class="site-header">
+  <button id="menu-toggle">☰</button>
+  <a href="../../index.html" class="logo"><div class="logo-icon">♟</div><span>JavaPatterns</span></a>
+  <div class="search-bar"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar" data-root="../../"></nav>
+  <main class="main-content">
+    <div class="page-header">
+      <div class="breadcrumb"><a href="../../index.html">Home</a><span class="sep">›</span><a href="index.html">Creational</a><span class="sep">›</span><span>Abstract Factory</span></div>
+      <div class="badges"><span class="badge badge-creational">Creational</span><span class="badge badge-medium">Medium</span></div>
+      <h1>🔧 Abstract Factory Pattern</h1>
+      <p>Provides an interface for creating families of related or dependent objects without specifying their concrete classes. A "factory of factories."</p>
+    </div>
+
+    <h2>🎯 When to Use</h2>
+    <ul>
+      <li>When your system needs to be independent of how its products are created</li>
+      <li>When you need to work with multiple families of products</li>
+      <li>When you want to enforce consistency among related products</li>
+      <li>Cross-platform UI toolkits (Windows vs macOS widgets)</li>
+      <li>Database driver families (MySQL vs PostgreSQL)</li>
+    </ul>
+
+    <h2>💻 Java Implementation</h2>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Cross-Platform UI Factory</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// ── Product Interfaces ──────────────────────────────────────
+public interface Button {
+    void render();
+    void onClick();
+}
+
+public interface TextField {
+    void render();
+    String getValue();
+}
+
+public interface Checkbox {
+    void render();
+    boolean isChecked();
+}
+
+// ── Windows Family ──────────────────────────────────────────
+public class WindowsButton implements Button {
+    public void render() { System.out.println("[Windows] Rendering flat button"); }
+    public void onClick() { System.out.println("[Windows] Button clicked — Win32 event"); }
+}
+
+public class WindowsTextField implements TextField {
+    private String value = "";
+    public void render() { System.out.println("[Windows] Rendering Win32 text field"); }
+    public String getValue() { return value; }
+}
+
+public class WindowsCheckbox implements Checkbox {
+    private boolean checked = false;
+    public void render() { System.out.println("[Windows] Rendering Win32 checkbox"); }
+    public boolean isChecked() { return checked; }
+}
+
+// ── macOS Family ────────────────────────────────────────────
+public class MacButton implements Button {
+    public void render() { System.out.println("[macOS] Rendering Aqua button"); }
+    public void onClick() { System.out.println("[macOS] Button clicked — Cocoa event"); }
+}
+
+public class MacTextField implements TextField {
+    private String value = "";
+    public void render() { System.out.println("[macOS] Rendering NSTextField"); }
+    public String getValue() { return value; }
+}
+
+public class MacCheckbox implements Checkbox {
+    private boolean checked = false;
+    public void render() { System.out.println("[macOS] Rendering NSButton (checkbox)"); }
+    public boolean isChecked() { return checked; }
+}
+
+// ── Abstract Factory Interface ───────────────────────────────
+public interface UIComponentFactory {
+    Button createButton();
+    TextField createTextField();
+    Checkbox createCheckbox();
+}
+
+// ── Concrete Factories ────────────────────────────────────────
+public class WindowsUIFactory implements UIComponentFactory {
+    @Override public Button createButton()       { return new WindowsButton(); }
+    @Override public TextField createTextField()  { return new WindowsTextField(); }
+    @Override public Checkbox createCheckbox()    { return new WindowsCheckbox(); }
+}
+
+public class MacUIFactory implements UIComponentFactory {
+    @Override public Button createButton()       { return new MacButton(); }
+    @Override public TextField createTextField()  { return new MacTextField(); }
+    @Override public Checkbox createCheckbox()    { return new MacCheckbox(); }
+}
+
+// ── Application — uses abstract factory ─────────────────────
+public class LoginForm {
+    private final Button submitButton;
+    private final TextField usernameField;
+    private final Checkbox rememberMe;
+
+    // Injected factory — doesn't know if Windows or Mac
+    public LoginForm(UIComponentFactory factory) {
+        this.submitButton  = factory.createButton();
+        this.usernameField = factory.createTextField();
+        this.rememberMe    = factory.createCheckbox();
+    }
+
+    public void render() {
+        usernameField.render();
+        rememberMe.render();
+        submitButton.render();
+    }
+
+    public void submit() {
+        System.out.println("User: " + usernameField.getValue() + " | Remember: " + rememberMe.isChecked());
+        submitButton.onClick();
+    }
+}
+
+// ── Client / Configuration ────────────────────────────────────
+public class Application {
+    public static void main(String[] args) {
+        // Determine factory based on OS at startup — only place that knows OS
+        UIComponentFactory factory = getFactory();
+
+        LoginForm form = new LoginForm(factory); // doesn't care about platform
+        form.render();
+        form.submit();
+    }
+
+    private static UIComponentFactory getFactory() {
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("mac")) return new MacUIFactory();
+        return new WindowsUIFactory(); // default
+    }
+}</code></pre>
+    </div>
+
+    <h2>📊 Pros &amp; Cons</h2>
+    <div class="table-wrapper"><table class="pros-cons-table">
+      <thead><tr><th>Aspect</th><th>Detail</th></tr></thead>
+      <tbody>
+        <tr><td class="pro">✅ Product consistency</td><td>Ensures products of the same family work together</td></tr>
+        <tr><td class="pro">✅ Decouples client</td><td>Client code works with interfaces, not concrete classes</td></tr>
+        <tr><td class="pro">✅ Easy to switch families</td><td>Swap entire UI family with one factory change</td></tr>
+        <tr><td class="con">❌ Hard to extend</td><td>Adding a new product type requires changes in ALL factories</td></tr>
+        <tr><td class="con">❌ Complex</td><td>Many interfaces and classes for simple scenarios</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>🎤 Interview Q&amp;A</h2>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">Q: What is the key difference between Factory Method and Abstract Factory?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p><strong>Factory Method</strong>: One factory, one product. Uses inheritance — subclass overrides a factory method to change the product. <br><strong>Abstract Factory</strong>: One factory interface, MULTIPLE related products (a family). Uses composition — clients are injected with a factory and call methods to get each product. Abstract Factory is like a "kit" of coordinated products.</p></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">Q: How does Abstract Factory support OCP?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p>To add a new platform (e.g., Linux), you create a <code>LinuxUIFactory</code> and Linux component classes — zero changes to existing factories, client code, or product interfaces. The client code (LoginForm) requires no changes because it depends on the abstract <code>UIComponentFactory</code> interface.</p></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">Q: Where is Abstract Factory used in Spring / Java?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p>(1) Spring's <code>BeanFactory</code> / <code>ApplicationContext</code> — abstract factories for bean creation. (2) JDBC's <code>Connection</code>, <code>Statement</code>, <code>ResultSet</code> — each driver returns its own family. (3) JPA — <code>EntityManagerFactory</code> creates coordinated <code>EntityManager</code>, <code>Query</code> etc. (4) Spring's <code>TransactionProxyFactoryBean</code> family.</p></div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <p>JavaPatterns • <a href="factory.html">← Factory Method</a> | <a href="builder.html">Builder →</a></p>
+    </footer>
+  </main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="../../js/main.js"></script>
+</body>
+</html>

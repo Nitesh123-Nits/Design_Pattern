@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>State Pattern in Java — JavaPatterns</title>
+  <link rel="stylesheet" href="../../css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+</head>
+<body>
+<header class="site-header">
+  <button id="menu-toggle">☰</button>
+  <a href="../../index.html" class="logo"><div class="logo-icon">♟</div><span>JavaPatterns</span></a>
+  <div class="search-bar"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar" data-root="../../"></nav>
+  <main class="main-content">
+    <div class="page-header">
+      <div class="breadcrumb"><a href="../../index.html">Home</a><span class="sep">›</span><a href="index.html">Behavioral</a><span class="sep">›</span><span>State</span></div>
+      <div class="badges"><span class="badge badge-behavioral">Behavioral</span><span class="badge badge-medium">Medium</span></div>
+      <h1>🔁 State Pattern</h1>
+      <p>Allows an object to alter its behavior when its internal state changes. The object will appear to change its class. Eliminates large conditional statements.</p>
+    </div>
+
+    <h2>🎯 When to Use</h2>
+    <ul>
+      <li>When an object's behavior depends on its state and must change at runtime</li>
+      <li>When you have many conditional branches depending on the object's state</li>
+      <li>Order management systems, vending machines, traffic lights, ATMs</li>
+      <li>Spring Statemachine framework</li>
+    </ul>
+
+    <h2>💻 Java Implementation</h2>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Order State Machine</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// State interface
+public interface OrderState {
+    void confirm(Order order);
+    void ship(Order order);
+    void deliver(Order order);
+    void cancel(Order order);
+    String getStateName();
+}
+
+// Context
+public class Order {
+    private OrderState state;
+    private final String orderId;
+
+    public Order(String orderId) {
+        this.orderId = orderId;
+        this.state = new PendingState(); // initial state
+        System.out.println("Order " + orderId + " created. Status: " + state.getStateName());
+    }
+
+    // Delegates all operations to current state
+    public void confirm()  { state.confirm(this); }
+    public void ship()     { state.ship(this); }
+    public void deliver()  { state.deliver(this); }
+    public void cancel()   { state.cancel(this); }
+
+    public void setState(OrderState state) {
+        System.out.println("[" + orderId + "] " + this.state.getStateName()
+            + " → " + state.getStateName());
+        this.state = state;
+    }
+
+    public String getStatus() { return state.getStateName(); }
+}
+
+// Concrete States
+public class PendingState implements OrderState {
+    @Override
+    public void confirm(Order order) {
+        order.setState(new ConfirmedState());
+    }
+    @Override public void ship(Order order)    { System.out.println("❌ Cannot ship: order not confirmed"); }
+    @Override public void deliver(Order order) { System.out.println("❌ Cannot deliver: order not shipped"); }
+    @Override public void cancel(Order order)  { order.setState(new CancelledState()); }
+    @Override public String getStateName()     { return "PENDING"; }
+}
+
+public class ConfirmedState implements OrderState {
+    @Override public void confirm(Order order) { System.out.println("⚠️ Already confirmed"); }
+    @Override
+    public void ship(Order order) { order.setState(new ShippedState()); }
+    @Override public void deliver(Order order) { System.out.println("❌ Cannot deliver: order not shipped"); }
+    @Override public void cancel(Order order)  { order.setState(new CancelledState()); }
+    @Override public String getStateName()     { return "CONFIRMED"; }
+}
+
+public class ShippedState implements OrderState {
+    @Override public void confirm(Order order) { System.out.println("⚠️ Already confirmed &amp; shipped"); }
+    @Override public void ship(Order order)    { System.out.println("⚠️ Already shipped"); }
+    @Override
+    public void deliver(Order order) { order.setState(new DeliveredState()); }
+    @Override public void cancel(Order order)  { System.out.println("❌ Cannot cancel: already shipped"); }
+    @Override public String getStateName()     { return "SHIPPED"; }
+}
+
+public class DeliveredState implements OrderState {
+    @Override public void confirm(Order order) { System.out.println("⚠️ Order already delivered"); }
+    @Override public void ship(Order order)    { System.out.println("⚠️ Order already delivered"); }
+    @Override public void deliver(Order order) { System.out.println("⚠️ Already delivered"); }
+    @Override public void cancel(Order order)  { System.out.println("❌ Cannot cancel: already delivered"); }
+    @Override public String getStateName()     { return "DELIVERED"; }
+}
+
+public class CancelledState implements OrderState {
+    @Override public void confirm(Order order) { System.out.println("❌ Order is cancelled"); }
+    @Override public void ship(Order order)    { System.out.println("❌ Order is cancelled"); }
+    @Override public void deliver(Order order) { System.out.println("❌ Order is cancelled"); }
+    @Override public void cancel(Order order)  { System.out.println("⚠️ Already cancelled"); }
+    @Override public String getStateName()     { return "CANCELLED"; }
+}
+
+// Usage
+public class Main {
+    public static void main(String[] args) {
+        Order order = new Order("ORD-100");
+        order.confirm();   // PENDING → CONFIRMED
+        order.ship();      // CONFIRMED → SHIPPED
+        order.cancel();    // ❌ Cannot cancel: already shipped
+        order.deliver();   // SHIPPED → DELIVERED
+        order.cancel();    // ❌ Cannot cancel: already delivered
+    }
+}</code></pre>
+    </div>
+
+    <h2>🎤 Interview Q&amp;A</h2>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">Q: How does State pattern differ from Strategy?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p><strong>State</strong>: States know about each other and manage transitions. State changes are internal — triggered by the state itself or the context based on conditions. The context's behavior changes automatically as state changes. <br><strong>Strategy</strong>: Strategies don't know about each other. Client explicitly sets the strategy. No automatic transitions. Use State when you have a finite state machine; Strategy for interchangeable algorithms.</p></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">Q: What's the alternative to State pattern without creating many classes?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p>A <strong>state machine enum</strong> with transitions: use an enum for states and a <code>Map&lt;State, Map&lt;Event, State&gt;&gt;</code> for transitions. For complex state machines, use <strong>Spring Statemachine</strong> — a full state machine framework with guards, actions, transitions, hierarchical states. For simple cases, even a switch statement on an enum works — just less extensible.</p></div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <p>JavaPatterns • <a href="observer.html">← Observer</a> | <a href="strategy.html">Strategy →</a></p>
+    </footer>
+  </main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="../../js/main.js"></script>
+</body>
+</html>

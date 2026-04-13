@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Proxy Pattern in Java — JavaPatterns</title>
+  <meta name="description" content="Proxy design pattern in Java — virtual proxy, protection proxy, Spring AOP, JDK dynamic proxy, interview questions." />
+  <link rel="stylesheet" href="../../css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+</head>
+<body>
+<header class="site-header">
+  <button id="menu-toggle">☰</button>
+  <a href="../../index.html" class="logo"><div class="logo-icon">♟</div><span>JavaPatterns</span></a>
+  <div class="search-bar"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar" data-root="../../"></nav>
+  <main class="main-content">
+    <div class="page-header">
+      <div class="breadcrumb"><a href="../../index.html">Home</a><span class="sep">›</span><a href="index.html">Structural</a><span class="sep">›</span><span>Proxy</span></div>
+      <div class="badges"><span class="badge badge-structural">Structural</span><span class="badge badge-medium">Medium</span></div>
+      <h1>🔒 Proxy Pattern</h1>
+      <p>Provides a surrogate or placeholder for another object. A proxy controls access to the original object, allowing you to perform something before or after the request reaches the original object.</p>
+    </div>
+
+    <h2>🎯 Types of Proxy</h2>
+    <ul>
+      <li><strong>Virtual Proxy</strong> — Lazy initialization; create expensive objects only when needed</li>
+      <li><strong>Protection Proxy</strong> — Controls access based on permissions</li>
+      <li><strong>Remote Proxy</strong> — Represents object in different address space (RMI, REST client)</li>
+      <li><strong>Caching Proxy</strong> — Caches results of expensive operations</li>
+      <li><strong>Logging Proxy</strong> — Adds logging before/after method calls</li>
+    </ul>
+
+    <h2>💻 Java Implementation</h2>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Caching + Protection Proxy</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">import java.util.HashMap;
+import java.util.Map;
+
+// Subject Interface
+public interface DatabaseService {
+    String query(String sql);
+    void execute(String sql);
+}
+
+// Real Subject — expensive operations
+public class RealDatabaseService implements DatabaseService {
+    public RealDatabaseService() {
+        System.out.println("🔌 Connecting to database...");
+    }
+
+    @Override
+    public String query(String sql) {
+        System.out.println("⚡ DB QUERY: " + sql);
+        return "Result for: " + sql;
+    }
+
+    @Override
+    public void execute(String sql) {
+        System.out.println("⚡ DB EXECUTE: " + sql);
+    }
+}
+
+// ── Proxy 1: Caching Proxy ────────────────────────────────────
+public class CachingDatabaseProxy implements DatabaseService {
+    private DatabaseService realService;  // lazy — created only when needed
+    private final Map&lt;String, String&gt; cache = new HashMap&lt;&gt;();
+
+    private DatabaseService getRealService() {
+        if (realService == null) {
+            realService = new RealDatabaseService();  // Virtual Proxy: lazy init
+        }
+        return realService;
+    }
+
+    @Override
+    public String query(String sql) {
+        // Check cache first
+        if (cache.containsKey(sql)) {
+            System.out.println("✅ CACHE HIT: " + sql);
+            return cache.get(sql);
+        }
+        // Cache miss — delegate to real service
+        String result = getRealService().query(sql);
+        cache.put(sql, result);
+        System.out.println("💾 CACHED result for: " + sql);
+        return result;
+    }
+
+    @Override
+    public void execute(String sql) {
+        // No caching for writes — invalidate cache
+        cache.clear();
+        getRealService().execute(sql);
+    }
+}
+
+// ── Proxy 2: Protection Proxy (Role-Based Access) ──────────────
+public class SecureDatabaseProxy implements DatabaseService {
+    private final DatabaseService delegate;
+    private final String userRole;
+
+    public SecureDatabaseProxy(DatabaseService delegate, String userRole) {
+        this.delegate = delegate;
+        this.userRole = userRole;
+    }
+
+    @Override
+    public String query(String sql) {
+        // All roles can query
+        System.out.println("[SEC] User role '" + userRole + "' querying...");
+        return delegate.query(sql);
+    }
+
+    @Override
+    public void execute(String sql) {
+        // Only ADMIN can execute write operations
+        if (!"ADMIN".equals(userRole)) {
+            throw new SecurityException("Access denied: User role '" + userRole + "' cannot execute DDL/DML");
+        }
+        System.out.println("[SEC] ADMIN executing...");
+        delegate.execute(sql);
+    }
+}
+
+// Usage
+public class Main {
+    public static void main(String[] args) {
+        // Caching proxy — virtual + caching
+        DatabaseService cachingProxy = new CachingDatabaseProxy();
+        System.out.println(cachingProxy.query("SELECT * FROM users")); // DB query
+        System.out.println(cachingProxy.query("SELECT * FROM users")); // Cache hit!
+        System.out.println(cachingProxy.query("SELECT * FROM orders")); // DB query
+
+        System.out.println();
+
+        // Protection proxy for admin
+        DatabaseService adminProxy = new SecureDatabaseProxy(new RealDatabaseService(), "ADMIN");
+        adminProxy.query("SELECT 1");
+        adminProxy.execute("DELETE FROM temp");  // ✅ ADMIN allowed
+
+        // Protection proxy for regular user
+        DatabaseService userProxy = new SecureDatabaseProxy(new RealDatabaseService(), "USER");
+        userProxy.query("SELECT name FROM products");  // ✅ OK
+        try {
+            userProxy.execute("DROP TABLE users");      // ❌ SecurityException
+        } catch (SecurityException e) {
+            System.out.println("🚫 " + e.getMessage());
+        }
+    }
+}</code></pre>
+    </div>
+
+    <h3>JDK Dynamic Proxy — Spring's Core Mechanism</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">JDK Dynamic Proxy</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">import java.lang.reflect.*;
+
+// JDK Dynamic Proxy — creates proxy at runtime without writing a class
+DatabaseService loggingProxy = (DatabaseService) Proxy.newProxyInstance(
+    DatabaseService.class.getClassLoader(),
+    new Class[]{ DatabaseService.class },
+    new InvocationHandler() {
+        private final DatabaseService delegate = new RealDatabaseService();
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            System.out.println("→ BEFORE: " + method.getName());
+            Object result = method.invoke(delegate, args);
+            System.out.println("← AFTER: " + method.getName());
+            return result;
+        }
+    }
+);
+
+loggingProxy.query("SELECT * FROM products");
+// → BEFORE: query
+// ⚡ DB QUERY: SELECT * FROM products
+// ← AFTER: query
+
+// This is EXACTLY how Spring @Transactional, @Cacheable, @Async work!</code></pre>
+    </div>
+
+    <h2>🎤 Interview Q&amp;A</h2>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">Q: How does Spring implement @Transactional using Proxy?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p>When you annotate a method with <code>@Transactional</code>, Spring creates a proxy (JDK Dynamic Proxy if implements interface, CGLIB subclass proxy otherwise) around your bean. When a method is called, the proxy intercepts it, starts a transaction, calls the real method, then commits or rolls back based on result. Your business class knows nothing about transaction management — clean separation via Proxy/AOP.</p></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">Q: What is the difference between JDK Dynamic Proxy and CGLIB proxy?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p><strong>JDK Dynamic Proxy</strong>: Creates proxy by implementing the target's interface at runtime. Requires that the target implements at least one interface. Uses <code>java.lang.reflect.Proxy</code>. <br><strong>CGLIB</strong>: Creates proxy by subclassing the target class at runtime. Works with classes that don't implement interfaces. Cannot proxy final classes or final methods. Spring Boot prefers CGLIB by default since Spring 4.</p></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">Q: What are the differences between Proxy, Decorator, and Adapter?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p>All three wrap an object, but: <br><strong>Proxy</strong>: Same interface, controls access (security, caching, lazy loading). Client doesn't know it's a proxy. <br><strong>Decorator</strong>: Same interface, adds behavior/features. Client often composes decorators. <br><strong>Adapter</strong>: Different interface, converts between incompatible interfaces. Structural compatibility.</p></div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <p>JavaPatterns • <a href="flyweight.html">← Flyweight</a> | <a href="../behavioral/index.html">Behavioral →</a></p>
+    </footer>
+  </main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="../../js/main.js"></script>
+</body>
+</html>

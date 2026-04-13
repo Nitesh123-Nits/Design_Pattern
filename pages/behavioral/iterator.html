@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Iterator Pattern in Java — JavaPatterns</title>
+  <link rel="stylesheet" href="../../css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+</head>
+<body>
+<header class="site-header">
+  <button id="menu-toggle">☰</button>
+  <a href="../../index.html" class="logo"><div class="logo-icon">♟</div><span>JavaPatterns</span></a>
+  <div class="search-bar"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar" data-root="../../"></nav>
+  <main class="main-content">
+    <div class="page-header">
+      <div class="breadcrumb"><a href="../../index.html">Home</a><span class="sep">›</span><a href="index.html">Behavioral</a><span class="sep">›</span><span>Iterator</span></div>
+      <div class="badges"><span class="badge badge-behavioral">Behavioral</span><span class="badge badge-easy">Easy</span></div>
+      <h1>🔄 Iterator Pattern</h1>
+      <p>Provides a way to access elements of a collection object sequentially without exposing its underlying representation. Java's <code>Iterator</code> and <code>for-each</code> are built on this pattern.</p>
+    </div>
+
+    <h2>💻 Java Implementation</h2>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Custom Collection with Iterator</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+// Custom collection — implements Iterable to support for-each
+public class NumberRange implements Iterable&lt;Integer&gt; {
+    private final int start;
+    private final int end;
+    private final int step;
+
+    public NumberRange(int start, int end, int step) {
+        this.start = start;
+        this.end   = end;
+        this.step  = step;
+    }
+
+    @Override
+    public Iterator&lt;Integer&gt; iterator() {
+        return new RangeIterator();
+    }
+
+    // Inner iterator — knows collection internals, client doesn't need to
+    private class RangeIterator implements Iterator&lt;Integer&gt; {
+        private int current = start;
+
+        @Override
+        public boolean hasNext() { return current &lt;= end; }
+
+        @Override
+        public Integer next() {
+            if (!hasNext()) throw new NoSuchElementException();
+            int value = current;
+            current += step;
+            return value;
+        }
+    }
+}
+
+// Usage
+public class Main {
+    public static void main(String[] args) {
+        NumberRange evens = new NumberRange(0, 10, 2);
+
+        // for-each works because we implement Iterable
+        for (int n : evens) {
+            System.out.print(n + " "); // 0 2 4 6 8 10
+        }
+
+        // Manual iteration
+        Iterator&lt;Integer&gt; it = new NumberRange(1, 5, 1).iterator();
+        while (it.hasNext()) {
+            System.out.print(it.next() + " "); // 1 2 3 4 5
+        }
+
+        // Java built-in Iterator example
+        java.util.List&lt;String&gt; list = java.util.List.of("Java", "Spring", "Patterns");
+        Iterator&lt;String&gt; strIt = list.iterator();
+        while (strIt.hasNext()) {
+            System.out.println(strIt.next());
+        }
+    }
+}</code></pre>
+    </div>
+
+    <h2>🎤 Interview Q&amp;A</h2>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">Q: What is the difference between Iterator and ListIterator?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p><code>Iterator</code>: traverse forward only, has <code>hasNext()</code>, <code>next()</code>, <code>remove()</code>. Works on any <code>Collection</code>. <br><code>ListIterator</code>: extends Iterator, supports bidirectional traversal (<code>hasPrevious()</code>, <code>previous()</code>), <code>add()</code>, <code>set()</code> — can modify during iteration. Only for <code>List</code> implementations.</p></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">Q: What is ConcurrentModificationException and how to avoid it?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p>Thrown when a collection is structurally modified while iterating over it (except through the iterator's own <code>remove()</code>). Fix: (1) Use <code>iterator.remove()</code> instead of <code>list.remove()</code> during iteration. (2) Use <code>CopyOnWriteArrayList</code> for concurrent scenario. (3) Collect items to remove, then remove after loop. (4) Use <code>list.removeIf(predicate)</code> (Java 8+).</p></div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <p>JavaPatterns • <a href="interpreter.html">← Interpreter</a> | <a href="mediator.html">Mediator →</a></p>
+    </footer>
+  </main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="../../js/main.js"></script>
+</body>
+</html>

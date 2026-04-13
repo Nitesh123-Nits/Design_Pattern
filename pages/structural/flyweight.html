@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flyweight Pattern in Java — JavaPatterns</title>
+  <link rel="stylesheet" href="../../css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+</head>
+<body>
+<header class="site-header">
+  <button id="menu-toggle">☰</button>
+  <a href="../../index.html" class="logo"><div class="logo-icon">♟</div><span>JavaPatterns</span></a>
+  <div class="search-bar"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar" data-root="../../"></nav>
+  <main class="main-content">
+    <div class="page-header">
+      <div class="breadcrumb"><a href="../../index.html">Home</a><span class="sep">›</span><a href="index.html">Structural</a><span class="sep">›</span><span>Flyweight</span></div>
+      <div class="badges"><span class="badge badge-structural">Structural</span><span class="badge badge-hard">Hard</span></div>
+      <h1>🪶 Flyweight Pattern</h1>
+      <p>Uses sharing to efficiently support a large number of fine-grained objects. Splits object state into <strong>intrinsic</strong> (shared, immutable) and <strong>extrinsic</strong> (unique, passed in).</p>
+    </div>
+
+    <h2>🎯 When to Use</h2>
+    <ul>
+      <li>When you have a massive number of similar objects consuming too much memory</li>
+      <li>Character rendering in text editors (millions of chars, share font/style data)</li>
+      <li>Particle systems in games</li>
+      <li>Integer, String caching in Java (<code>Integer.valueOf()</code> pool)</li>
+    </ul>
+
+    <h2>💻 Java Implementation</h2>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Text Editor Character Flyweight</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">import java.util.HashMap;
+import java.util.Map;
+
+// Flyweight — contains intrinsic (shared) state
+public final class CharacterStyle {
+    private final String fontFamily;  // intrinsic: shared
+    private final int fontSize;        // intrinsic: shared
+    private final String color;        // intrinsic: shared
+    private final boolean bold;        // intrinsic: shared
+
+    public CharacterStyle(String fontFamily, int fontSize, String color, boolean bold) {
+        this.fontFamily = fontFamily;
+        this.fontSize   = fontSize;
+        this.color      = color;
+        this.bold       = bold;
+    }
+
+    // Render with extrinsic state passed in
+    public void render(char character, int x, int y) {
+        System.out.printf("Char '%c' at (%d,%d) | %s %dpx %s %s%n",
+            character, x, y, fontFamily, fontSize, color, bold ? "BOLD" : "");
+    }
+
+    @Override
+    public String toString() { return fontFamily + "-" + fontSize + "-" + color + "-" + bold; }
+}
+
+// Flyweight Factory — creates and caches flyweights
+public class CharacterStyleFactory {
+    private static final Map&lt;String, CharacterStyle&gt; cache = new HashMap&lt;&gt;();
+
+    public static CharacterStyle getStyle(String fontFamily, int fontSize, String color, boolean bold) {
+        String key = fontFamily + "-" + fontSize + "-" + color + "-" + bold;
+        return cache.computeIfAbsent(key,
+            k -> {
+                System.out.println("Creating NEW style: " + k);
+                return new CharacterStyle(fontFamily, fontSize, color, bold);
+            }
+        );
+    }
+
+    public static int getCacheSize() { return cache.size(); }
+}
+
+// Context — holds extrinsic state (unique per character instance)
+public class DocumentCharacter {
+    private final char character;    // extrinsic: unique per char
+    private final int x, y;          // extrinsic: position
+    private final CharacterStyle style; // shared flyweight
+
+    public DocumentCharacter(char character, int x, int y, CharacterStyle style) {
+        this.character = character;
+        this.x = x;
+        this.y = y;
+        this.style = style;
+    }
+
+    public void render() {
+        style.render(character, x, y); // pass extrinsic state to flyweight
+    }
+}
+
+// Usage — 1 million chars, but only a handful of style objects
+public class TextDocument {
+    public static void main(String[] args) {
+        // Imagine rendering a large document
+        String text = "Hello World Java Design Patterns";
+        int x = 0;
+
+        for (int i = 0; i &lt; text.length(); i++) {
+            // All chars share the SAME style object — not millions of style objects
+            CharacterStyle style = CharacterStyleFactory.getStyle("Arial", 12, "black", false);
+            DocumentCharacter ch = new DocumentCharacter(text.charAt(i), x, 100, style);
+            ch.render();
+            x += 8;
+        }
+
+        // Bold title — different but reused style
+        CharacterStyle titleStyle = CharacterStyleFactory.getStyle("Arial", 24, "blue", true);
+        new DocumentCharacter('J', 0, 0, titleStyle).render();
+
+        // Only 2 style objects created for entire document!
+        System.out.println("\nTotal style objects: " + CharacterStyleFactory.getCacheSize()); // 2
+
+        // Real Java Flyweight examples:
+        Integer a = Integer.valueOf(127);  // cached
+        Integer b = Integer.valueOf(127);  // same object!
+        System.out.println("Same integer object? " + (a == b)); // true (-128 to 127 cached)
+    }
+}</code></pre>
+    </div>
+
+    <h2>🎤 Interview Q&amp;A</h2>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">Q: What is the difference between intrinsic and extrinsic state?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p><strong>Intrinsic state</strong>: Stored in the flyweight, shared across all instances, independent of context. Should be immutable. Example: font family, font size — same for all 'A' characters in the same style. <br><strong>Extrinsic state</strong>: Unique to each instance, cannot be shared, passed in at runtime by the client. Example: x/y position of each character, the actual character value.</p></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">Q: How does Java's String Pool implement Flyweight?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p>Java's String interning pool is a Flyweight implementation. String literals in Java are automatically interned — <code>"hello" == "hello"</code> is <code>true</code> because both point to the same String object in the pool. <code>String.intern()</code> explicitly pools a string. <code>Integer.valueOf()</code> caches integers between -128 and 127 for the same reason.</p></div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <p>JavaPatterns • <a href="facade.html">← Facade</a> | <a href="proxy.html">Proxy →</a></p>
+    </footer>
+  </main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="../../js/main.js"></script>
+</body>
+</html>

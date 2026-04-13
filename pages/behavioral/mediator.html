@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mediator Pattern in Java — JavaPatterns</title>
+  <link rel="stylesheet" href="../../css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+</head>
+<body>
+<header class="site-header">
+  <button id="menu-toggle">☰</button>
+  <a href="../../index.html" class="logo"><div class="logo-icon">♟</div><span>JavaPatterns</span></a>
+  <div class="search-bar"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar" data-root="../../"></nav>
+  <main class="main-content">
+    <div class="page-header">
+      <div class="breadcrumb"><a href="../../index.html">Home</a><span class="sep">›</span><a href="index.html">Behavioral</a><span class="sep">›</span><span>Mediator</span></div>
+      <div class="badges"><span class="badge badge-behavioral">Behavioral</span><span class="badge badge-medium">Medium</span></div>
+      <h1>📡 Mediator Pattern</h1>
+      <p>Defines an object (mediator) that encapsulates how a set of objects interact. Promotes loose coupling by keeping objects from referring to each other explicitly.</p>
+    </div>
+
+    <h2>🎯 When to Use</h2>
+    <ul>
+      <li>When many objects communicate in complex ways (spaghetti references)</li>
+      <li>Chat rooms, air traffic control, event bus systems</li>
+      <li>Spring's <code>ApplicationContext</code> as mediator between beans</li>
+      <li>MVC frameworks — controller mediates between model and view</li>
+    </ul>
+
+    <h2>💻 Java Implementation</h2>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Chat Room Mediator</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">import java.util.ArrayList;
+import java.util.List;
+
+// Mediator interface
+public interface ChatMediator {
+    void sendMessage(String message, User sender);
+    void addUser(User user);
+}
+
+// Colleague
+public abstract class User {
+    protected final ChatMediator mediator;
+    protected final String name;
+
+    public User(ChatMediator mediator, String name) {
+        this.mediator = mediator;
+        this.name     = name;
+    }
+
+    public abstract void receive(String message, String from);
+    public void send(String message) {
+        System.out.println("[" + name + " → ALL]: " + message);
+        mediator.sendMessage(message, this); // via mediator, not direct reference
+    }
+
+    public String getName() { return name; }
+}
+
+// Concrete Mediator
+public class ChatRoom implements ChatMediator {
+    private final List&lt;User&gt; users = new ArrayList&lt;&gt;();
+
+    @Override
+    public void addUser(User user) { users.add(user); }
+
+    @Override
+    public void sendMessage(String message, User sender) {
+        // Mediator controls who gets the message
+        users.stream()
+            .filter(u -> u != sender) // don't echo to sender
+            .forEach(u -> u.receive(message, sender.getName()));
+    }
+}
+
+// Concrete User
+public class ChatUser extends User {
+    public ChatUser(ChatMediator mediator, String name) {
+        super(mediator, name);
+        mediator.addUser(this);
+    }
+
+    @Override
+    public void receive(String message, String from) {
+        System.out.println("  [" + name + " received from " + from + "]: " + message);
+    }
+}
+
+// Specialized user — only receives messages
+public class AdminUser extends User {
+    public AdminUser(ChatMediator mediator) {
+        super(mediator, "ADMIN");
+        mediator.addUser(this);
+    }
+
+    @Override
+    public void receive(String message, String from) {
+        System.out.println("  📋 [ADMIN monitoring from " + from + "]: " + message);
+    }
+}
+
+// Usage
+public class Main {
+    public static void main(String[] args) {
+        ChatMediator chatRoom = new ChatRoom();
+
+        User alice = new ChatUser(chatRoom, "Alice");
+        User bob   = new ChatUser(chatRoom, "Bob");
+        User carol = new ChatUser(chatRoom, "Carol");
+        User admin = new AdminUser(chatRoom);  // monitors all
+
+        alice.send("Hello everyone!");
+        // Bob, Carol, Admin receive — Alice doesn't
+        // No direct Alice → Bob reference!
+
+        bob.send("Hi Alice! Hi Carol!");
+        // Alice, Carol, Admin receive
+    }
+}</code></pre>
+    </div>
+
+    <h2>🎤 Interview Q&amp;A</h2>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">Q: What is the difference between Mediator and Observer?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p><strong>Observer</strong>: One subject notifies many observers — one-to-many. Subject knows about observers. <br><strong>Mediator</strong>: Many objects communicate through a central mediator — many-to-many. Objects only know the mediator, not each other. Mediator encapsulates the communication logic (routing, filtering). Observer is simpler; Mediator handles more complex inter-object communication.</p></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">Q: Can Mediator become a bottleneck?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p>Yes — the mediator can become a "God Object" that knows too much and violates SRP. Solution: keep the mediator thin — only routing logic, no business logic. For heavy load, use async messaging (Kafka, RabbitMQ) instead of a synchronous mediator.</p></div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <p>JavaPatterns • <a href="iterator.html">← Iterator</a> | <a href="memento.html">Memento →</a></p>
+    </footer>
+  </main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="../../js/main.js"></script>
+</body>
+</html>

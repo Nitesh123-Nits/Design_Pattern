@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Facade Pattern in Java — JavaPatterns</title>
+  <meta name="description" content="Facade design pattern in Java — simplified API, subsystem complexity, Spring facades, interview questions." />
+  <link rel="stylesheet" href="../../css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+</head>
+<body>
+<header class="site-header">
+  <button id="menu-toggle">☰</button>
+  <a href="../../index.html" class="logo"><div class="logo-icon">♟</div><span>JavaPatterns</span></a>
+  <div class="search-bar"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Search..." autocomplete="off" /><div id="search-results"></div></div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar" data-root="../../"></nav>
+  <main class="main-content">
+    <div class="page-header">
+      <div class="breadcrumb"><a href="../../index.html">Home</a><span class="sep">›</span><a href="index.html">Structural</a><span class="sep">›</span><span>Facade</span></div>
+      <div class="badges"><span class="badge badge-structural">Structural</span><span class="badge badge-easy">Easy</span></div>
+      <h1>🏢 Facade Pattern</h1>
+      <p>Provides a simplified interface to a complex subsystem. Hides the complexity of the underlying system and provides a simple API for clients.</p>
+    </div>
+
+    <h2>🎯 When to Use</h2>
+    <ul>
+      <li>When you want to provide a simple interface to a complex system</li>
+      <li>When there are many interdependent classes in a subsystem</li>
+      <li>When layering a system — Facade defines an entry point to each layer</li>
+      <li>Service layer in Spring (hides repo + business logic complexity from controllers)</li>
+    </ul>
+
+    <h2>💻 Java Implementation</h2>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">E-Commerce Order Facade</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// ── Complex Subsystem Classes ─────────────────────────────────
+
+public class InventoryService {
+    public boolean checkStock(String productId, int quantity) {
+        System.out.println("Checking stock for " + productId + " × " + quantity);
+        return true; // assume in stock
+    }
+    public void reserveStock(String productId, int quantity) {
+        System.out.println("Reserving " + quantity + " units of " + productId);
+    }
+}
+
+public class PaymentProcessor {
+    public String processPayment(String userId, double amount) {
+        System.out.println("Processing payment of $" + amount + " for user " + userId);
+        return "TXN-" + System.currentTimeMillis();
+    }
+    public void refund(String transactionId) {
+        System.out.println("Refunding transaction: " + transactionId);
+    }
+}
+
+public class ShippingService {
+    public String scheduleDelivery(String orderId, String address) {
+        System.out.println("Scheduling delivery for " + orderId + " to " + address);
+        return "SHIP-" + orderId;
+    }
+    public void cancelDelivery(String shipmentId) {
+        System.out.println("Cancelling shipment: " + shipmentId);
+    }
+}
+
+public class NotificationService {
+    public void sendOrderConfirmation(String userId, String orderId) {
+        System.out.println("Sending order confirmation email for order " + orderId);
+    }
+    public void sendShippingNotification(String userId, String trackingId) {
+        System.out.println("Sending shipping notification, tracking: " + trackingId);
+    }
+}
+
+public class LoyaltyPointsService {
+    public void addPoints(String userId, double amount) {
+        int points = (int)(amount * 10);
+        System.out.println("Adding " + points + " loyalty points to " + userId);
+    }
+}
+
+// ── Facade — One simple method replaces all subsystem calls ──
+public class OrderFacade {
+    private final InventoryService inventory;
+    private final PaymentProcessor payment;
+    private final ShippingService shipping;
+    private final NotificationService notification;
+    private final LoyaltyPointsService loyalty;
+
+    public OrderFacade() {
+        // Facade manages all subsystem instances
+        this.inventory    = new InventoryService();
+        this.payment      = new PaymentProcessor();
+        this.shipping     = new ShippingService();
+        this.notification = new NotificationService();
+        this.loyalty      = new LoyaltyPointsService();
+    }
+
+    // ONE simple method wraps complex orchestration
+    public String placeOrder(String userId, String productId, int qty, double price, String address) {
+        System.out.println("\n=== Placing Order ===");
+
+        // 1. Check stock
+        if (!inventory.checkStock(productId, qty)) {
+            throw new IllegalStateException("Out of stock: " + productId);
+        }
+
+        // 2. Reserve stock
+        inventory.reserveStock(productId, qty);
+
+        // 3. Process payment
+        String transactionId = payment.processPayment(userId, price * qty);
+
+        // 4. Generate order ID
+        String orderId = "ORD-" + System.currentTimeMillis();
+
+        // 5. Schedule delivery
+        String trackingId = shipping.scheduleDelivery(orderId, address);
+
+        // 6. Notify customer
+        notification.sendOrderConfirmation(userId, orderId);
+        notification.sendShippingNotification(userId, trackingId);
+
+        // 7. Award loyalty points
+        loyalty.addPoints(userId, price * qty);
+
+        System.out.println("=== Order Complete: " + orderId + " ===\n");
+        return orderId;
+    }
+}
+
+// ── Client — only deals with Facade ──────────────────────────
+public class CheckoutController {
+    private final OrderFacade orderFacade = new OrderFacade();
+
+    public void checkout(String userId, String productId, int qty, double price, String address) {
+        // Client doesn't know about Inventory, Payment, Shipping — just one call!
+        String orderId = orderFacade.placeOrder(userId, productId, qty, price, address);
+        System.out.println("Order confirmed: " + orderId);
+    }
+
+    public static void main(String[] args) {
+        new CheckoutController().checkout("user-123", "PROD-456", 2, 29.99, "123 Main St");
+    }
+}</code></pre>
+    </div>
+
+    <h2>🔍 Real-World Usage</h2>
+    <ul>
+      <li>Spring's <code>JdbcTemplate</code> — facade over JDBC's complex API</li>
+      <li>Spring's <code>RestTemplate</code> / <code>WebClient</code> — facade over HTTP</li>
+      <li>SLF4J — facade over logging frameworks (Log4j, Logback)</li>
+      <li>Service layer in Spring MVC — facade between controllers and repositories</li>
+      <li>Spring's <code>ApplicationContext</code> — facade over bean management</li>
+    </ul>
+
+    <h2>🎤 Interview Q&amp;A</h2>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">Q: What is the difference between Facade and Adapter patterns?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p><strong>Facade</strong>: Simplifies interface to a complex subsystem for ease of use. Defines a new interface. Works with the subsystem as-is. <br><strong>Adapter</strong>: Makes incompatible interfaces work together. Converts one interface to another that the client expects. Focuses on compatibility, not simplicity.</p></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">Q: Does Facade violate the Single Responsibility Principle?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p>It can if taken too far. The Facade's responsibility is <em>orchestration</em> — coordinating the subsystem. As long as the Facade doesn't contain business logic (which lives in subsystem classes), it's fine. In Spring, the Service layer acts as a Facade but should delegate actual logic to repositories, domain objects, and specialized services.</p></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">Q: How does SLF4J demonstrate the Facade pattern?<span class="accordion-icon">+</span></button>
+        <div class="accordion-body"><p>SLF4J (Simple Logging Facade for Java) provides a unified logging API. Your code calls <code>Logger.info()</code>. At runtime, SLF4J delegates to whatever binding is on the classpath (Logback, Log4j2, java.util.logging). Your code doesn't change if you switch logging frameworks — the Facade absorbs the difference.</p></div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <p>JavaPatterns • <a href="decorator.html">← Decorator</a> | <a href="flyweight.html">Flyweight →</a></p>
+    </footer>
+  </main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="../../js/main.js"></script>
+</body>
+</html>
