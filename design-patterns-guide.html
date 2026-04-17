@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Complete Design Patterns Guide — Java patterns Reference</title>
+  <meta name="description" content="A comprehensive reference for all 23 GoF Design Patterns plus Architectural patterns (Saga, CQRS, etc.) with detailed explanations and Java best practices." />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+  <style>
+    /* Page-specific adjustments for long-form cards */
+    .guide-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 24px;
+      margin-top: 24px;
+    }
+    .guide-card {
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .guide-card .card-head {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 8px;
+    }
+    .guide-card .card-icon {
+      font-size: 1.8rem;
+      width: 48px; height: 48px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid var(--glass-border);
+    }
+    .guide-card h3 { margin: 0; font-size: 1.25rem; }
+    .guide-card .card-also { font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+    .guide-card .section-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      margin-top: 12px;
+    }
+    .guide-card ul { margin: 8px 0 0 18px; }
+    .guide-card li { font-size: 0.88rem; margin-bottom: 4px; }
+    .guide-card .note-box {
+      margin-top: 16px;
+      padding: 12px;
+      background: rgba(255,152,0,0.05);
+      border-left: 2px solid var(--principles);
+      font-size: 0.82rem;
+      font-style: italic;
+      color: var(--text-secondary);
+    }
+    @media (max-width: 600px) {
+      .guide-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <button id="menu-toggle" aria-label="Toggle sidebar"></button>
+  <a href="index.html" class="logo"><div class="logo-icon"></div>
+    <span>JavaPatterns</span>
+  </a>
+  <div class="search-bar">
+    <span class="search-icon"></span>
+    <input type="text" id="search-input" placeholder="Search patterns..." autocomplete="off" />
+    <div id="search-results"></div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar" data-root=""></nav>
+  
+  <main class="main-content">
+    <div class="page-header">
+      <div class="breadcrumb">
+        <a href="index.html">Home</a><span class="sep">›</span>
+        <span>Complete Guide</span>
+      </div>
+      <div class="badges">
+        <span class="badge badge-principles">Comprehensive Reference</span>
+        <span class="badge badge-oop">GoF + Architectural</span>
+      </div>
+      <h1>Design Patterns: <em>The Complete Guide</em></h1>
+      <p>A master reference of proven blueprints for solving recurring software design challenges. From object creation to system-level architecture, this guide covers the "why", "when", and "how" of software structure.</p>
+    </div>
+
+    <!-- Stats Summary -->
+    <div class="hero-stats" style="justify-content: flex-start; margin-bottom: 60px;">
+      <div class="stat"><span class="stat-num">23</span><span class="stat-label">GoF Patterns</span></div>
+      <div class="stat"><span class="stat-num">8</span><span class="stat-label">Architectural</span></div>
+      <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Java Consistent</span></div>
+    </div>
+
+    <!-- CREATIONAL -->
+    <section class="category-section" id="category-creational">
+      <div class="category-header">
+        <div class="cat-icon" style="background:rgba(6,255,165,0.1);color:var(--creational)"></div>
+        <div class="cat-info">
+          <h2 style="color:var(--creational)">Creational Patterns</h2>
+          <p>Mechanisms for object instantiation while keeping clients decoupled from details.</p>
+        </div>
+      </div>
+      
+      <div class="guide-grid">
+        <!-- Singleton -->
+        <div class="card guide-card" id="singleton">
+          <div class="card-head">
+            <div class="card-icon">①</div>
+            <div>
+              <h3>Singleton</h3>
+              <div class="card-also">aka: Single Instance</div>
+            </div>
+          </div>
+          <p>Ensures a class has exactly one instance and provides a global access point to it. Created lazily on first use and reused subsequently.</p>
+          <div class="section-title">When to use</div>
+          <ul>
+            <li>Managing shared resources (DB pools, loggers, thread pools).</li>
+            <li>Centralized configuration management.</li>
+          </ul>
+          <div class="section-title">Why it helps</div>
+          <p>Prevents instance conflicts, reduces memory footprint, and provides a stable access point.</p>
+          <div class="note-box">⚠ Overuse makes testing difficult. Prefer Dependency Injection where possible.</div>
+        </div>
+
+        <!-- Factory Method -->
+        <div class="card guide-card" id="factory-method">
+          <div class="card-head">
+            <div class="card-icon">🏭</div>
+            <div>
+              <h3>Factory Method</h3>
+              <div class="card-also">aka: Virtual Constructor</div>
+            </div>
+          </div>
+          <p>Defines an interface for creating an object but lets subclasses decide which class to instantiate.</p>
+          <div class="section-title">When to use</div>
+          <ul>
+            <li>Exact product type isn't known until runtime.</li>
+            <li>Frameworks where users must extend components (UI widgets).</li>
+          </ul>
+          <div class="section-title">Why it helps</div>
+          <p>Decouples client code from concrete classes. Adding new types doesn't break existing logic.</p>
+        </div>
+
+        <!-- Abstract Factory -->
+        <div class="card guide-card" id="abstract-factory">
+          <div class="card-head">
+            <div class="card-icon">🏗️</div>
+            <div>
+              <h3>Abstract Factory</h3>
+              <div class="card-also">aka: Kit</div>
+            </div>
+          </div>
+          <p>Creates families of related objects without specifying their concrete classes.</p>
+          <div class="section-title">When to use</div>
+          <ul>
+            <li>Family of objects must be used together (e.g., macOS buttons + menus).</li>
+            <li>Independence from concrete product representations.</li>
+          </ul>
+          <div class="section-title">Why it helps</div>
+          <p>Enforces consistency across a product family with a single point of failure (the factory).</p>
+        </div>
+
+        <!-- Builder -->
+        <div class="card guide-card" id="builder">
+          <div class="card-head">
+            <div class="card-icon">🔨</div>
+            <div>
+              <h3>Builder</h3>
+              <div class="card-also">aka: Step Builder</div>
+            </div>
+          </div>
+          <p>Separates complex object construction from its representation for step-by-step assembly.</p>
+          <div class="section-title">When to use</div>
+          <ul>
+            <li>Objects with many optional parameters (telescoping constructor problem).</li>
+            <li>Different representations for same data (HTML vs PDF).</li>
+          </ul>
+          <div class="section-title">Why it helps</div>
+          <p>Cleaner code, immutable objects, and avoids inconsistent intermediate states.</p>
+        </div>
+
+        <!-- Prototype -->
+        <div class="card guide-card" id="prototype">
+          <div class="card-head">
+            <div class="card-icon">🧬</div>
+            <div>
+              <h3>Prototype</h3>
+              <div class="card-also">aka: Clone</div>
+            </div>
+          </div>
+          <p>Creates new objects by copying an existing prototypical instance.</p>
+          <div class="section-title">When to use</div>
+          <ul>
+            <li>Costly initialization (DB fetches, complex math).</li>
+            <li>Avoid subclassing just to vary properties.</li>
+          </ul>
+          <div class="section-title">Why it helps</div>
+          <p>Faster than re-initialization. Useful for game spawning or template-heavy systems.</p>
+        </div>
+
+        <!-- Object Pool -->
+        <div class="card guide-card" id="object-pool">
+          <div class="card-head">
+            <div class="card-icon">🏊</div>
+            <div>
+              <h3>Object Pool</h3>
+              <div class="card-also">aka: Resource Pool</div>
+            </div>
+          </div>
+          <p>Maintains a set of pre-initialized objects ready for use instead of allocating on demand.</p>
+          <div class="section-title">When to use</div>
+          <ul>
+            <li>Costly creation (DB connections, HTTP clients).</li>
+            <li>High frequency of short-lived objects.</li>
+          </ul>
+          <div class="section-title">Why it helps</div>
+          <p>Reduces GC pressure and allocation latency. Core of connection pooling libs.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- STRUCTURAL -->
+    <section class="category-section" id="category-structural">
+      <div class="category-header">
+        <div class="cat-icon" style="background:rgba(240,147,251,0.1);color:var(--structural)"></div>
+        <div class="cat-info">
+          <h2 style="color:var(--structural)">Structural Patterns</h2>
+          <p>Combining classes and objects into larger, more flexible structures.</p>
+        </div>
+      </div>
+      
+      <div class="guide-grid">
+        <!-- Adapter -->
+        <div class="card guide-card" id="adapter">
+          <div class="card-head">
+            <div class="card-icon">🔌</div>
+            <div>
+              <h3>Adapter</h3>
+              <div class="card-also">aka: Wrapper</div>
+            </div>
+          </div>
+          <p>Converts one interface into another that clients expect. Bridges incompatible code.</p>
+          <div class="section-title">When to use</div>
+          <ul>
+            <li>Integrating 3rd-party libs with mismatching APIs.</li>
+            <li>Reusing legacy code without breaking changes.</li>
+          </ul>
+          <div class="section-title">Why it helps</div>
+          <p>Enables components to cooperate through a translation layer. isolates risk.</p>
+        </div>
+
+        <!-- Bridge -->
+        <div class="card guide-card" id="bridge">
+          <div class="card-head">
+            <div class="card-icon">🌉</div>
+            <div>
+              <h3>Bridge</h3>
+              <div class="card-also">aka: Handle/Body</div>
+            </div>
+          </div>
+          <p>Decouples abstraction from its implementation so both can vary independently.</p>
+          <div class="section-title">When to use</div>
+          <ul>
+            <li>Avoid permanent binding of abstraction/impl.</li>
+            <li>Orthogonal dimensions of inheritance (e.g., shapes x platforms).</li>
+          </ul>
+          <div class="section-title">Why it helps</div>
+          <p>Eliminates class explosion. New features don't touch existing implementation classes.</p>
+        </div>
+
+        <!-- Composite -->
+        <div class="card guide-card" id="composite">
+          <div class="card-head">
+            <div class="card-icon">🌳</div>
+            <div>
+              <h3>Composite</h3>
+              <div class="card-also">aka: Tree Structure</div>
+            </div>
+          </div>
+          <p>Composes objects into tree structures. Clients treat leaf and composite objects uniformly.</p>
+          <div class="section-title">When to use</div>
+          <ul>
+            <li>Tree structures (file systems, component trees, organizational charts).</li>
+            <li>Recursive operations on part-whole hierarchies.</li>
+          </ul>
+          <div class="section-title">Why it helps</div>
+          <p>Simplifies recursive processing. One call propagates through the entire structure automatically.</p>
+        </div>
+
+        <!-- Decorator -->
+        <div class="card guide-card" id="decorator">
+          <div class="card-head">
+            <div class="card-icon">🎨</div>
+            <div>
+              <h3>Decorator</h3>
+              <div class="card-also">aka: Wrapper</div>
+            </div>
+          </div>
+          <p>Attaches additional responsibilities to an object dynamically via composition.</p>
+          <div class="section-title">When to use</div>
+          <ul>
+            <li>Adding features without subclassing (logging, compression, caching).</li>
+            <li>Stacking behaviors selectively at runtime.</li>
+          </ul>
+          <div class="section-title">Why it helps</div>
+          <p>Flexible alternative to inheritance. Behaviors can be combined in any order.</p>
+        </div>
+
+        <!-- Facade -->
+        <div class="card guide-card" id="facade">
+          <div class="card-head">
+            <div class="card-icon">🏢</div>
+            <div>
+              <h3>Facade</h3>
+              <div class="card-also">aka: Simplified Interface</div>
+            </div>
+          </div>
+          <p>Provides a unified, simplified interface to a complex subsystem.</p>
+          <div class="section-title">When to use</div>
+          <ul>
+            <li>Hiding complexity of frameworks or multiple internal modules.</li>
+            <li>Layering systems to reduce inter-layer coupling.</li>
+          </ul>
+          <div class="section-title">Why it helps</div>
+          <p>Reduces cognitive load and coupling. Clients only see one clean interface.</p>
+        </div>
+
+        <!-- Flyweight -->
+        <div class="card guide-card" id="flyweight">
+          <div class="card-head">
+            <div class="card-icon">🪶</div>
+            <div>
+              <h3>Flyweight</h3>
+              <div class="card-also">aka: Cache</div>
+            </div>
+          </div>
+          <p>Uses sharing to support large numbers of fine-grained objects efficiently.</p>
+          <div class="section-title">When to use</div>
+          <ul>
+            <li>Huge populations of similar objects (game particles, text glyphs).</li>
+            <li>Memory constraints due to redundant object state.</li>
+          </ul>
+          <div class="section-title">Why it helps</div>
+          <p>Dramatically lowers memory usage by sharing immutable state across instances.</p>
+        </div>
+
+        <!-- Proxy -->
+        <div class="card guide-card" id="proxy">
+          <div class="card-head">
+            <div class="card-icon">🔒</div>
+            <div>
+              <h3>Proxy</h3>
+              <div class="card-also">aka: Surrogate</div>
+            </div>
+          </div>
+          <p>Provides a placeholder to control access to another object (protection, caching, lazy init).</p>
+          <div class="section-title">When to use</div>
+          <ul>
+            <li>Lazy loading expensive objects.</li>
+            <li>Access control or logging interceptions.</li>
+          </ul>
+          <div class="section-title">Why it helps</div>
+          <p>Interception layer is transparent to the client. Real object is only used when needed.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- BEHAVIORAL -->
+    <section class="category-section" id="category-behavioral">
+      <div class="category-header">
+        <div class="cat-icon" style="background:rgba(255,217,61,0.1);color:var(--behavioral)"></div>
+        <div class="cat-info">
+          <h2 style="color:var(--behavioral)">Behavioral Patterns</h2>
+          <p>Managing object communication, distributed responsibilities, and algorithms.</p>
+        </div>
+      </div>
+      
+      <div class="guide-grid">
+        <!-- Chain of Responsibility -->
+        <div class="card guide-card" id="chain-of-responsibility">
+          <div class="card-head">
+            <div class="card-icon">⛓️</div>
+            <div>
+              <h3>Chain of Responsibility</h3>
+              <div class="card-also">aka: Handler Chain</div>
+            </div>
+          </div>
+          <p>Passes a request along a chain of handlers. Each handler decides to process or forward.</p>
+          <div class="section-title">When to use</div>
+          <ul>
+            <li>Middleware pipelines (auth, logging, validation).</li>
+            <li>Event bubbling or nested permission checks.</li>
+          </ul>
+          <div class="section-title">Why it helps</div>
+          <p>Dynamic, decoupled processing. adding/removing handlers doesn't affect the sender.</p>
+        </div>
+
+        <!-- Command -->
+        <div class="card guide-card" id="command">
+          <div class="card-head">
+            <div class="card-icon">📝</div>
+            <div>
+              <h3>Command</h3>
+              <div class="card-also">aka: Action</div>
+            </div>
+          </div>
+          <p>Encapsulates a request as an object, allowing undo, queuing, and parameterization.</p>
+          <div class="section-title">When to use</div>
+          <ul>
+            <li>Undo/Redo history systems.</li>
+            <li>Asynchronous task execution or macro recording.</li>
+          </ul>
+          <div class="section-title">Why it helps</div>
+          <p>Requests are first-class citizens. They can be stored, replayed, or undone easily.</p>
+        </div>
+
+        <!-- Iterator -->
+        <div class="card guide-card" id="iterator">
+          <div class="card-head">
+            <div class="card-icon">🔄</div>
+            <div>
+              <h3>Iterator</h3>
+              <div class="card-also">aka: Cursor</div>
+            </div>
+          </div>
+          <p>Accesses elements of a collection sequentially without revealing its internal structure.</p>
+          <div class="section-title">When to use</div>
+          <ul>
+            <li>Uniform traversal across lists, trees, graphs.</li>
+            <li>Support multiple simultaneous traversals.</li>
+          </ul>
+          <div class="section-title">Why it helps</div>
+          <p>Abstracts storage logic. Clients write for interfaces, not implementation details.</p>
+        </div>
+
+        <!-- Mediator -->
+        <div class="card guide-card" id="mediator">
+          <div class="card-head">
+            <div class="card-icon">📡</div>
+            <div>
+              <h3>Mediator</h3>
+              <div class="card-also">aka: Controller Hub</div>
+            </div>
+          </div>
+          <p>Encapsulates interaction logic between a set of objects. Promotes loose coupling.</p>
+          <div class="section-title">When to use</div>
+          <ul>
+            <li>Complex UI forms or chat systems.</li>
+            <li>Tangled dependencies between component groups.</li>
+          </ul>
+          <div class="section-title">Why it helps</div>
+          <p>Converts M:N relationships into 1:N star topology. Components become simpler.</p>
+        </div>
+
+        <!-- Memento -->
+        <div class="card guide-card" id="memento">
+          <div class="card-head">
+            <div class="card-icon">💾</div>
+            <div>
+              <h3>Memento</h3>
+              <div class="card-also">aka: Snapshot</div>
+            </div>
+          </div>
+          <p>Captures object state without exposing internals, allowing for later restoration.</p>
+          <div class="section-title">When to use</div>
+          <ul>
+            <li>Checkpointing long tasks.</li>
+            <li>Save/Restore states in games or editors.</li>
+          </ul>
+          <div class="section-title">Why it helps</div>
+          <p>Preserves encapsulation. Originator manages its own state recovery.</p>
+        </div>
+
+        <!-- Observer -->
+        <div class="card guide-card" id="observer">
+          <div class="card-head">
+            <div class="card-icon">👁️</div>
+            <div>
+              <h3>Observer</h3>
+              <div class="card-also">aka: Pub-Sub</div>
+            </div>
+          </div>
+          <p>Notifies dependents automatically when a subject changes state.</p>
+          <div class="section-title">When to use</div>
+          <ul>
+            <li>Event listeners, reactive UIs, message buses.</li>
+            <li>One-to-many change propagation.</li>
+          </ul>
+          <div class="section-title">Why it helps</div>
+          <p>Decouples signal from action. foundation for all modern event-driven logic.</p>
+        </div>
+
+        <!-- State -->
+        <div class="card guide-card" id="state">
+          <div class="card-head">
+            <div class="card-icon">🔁</div>
+            <div>
+              <h3>State</h3>
+              <div class="card-also">aka: FSM</div>
+            </div>
+          </div>
+          <p>Changes object behavior when its internal state changes. States are objects.</p>
+          <div class="section-title">When to use</div>
+          <ul>
+            <li>Vending machines, order workflows, traffic lights.</li>
+            <li>Replace complex switch/if-else chains.</li>
+          </ul>
+          <div class="section-title">Why it helps</div>
+          <p>Isolates state-specific logic. Adding new states is non-invasive.</p>
+        </div>
+
+        <!-- Strategy -->
+        <div class="card guide-card" id="strategy">
+          <div class="card-head">
+            <div class="card-icon">♟️</div>
+            <div>
+              <h3>Strategy</h3>
+              <div class="card-also">aka: Policy</div>
+            </div>
+          </div>
+          <p>Encapsulates algorithms into interchangeable objects. Clients decide logic at runtime.</p>
+          <div class="section-title">When to use</div>
+          <ul>
+            <li>Different sorting, compression, or payment methods.</li>
+            <li>Algorithm varies independently of context.</li>
+          </ul>
+          <div class="section-title">Why it helps</div>
+          <p>Enables Open/Closed Principle. Adding a strategy doesn't touch existing code.</p>
+        </div>
+
+        <!-- Template Method -->
+        <div class="card guide-card" id="template-method">
+          <div class="card-head">
+            <div class="card-icon">📐</div>
+            <div>
+              <h3>Template Method</h3>
+              <div class="card-also">aka: Skeleton</div>
+            </div>
+          </div>
+          <p>Defines algorithm skeleton in base class, deferring specific steps to subclasses.</p>
+          <div class="section-title">When to use</div>
+          <ul>
+            <li>Standardized workflows with custom hooks (parsers, report tools).</li>
+            <li>DRY for structural logic.</li>
+          </ul>
+          <div class="section-title">Why it helps</div>
+          <p>Inversion of Control (Hollywood Principle). Framework calls your overrides.</p>
+        </div>
+
+        <!-- Visitor -->
+        <div class="card guide-card" id="visitor">
+          <div class="card-head">
+            <div class="card-icon">🚶</div>
+            <div>
+              <h3>Visitor</h3>
+              <div class="card-also">aka: Double Dispatch</div>
+            </div>
+          </div>
+          <p>Adds operations to structures without modifying classes. Logic exists in visitors.</p>
+          <div class="section-title">When to use</div>
+          <ul>
+            <li>AST traversal, reporting on complex object hierarchies.</li>
+            <li>Add features to rigid structures.</li>
+          </ul>
+          <div class="section-title">Why it helps</div>
+          <p>Consolidates related logic. Elements don't need to know about all possible ops.</p>
+        </div>
+
+        <!-- Null Object -->
+        <div class="card guide-card" id="null-object">
+          <div class="card-head">
+            <div class="card-icon">🚫</div>
+            <div>
+              <h3>Null Object</h3>
+              <div class="card-also">aka: Default object</div>
+            </div>
+          </div>
+          <p>Substitute for null that provides do-nothing behavior to avoid null checks.</p>
+          <div class="section-title">When to use</div>
+          <ul>
+            <li>Optional collaborators without side-effects (Stub logger).</li>
+            <li>Remove repetitive null-guard noise.</li>
+          </ul>
+          <div class="section-title">Why it helps</div>
+          <p>Cleaner client code. Logic flows smoothly without interruption marks.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ARCHITECTURAL -->
+    <section class="category-section" id="category-architectural">
+      <div class="category-header">
+        <div class="cat-icon" style="background:rgba(189,147,249,0.1);color:var(--architectural)"></div>
+        <div class="cat-info">
+          <h2 style="color:var(--architectural)">Architectural Patterns</h2>
+          <p>High-level system structure and cross-service communication patterns.</p>
+        </div>
+      </div>
+      
+      <div class="guide-grid">
+        <!-- MVC -->
+        <div class="card guide-card" id="mvc">
+          <div class="card-head">
+            <div class="card-icon">🏗️</div>
+            <div>
+              <h3>MVC</h3>
+              <div class="card-also">Model-View-Controller</div>
+            </div>
+          </div>
+          <p>Separates application into data logic (Model), presentation (View), and input (Controller).</p>
+          <div class="section-title">When to use</div>
+          <ul>
+            <li>Web & desktop UIs where data/UI change independently.</li>
+          </ul>
+          <div class="section-title">Why it helps</div>
+          <p>Decouples business rules from display technology. Parallel development.</p>
+        </div>
+
+        <!-- CQRS -->
+        <div class="card guide-card" id="cqrs">
+          <div class="card-head">
+            <div class="card-icon">⚡</div>
+            <div>
+              <h3>CQRS</h3>
+              <div class="card-also">Command Query Segregation</div>
+            </div>
+          </div>
+          <p>Splits read (Query) and write (Command) logic into separate models for performance.</p>
+          <div class="section-title">When to use</div>
+          <ul>
+            <li>High-scale systems where read/write demands differ greatly.</li>
+            <li>Complex domains requiring denormalized read views.</li>
+          </ul>
+          <div class="section-title">Why it helps</div>
+          <p>Optimize read/write paths independently. Scalability at the architectural level.</p>
+        </div>
+
+        <!-- Saga -->
+        <div class="card guide-card" id="saga">
+          <div class="card-head">
+            <div class="card-icon">🏹</div>
+            <div>
+              <h3>Saga</h3>
+              <div class="card-also">Distributed Transactions</div>
+            </div>
+          </div>
+          <p>Manages long-running distributed steps via local transactions and compensation logic.</p>
+          <div class="section-title">When to use</div>
+          <ul>
+            <li>Microservices where 2-phase commit is too slow/risky.</li>
+            <li>Event-driven workflows spanning multiple services.</li>
+          </ul>
+          <div class="section-title">Why it helps</div>
+          <p>Eventual consistency without global locks. Graceful failure recovery.</p>
+        </div>
+
+        <!-- Circuit Breaker -->
+        <div class="card guide-card" id="circuit-breaker">
+          <div class="card-head">
+            <div class="card-icon">🔌</div>
+            <div>
+              <h3>Circuit Breaker</h3>
+              <div class="card-also">aka: Fail-Fast Gate</div>
+            </div>
+          </div>
+          <p>Wraps service calls to monitor failures and open the circuit to prevent cascade crashes.</p>
+          <div class="section-title">When to use</div>
+          <ul>
+            <li>Integration with fragile 3rd-party APIs.</li>
+            <li>Inter-service communication in distributed systems.</li>
+          </ul>
+          <div class="section-title">Why it helps</div>
+          <p>Fault tolerance. System degrades gracefully instead of hanging on timeouts.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer" style="text-align:center">
+      <p>Built for Java developers • All 23 GoF Patterns • SOLID • Architectural patterns</p>
+    </footer>
+  </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

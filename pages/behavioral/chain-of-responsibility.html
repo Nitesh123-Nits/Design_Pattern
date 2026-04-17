@@ -30,112 +30,108 @@
 
     <h2>Java Implementation</h2>
     <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Purchase Approval Chain - Handler Interface</span><button class="copy-btn">Copy</button></div>
-      <pre><code class="language-java">//  Handler Interface 
-public abstract class ApprovalHandler {
-    protected ApprovalHandler nextHandler;
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">ATM Dispenser Chain - Handler Interface</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Handler Interface
+public abstract class DispenseChain {
+    protected DispenseChain nextChain;
 
-    public ApprovalHandler setNext(ApprovalHandler next) {
-        this.nextHandler = next;
-        return next; // enables chaining: handler1.setNext(handler2).setNext(handler3)
+    public void setNext(DispenseChain next) {
+        this.nextChain = next;
     }
 
-    public abstract void handleRequest(PurchaseRequest request);
-
-    protected void passToNext(PurchaseRequest request) {
-        if (nextHandler != null) {
-            nextHandler.handleRequest(request);
-        } else {
-            System.out.println(" Request denied: $" + request.getAmount() + " — no approver available");
-        }
-    }
+    public abstract void dispense(Currency currency);
 }
 
-public class PurchaseRequest {
-    private final String purpose;
-    private final double amount;
-    public PurchaseRequest(String purpose, double amount) { this.purpose = purpose; this.amount = amount; }
-    public String getPurpose() { return purpose; }
-    public double getAmount() { return amount; }
+public class Currency {
+    private final int amount;
+    public Currency(int amount) { this.amount = amount; }
+    public int getAmount() { return amount; }
 }</code></pre>
     </div>
 
     <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Purchase Approval Chain - Concrete Handlers</span><button class="copy-btn">Copy</button></div>
-      <pre><code class="language-java">//  Concrete Handlers 
-public class TeamLeadHandler extends ApprovalHandler {
-    private static final double LIMIT = 1000.0;
-
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">ATM Dispenser Chain - Concrete Handlers</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Concrete Handlers
+public class Rupee2000Handler extends DispenseChain {
     @Override
-    public void handleRequest(PurchaseRequest request) {
-        if (request.getAmount() &lt;= LIMIT) {
-            System.out.printf(" TEAM LEAD approved $%.2f for '%s'%n",
-                request.getAmount(), request.getPurpose());
+    public void dispense(Currency currency) {
+        if (currency.getAmount() >= 2000) {
+            int num = currency.getAmount() / 2000;
+            int remainder = currency.getAmount() % 2000;
+            System.out.println("Dispensing " + num + " Rs. 2000 note(s)");
+            if (remainder != 0) nextChain.dispense(new Currency(remainder));
         } else {
-            System.out.printf(" TEAM LEAD passing $%.2f to Manager%n", request.getAmount());
-            passToNext(request);
+            nextChain.dispense(currency);
         }
     }
 }
 
-public class ManagerHandler extends ApprovalHandler {
-    private static final double LIMIT = 10000.0;
-
+public class Rupee500Handler extends DispenseChain {
     @Override
-    public void handleRequest(PurchaseRequest request) {
-        if (request.getAmount() &lt;= LIMIT) {
-            System.out.printf(" MANAGER approved $%.2f for '%s'%n",
-                request.getAmount(), request.getPurpose());
+    public void dispense(Currency currency) {
+        if (currency.getAmount() >= 500) {
+            int num = currency.getAmount() / 500;
+            int remainder = currency.getAmount() % 500;
+            System.out.println("Dispensing " + num + " Rs. 500 note(s)");
+            if (remainder != 0) nextChain.dispense(new Currency(remainder));
         } else {
-            System.out.printf(" MANAGER passing $%.2f to Director%n", request.getAmount());
-            passToNext(request);
+            nextChain.dispense(currency);
         }
     }
 }
 
-public class DirectorHandler extends ApprovalHandler {
-    private static final double LIMIT = 100000.0;
-
+public class Rupee200Handler extends DispenseChain {
     @Override
-    public void handleRequest(PurchaseRequest request) {
-        if (request.getAmount() &lt;= LIMIT) {
-            System.out.printf(" DIRECTOR approved $%.2f for '%s'%n",
-                request.getAmount(), request.getPurpose());
+    public void dispense(Currency currency) {
+        if (currency.getAmount() >= 200) {
+            int num = currency.getAmount() / 200;
+            int remainder = currency.getAmount() % 200;
+            System.out.println("Dispensing " + num + " Rs. 200 note(s)");
+            if (remainder != 0) nextChain.dispense(new Currency(remainder));
         } else {
-            System.out.printf(" DIRECTOR passing $%.2f to CEO%n", request.getAmount());
-            passToNext(request);
+            nextChain.dispense(currency);
         }
     }
 }
 
-public class CEOHandler extends ApprovalHandler {
+public class Rupee100Handler extends DispenseChain {
     @Override
-    public void handleRequest(PurchaseRequest request) {
-        // CEO approves everything (final handler)
-        System.out.printf(" CEO approved $%.2f for '%s'%n",
-            request.getAmount(), request.getPurpose());
+    public void dispense(Currency currency) {
+        if (currency.getAmount() >= 100) {
+            int num = currency.getAmount() / 100;
+            int remainder = currency.getAmount() % 100;
+            System.out.println("Dispensing " + num + " Rs. 100 note(s)");
+            if (remainder != 0) {
+                System.out.println("Remaining amount " + remainder + " cannot be dispensed.");
+            }
+        } else {
+             System.out.println("Amount " + currency.getAmount() + " is too small to dispense.");
+        }
     }
 }</code></pre>
     </div>
 
     <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Purchase Approval Chain - Usage</span><button class="copy-btn">Copy</button></div>
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">ATM Dispenser Chain - Usage</span><button class="copy-btn">Copy</button></div>
       <pre><code class="language-java">// Usage
 public class Main {
     public static void main(String[] args) {
-        // Build the chain
-        ApprovalHandler teamLead = new TeamLeadHandler();
-        ApprovalHandler manager  = new ManagerHandler();
-        ApprovalHandler director = new DirectorHandler();
-        ApprovalHandler ceo      = new CEOHandler();
+        // Initialize the chain
+        DispenseChain c1 = new Rupee2000Handler();
+        DispenseChain c2 = new Rupee500Handler();
+        DispenseChain c3 = new Rupee200Handler();
+        DispenseChain c4 = new Rupee100Handler();
 
-        teamLead.setNext(manager).setNext(director).setNext(ceo);
+        // Set the sequence
+        c1.setNext(c2);
+        c2.setNext(c3);
+        c3.setNext(c4);
 
-        // Same entry point — each request finds its appropriate approver
-        teamLead.handleRequest(new PurchaseRequest("Office supplies", 500));
-        teamLead.handleRequest(new PurchaseRequest("Team training", 5000));
-        teamLead.handleRequest(new PurchaseRequest("Software licenses", 50000));
-        teamLead.handleRequest(new PurchaseRequest("Acquisition", 500000));
+        System.out.println("Processing Rs. 5800:");
+        c1.dispense(new Currency(5800));
+
+        System.out.println("\nProcessing Rs. 2350:");
+        c1.dispense(new Currency(2350));
     }
 }</code></pre>
     </div>

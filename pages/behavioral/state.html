@@ -30,106 +30,112 @@
 
     <h2>Java Implementation</h2>
     <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Order State Machine - State interface</span><button class="copy-btn">Copy</button></div>
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Vending Machine - State interface</span><button class="copy-btn">Copy</button></div>
       <pre><code class="language-java">// State interface
-public interface OrderState {
-    void confirm(Order order);
-    void ship(Order order);
-    void deliver(Order order);
-    void cancel(Order order);
+public interface VendingMachineState {
+    void insertCoin(VendingMachine machine);
+    void pressButton(VendingMachine machine);
+    void dispense(VendingMachine machine);
     String getStateName();
 }</code></pre>
     </div>
 
     <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Order State Machine - Context</span><button class="copy-btn">Copy</button></div>
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Vending Machine - Context</span><button class="copy-btn">Copy</button></div>
       <pre><code class="language-java">// Context
-public class Order {
-    private OrderState state;
-    private final String orderId;
+public class VendingMachine {
+    private VendingMachineState state;
+    private int inventory = 0;
 
-    public Order(String orderId) {
-        this.orderId = orderId;
-        this.state = new PendingState(); // initial state
-        System.out.println("Order " + orderId + " created. Status: " + state.getStateName());
+    public VendingMachine(int inventory) {
+        this.inventory = inventory;
+        this.state = (inventory > 0) ? new IdleState() : new OutOfStockState();
+        System.out.println("Vending Machine initialized. Inventory: " + inventory);
     }
 
-    // Delegates all operations to current state
-    public void confirm()  { state.confirm(this); }
-    public void ship()     { state.ship(this); }
-    public void deliver()  { state.deliver(this); }
-    public void cancel()   { state.cancel(this); }
+    public void insertCoin()  { state.insertCoin(this); }
+    public void pressButton() { state.pressButton(this); }
+    public void dispense()    { state.dispense(this); }
 
-    public void setState(OrderState state) {
-        System.out.println("[" + orderId + "] " + this.state.getStateName()
+    public void setState(VendingMachineState state) {
+        System.out.println("State transition: " + this.state.getStateName()
             + " → " + state.getStateName());
         this.state = state;
     }
 
-    public String getStatus() { return state.getStateName(); }
-}</code></pre>
-    </div>
-
-    <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Order State Machine - Concrete States</span><button class="copy-btn">Copy</button></div>
-      <pre><code class="language-java">// Concrete States
-public class PendingState implements OrderState {
-    @Override
-    public void confirm(Order order) {
-        order.setState(new ConfirmedState());
+    public int getInventory() { return inventory; }
+    public void releaseProduct() {
+        if (inventory > 0) inventory--;
     }
-    @Override public void ship(Order order)    { System.out.println(" Cannot ship: order not confirmed"); }
-    @Override public void deliver(Order order) { System.out.println(" Cannot deliver: order not shipped"); }
-    @Override public void cancel(Order order)  { order.setState(new CancelledState()); }
-    @Override public String getStateName()     { return "PENDING"; }
-}
-
-public class ConfirmedState implements OrderState {
-    @Override public void confirm(Order order) { System.out.println(" Already confirmed"); }
-    @Override
-    public void ship(Order order) { order.setState(new ShippedState()); }
-    @Override public void deliver(Order order) { System.out.println(" Cannot deliver: order not shipped"); }
-    @Override public void cancel(Order order)  { order.setState(new CancelledState()); }
-    @Override public String getStateName()     { return "CONFIRMED"; }
-}
-
-public class ShippedState implements OrderState {
-    @Override public void confirm(Order order) { System.out.println(" Already confirmed &amp; shipped"); }
-    @Override public void ship(Order order)    { System.out.println(" Already shipped"); }
-    @Override
-    public void deliver(Order order) { order.setState(new DeliveredState()); }
-    @Override public void cancel(Order order)  { System.out.println(" Cannot cancel: already shipped"); }
-    @Override public String getStateName()     { return "SHIPPED"; }
-}
-
-public class DeliveredState implements OrderState {
-    @Override public void confirm(Order order) { System.out.println(" Order already delivered"); }
-    @Override public void ship(Order order)    { System.out.println(" Order already delivered"); }
-    @Override public void deliver(Order order) { System.out.println(" Already delivered"); }
-    @Override public void cancel(Order order)  { System.out.println(" Cannot cancel: already delivered"); }
-    @Override public String getStateName()     { return "DELIVERED"; }
-}
-
-public class CancelledState implements OrderState {
-    @Override public void confirm(Order order) { System.out.println(" Order is cancelled"); }
-    @Override public void ship(Order order)    { System.out.println(" Order is cancelled"); }
-    @Override public void deliver(Order order) { System.out.println(" Order is cancelled"); }
-    @Override public void cancel(Order order)  { System.out.println(" Already cancelled"); }
-    @Override public String getStateName()     { return "CANCELLED"; }
 }</code></pre>
     </div>
 
     <div class="code-block">
-      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Order State Machine - Usage</span><button class="copy-btn">Copy</button></div>
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Vending Machine - Concrete States</span><button class="copy-btn">Copy</button></div>
+      <pre><code class="language-java">// Concrete States
+public class IdleState implements VendingMachineState {
+    @Override
+    public void insertCoin(VendingMachine machine) {
+        System.out.println(" Coin inserted.");
+        machine.setState(new HasCoinState());
+    }
+    @Override public void pressButton(VendingMachine machine) { System.out.println(" Insert coin first."); }
+    @Override public void dispense(VendingMachine machine)    { System.out.println(" Insert coin first."); }
+    @Override public String getStateName() { return "IDLE"; }
+}
+
+public class HasCoinState implements VendingMachineState {
+    @Override public void insertCoin(VendingMachine machine) { System.out.println(" Coin already inserted."); }
+    @Override
+    public void pressButton(VendingMachine machine) {
+        System.out.println(" Button pressed.");
+        machine.setState(new DispensingState());
+    }
+    @Override public void dispense(VendingMachine machine) { System.out.println(" Press button first."); }
+    @Override public String getStateName() { return "HAS_COIN"; }
+}
+
+public class DispensingState implements VendingMachineState {
+    @Override public void insertCoin(VendingMachine machine) { System.out.println(" Please wait, dispensing..."); }
+    @Override public void pressButton(VendingMachine machine) { System.out.println(" Already dispensing..."); }
+    @Override
+    public void dispense(VendingMachine machine) {
+        machine.releaseProduct();
+        System.out.println(" Product dispensed.");
+        if (machine.getInventory() > 0) {
+            machine.setState(new IdleState());
+        } else {
+            machine.setState(new OutOfStockState());
+        }
+    }
+    @Override public String getStateName() { return "DISPENSING"; }
+}
+
+public class OutOfStockState implements VendingMachineState {
+    @Override public void insertCoin(VendingMachine machine) { System.out.println(" Machine out of stock."); }
+    @Override public void pressButton(VendingMachine machine) { System.out.println(" Machine out of stock."); }
+    @Override public void dispense(VendingMachine machine)    { System.out.println(" Machine out of stock."); }
+    @Override public String getStateName() { return "OUT_OF_STOCK"; }
+}</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Vending Machine - Usage</span><button class="copy-btn">Copy</button></div>
       <pre><code class="language-java">// Usage
 public class Main {
     public static void main(String[] args) {
-        Order order = new Order("ORD-100");
-        order.confirm();   // PENDING → CONFIRMED
-        order.ship();      // CONFIRMED → SHIPPED
-        order.cancel();    //  Cannot cancel: already shipped
-        order.deliver();   // SHIPPED → DELIVERED
-        order.cancel();    //  Cannot cancel: already delivered
+        VendingMachine vm = new VendingMachine(2); // Start with 2 items
+
+        vm.insertCoin();   // IDLE → HAS_COIN
+        vm.pressButton();  // HAS_COIN → DISPENSING
+        vm.dispense();     // DISPENSING → IDLE (1 item left)
+
+        vm.pressButton();  // Insert coin first
+        vm.insertCoin();   // IDLE → HAS_COIN
+        vm.pressButton();  // HAS_COIN → DISPENSING
+        vm.dispense();     // DISPENSING → OUT_OF_STOCK (0 items left)
+
+        vm.insertCoin();   // Machine out of stock
     }
 }</code></pre>
     </div>

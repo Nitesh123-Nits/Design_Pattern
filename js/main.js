@@ -36,6 +36,19 @@ const SEARCH_INDEX = [
   { name: 'Strategy', cat: 'Behavioral', url: '../../pages/behavioral/strategy.html', icon: '♟️' },
   { name: 'Template Method', cat: 'Behavioral', url: '../../pages/behavioral/template-method.html', icon: '📐' },
   { name: 'Visitor', cat: 'Behavioral', url: '../../pages/behavioral/visitor.html', icon: '🚶' },
+  // Unique Patterns from Guide
+  { name: 'Complete Reference Guide', cat: 'Reference', url: '../../design-patterns-guide.html', icon: '📚' },
+  { name: 'Object Pool', cat: 'Creational', url: '../../design-patterns-guide.html#object-pool', icon: '🏊' },
+  { name: 'Null Object', cat: 'Behavioral', url: '../../design-patterns-guide.html#null-object', icon: '🚫' },
+  // Architectural
+  { name: 'MVC', cat: 'Architectural', url: '../../design-patterns-guide.html#mvc', icon: '🏗️' },
+  { name: 'MVVM', cat: 'Architectural', url: '../../design-patterns-guide.html#mvvm', icon: '📱' },
+  { name: 'Repository', cat: 'Architectural', url: '../../design-patterns-guide.html#repository', icon: '📦' },
+  { name: 'CQRS', cat: 'Architectural', url: '../../design-patterns-guide.html#cqrs', icon: '⚡' },
+  { name: 'Event Sourcing', cat: 'Architectural', url: '../../design-patterns-guide.html#event-sourcing', icon: '📜' },
+  { name: 'Saga', cat: 'Architectural', url: '../../design-patterns-guide.html#saga', icon: '🏹' },
+  { name: 'Circuit Breaker', cat: 'Architectural', url: '../../design-patterns-guide.html#circuit-breaker', icon: '🔌' },
+  { name: 'Strangler Fig', cat: 'Architectural', url: '../../design-patterns-guide.html#strangler-fig', icon: '🌿' },
 ];
 
 // ── Sidebar HTML ─────────────────────────────────────────────
@@ -48,6 +61,7 @@ function getSidebarHTML(rootPath = '') {
         <li><a href="${rootPath}pages/oop/index.html"><span class="nav-icon">🧬</span> OOP Concepts</a></li>
         <li><a href="${rootPath}pages/solid/index.html"><span class="nav-icon">🏛️</span> SOLID Principles</a></li>
         <li><a href="${rootPath}pages/principles/index.html"><span class="nav-icon">💡</span> Design Principles</a></li>
+        <li><a href="${rootPath}design-patterns-guide.html"><span class="nav-icon">📚</span> Complete Guide</a></li>
       </ul>
     </div>
     <div class="sidebar-divider"></div>
@@ -60,6 +74,7 @@ function getSidebarHTML(rootPath = '') {
         <li><a href="${rootPath}pages/creational/abstract-factory.html"><span class="cat-dot" style="background:var(--creational)"></span> Abstract Factory</a></li>
         <li><a href="${rootPath}pages/creational/builder.html"><span class="cat-dot" style="background:var(--creational)"></span> Builder</a></li>
         <li><a href="${rootPath}pages/creational/prototype.html"><span class="cat-dot" style="background:var(--creational)"></span> Prototype</a></li>
+        <li><a href="${rootPath}design-patterns-guide.html#object-pool"><span class="cat-dot" style="background:var(--creational)"></span> Object Pool</a></li>
       </ul>
     </div>
     <div class="sidebar-divider"></div>
@@ -92,6 +107,17 @@ function getSidebarHTML(rootPath = '') {
         <li><a href="${rootPath}pages/behavioral/strategy.html"><span class="cat-dot" style="background:var(--behavioral)"></span> Strategy</a></li>
         <li><a href="${rootPath}pages/behavioral/template-method.html"><span class="cat-dot" style="background:var(--behavioral)"></span> Template Method</a></li>
         <li><a href="${rootPath}pages/behavioral/visitor.html"><span class="cat-dot" style="background:var(--behavioral)"></span> Visitor</a></li>
+        <li><a href="${rootPath}design-patterns-guide.html#null-object"><span class="cat-dot" style="background:var(--behavioral)"></span> Null Object</a></li>
+      </ul>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Architectural Patterns</div>
+      <ul class="sidebar-nav">
+        <li><a href="${rootPath}design-patterns-guide.html#mvc"><span class="cat-dot" style="background:var(--architectural)"></span> MVC / MVVM</a></li>
+        <li><a href="${rootPath}design-patterns-guide.html#cqrs"><span class="cat-dot" style="background:var(--architectural)"></span> CQRS / Event Sourcing</a></li>
+        <li><a href="${rootPath}design-patterns-guide.html#saga"><span class="cat-dot" style="background:var(--architectural)"></span> Saga Pattern</a></li>
+        <li><a href="${rootPath}design-patterns-guide.html#circuit-breaker"><span class="cat-dot" style="background:var(--architectural)"></span> Circuit Breaker</a></li>
       </ul>
     </div>
     <div style="height:24px"></div>
